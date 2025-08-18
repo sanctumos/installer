@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Tools & Admin - Sanctum Configurator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+    <link href="settings.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="d-flex align-items-center justify-content-between p-2 px-3 border-bottom">
+        <div class="d-flex align-items-center gap-2">
+            <div class="dropdown">
+                <button class="btn btn-link text-light text-decoration-none p-0 fw-medium dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    Athena
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#" data-agent="athena">Athena</a></li>
+                    <li><a class="dropdown-item" href="#" data-agent="monday">Monday</a></li>
+                    <li><a class="dropdown-item" href="#" data-agent="timbre">Timbre</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <span class="text-muted small">Status: <span class="text-success">● Healthy</span> v1.0.0</span>
+            <a href="index.html" class="btn btn-outline-light btn-sm px-3 py-1">
+                <span class="me-1">←</span>
+                <span class="d-none d-sm-inline">Back to Chat</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container-fluid px-0 d-flex flex-column">
+        <div class="container px-3 py-4">
+            <!-- Page Title -->
+            <div class="mb-4">
+                <h1 class="h3 mb-1">Tools & Admin</h1>
+                <p class="text-muted mb-0">Manage your Sanctum configuration and tools</p>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="mb-4">
+                <div class="input-group" style="max-width: 400px;">
+                    <span class="input-group-text bg-dark border-0 text-muted">🔍</span>
+                    <input type="text" class="form-control bg-dark border-0 text-light" placeholder="Search tools…" id="searchTools">
+                    <button class="btn search-clear d-none" id="clearSearch" type="button">✕</button>
+                </div>
+                <div class="search-results" id="searchResults"></div>
+            </div>
+
+            <!-- Tools Grid -->
+            <div class="row g-4" id="toolsGrid">
+                <!-- Install Tool -->
+                <div class="col-lg-4 col-md-6" data-tool-name="install" data-tool-desc="quick setup upgrades">
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <span class="tool-emoji">🧰</span>
+                            <div class="tool-status ok" data-status="Healthy"></div>
+                        </div>
+                        <h3 class="tool-title">Install Tool</h3>
+                        <p class="tool-description">Quick setup & upgrades</p>
+                        <div class="tool-actions">
+                            <button class="btn btn-primary btn-sm">Open</button>
+                            <div class="dropdown d-inline-block">
+                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    ⋯
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Pin to gear</a></li>
+                                    <li><a class="dropdown-item" href="#">View logs</a></li>
+                                    <li><a class="dropdown-item" href="#">Disable</a></li>
+                                    <li><a class="dropdown-item" href="#">Permissions</a></li>
+                                    <li><a class="dropdown-item" href="#">Docs</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Settings -->
+                <div class="col-lg-4 col-md-6" data-tool-name="chat settings" data-tool-desc="model voice safety persona">
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <span class="tool-emoji">💬</span>
+                            <div class="tool-status ok" data-status="Healthy"></div>
+                        </div>
+                        <h3 class="tool-title">Chat Settings</h3>
+                        <p class="tool-description">Model, voice, safety, persona</p>
+                        <div class="tool-actions">
+                            <button class="btn btn-primary btn-sm">Open</button>
+                            <div class="dropdown d-inline-block">
+                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    ⋯
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Pin to gear</a></li>
+                                    <li><a class="dropdown-item" href="#">View logs</a></li>
+                                    <li><a class="dropdown-item" href="#">Disable</a></li>
+                                    <li><a class="dropdown-item" href="#">Permissions</a></li>
+                                    <li><a class="dropdown-item" href="#">Docs</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Broca -->
+                <div class="col-lg-4 col-md-6" data-tool-name="broca" data-tool-desc="streams tool io">
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <span class="tool-emoji">🛰️</span>
+                            <div class="tool-status ok" data-status="Healthy"></div>
+                        </div>
+                        <h3 class="tool-title">Broca</h3>
+                        <p class="tool-description">Streams & tool I/O</p>
+                        <div class="tool-actions">
+                            <button class="btn btn-primary btn-sm">Open</button>
+                            <div class="dropdown d-inline-block">
+                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    ⋯
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Pin to gear</a></li>
+                                    <li><a class="dropdown-item" href="#">View logs</a></li>
+                                    <li><a class="dropdown-item" href="#">Disable</a></li>
+                                    <li><a class="dropdown-item" href="#">Permissions</a></li>
+                                    <li><a class="dropdown-item" href="#">Docs</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thalamus / Cerebellum -->
+                <div class="col-lg-4 col-md-6" data-tool-name="thalamus cerebellum" data-tool-desc="routing memory inspectors">
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <span class="tool-emoji">🧠</span>
+                            <div class="tool-status ok" data-status="Healthy"></div>
+                        </div>
+                        <h3 class="tool-title">Thalamus / Cerebellum</h3>
+                        <p class="tool-description">Routing & memory inspectors</p>
+                        <div class="tool-actions">
+                            <button class="btn btn-primary btn-sm">Open</button>
+                            <div class="dropdown d-inline-block">
+                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    ⋯
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Pin to gear</a></li>
+                                    <li><a class="dropdown-item" href="#">View logs</a></li>
+                                    <li><a class="dropdown-item" href="#">Disable</a></li>
+                                    <li><a class="dropdown-item" href="#">Permissions</a></li>
+                                    <li><a class="dropdown-item" href="#">Docs</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dream Agent -->
+                <div class="col-lg-4 col-md-6" data-tool-name="dream agent" data-tool-desc="archives recall policies">
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <span class="tool-emoji">🌙</span>
+                            <div class="tool-status degraded" data-status="Degraded"></div>
+                        </div>
+                        <h3 class="tool-title">Dream Agent</h3>
+                        <p class="tool-description">Archives & recall policies</p>
+                        <div class="tool-actions">
+                            <button class="btn btn-primary btn-sm">Open</button>
+                            <div class="dropdown d-inline-block">
+                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    ⋯
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Pin to gear</a></li>
+                                    <li><a class="dropdown-item" href="#">View logs</a></li>
+                                    <li><a class="dropdown-item" href="#">Disable</a></li>
+                                    <li><a class="dropdown-item" href="#">Permissions</a></li>
+                                    <li><a class="dropdown-item" href="#">Docs</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SMCP Configurator -->
+                <div class="col-lg-4 col-md-6" data-tool-name="smcp config" data-tool-desc="mcp plugins scopes health">
+                    <div class="tool-card">
+                        <div class="tool-header">
+                            <span class="tool-emoji">🔌</span>
+                            <div class="tool-status off" data-status="Off"></div>
+                        </div>
+                        <h3 class="tool-title">SMCP Configurator</h3>
+                        <p class="tool-description">MCP plugins, scopes & health</p>
+                        <div class="tool-actions">
+                            <button class="btn btn-primary btn-sm">Open</button>
+                            <div class="dropdown d-inline-block">
+                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    ⋯
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#">Pin to gear</a></li>
+                                    <li><a class="dropdown-item" href="#">View logs</a></li>
+                                    <li><a class="dropdown-item" href="#">Enable</a></li>
+                                    <li><a class="dropdown-item" href="#">Permissions</a></li>
+                                    <li><a class="dropdown-item" href="#">Docs</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tips -->
+            <div class="mt-5 pt-4 border-top border-secondary">
+                <p class="text-muted small mb-0">
+                    <strong>Tips:</strong> 1–6 to open • Enter = Open • ⌥Enter = Open in new tab • ? Help
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="settings.js"></script>
+</body>
+</html>
