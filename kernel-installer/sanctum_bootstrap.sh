@@ -49,6 +49,7 @@ cat > ~/.letta/.env <<EOF
 OPENAI_API_KEY="$OPENAI_API_KEY"
 ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY"
 OLLAMA_BASE_URL="$OLLAMA_BASE_URL"
+LETTA_SERVER_PASSWORD="$LETTAPASS"
 EOF
 
 ############################################
@@ -298,7 +299,7 @@ CMD="docker run \
   -p 8284:8283 \
   --env-file ~/.letta/.env \
   -e SECURE=true \
-  -e LETTA_SERVER_PASSWORD=\"$LETTAPASS\" \
+  -e LETTA_SERVER_PASSWORD=\"$LETTA_SERVER_PASSWORD\" \
   --add-host=host.docker.internal:host-gateway \
   letta/letta:latest"
 
