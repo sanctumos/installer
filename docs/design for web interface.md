@@ -10,14 +10,14 @@ This document specifies the complete web interface design for the Sanctum Config
 
 ### Layout & Structure
 
-The Settings page presents a card wall layout with tool management capabilities:
+The Settings page now uses a tabbed navigation system to properly separate master-level configuration from per-agent configuration:
 
 ```
 ┌────────────────────────────────────────────────────────────────────┐
 │  [Athena ▼]                    Settings                    [← Chat] │
 │  ───────────────────────────────────────────────────────────────── │
-│  [Search tools…] [✕]                    Status: ● Healthy  v1.0.0 │
-│  [n results]                                                       │
+│  [Master] [Athena] [Monday] [Timbre] [SMCP]                       │
+│  ───────────────────────────────────────────────────────────────── │
 │                                                                      │
 │  ┌───────────────────┐  ┌───────────────────┐  ┌───────────────────┐ │
 │  │🧰  Install Tool    │  │💬  Chat Settings   │  │🛰️  Broca           │ │
@@ -39,15 +39,47 @@ The Settings page presents a card wall layout with tool management capabilities:
 └────────────────────────────────────────────────────────────────────┘
 ```
 
+### Tab Navigation System
+
+#### Master Tab (Global Configuration)
+- **Global Venv Management**: Python interpreter, shared dependencies
+- **System-wide Settings**: Base ports, paths, environment variables
+- **Control Plane**: Optional registry, gateway, admin UI
+- **Installation Tools**: Setup, upgrades, system health
+
+#### Agent Tabs (Per-Prime Configuration)
+- **Agent-specific Tools**: Broca2, Thalamus, Dream Agent, etc.
+- **Module Configurations**: Individual .env files, ports, DB paths
+- **Agent Plugins**: Per-agent plugin management
+- **Local Settings**: Model preferences, voice settings, persona configs
+
+#### SMCP Tab (Independent Service)
+- **MCP Service**: Plugin management, service configuration
+- **Service Health**: Status monitoring, logs, performance
+- **Plugin Registry**: Available plugins, installation status
+
 ### Key Features
 
+#### Tab-based Navigation
+- **Active Tab**: Highlighted with accent color and border
+- **Tab Switching**: Instant navigation between configuration levels
+- **Context Awareness**: Each tab shows relevant tools and settings
+- **Search Scope**: Search filters within the active tab context
+
+#### Configuration Hierarchy
+- **Master Level**: System-wide settings affecting all agents
+- **Agent Level**: Individual Prime configurations and tools
+- **Module Level**: Specific tool configurations within each agent
+- **Service Level**: Independent services like SMCP
+
 #### Agent Switching
-- **Dropdown Header**: Shows current agent (Athena, Monday, Timbre) with dropdown menu
+- **Dropdown Header**: Shows current agent with dropdown menu
+- **Tab Context**: Agent tabs automatically switch when changing agents
 - **Page Refresh**: Switching agents refreshes the entire page to load new context
 - **Loading State**: Brief "Loading [Agent]..." display during transition
 
 #### Search & Filtering
-- **Live Search**: Real-time filtering by tool name and description
+- **Tab-scoped Search**: Live filtering within the active tab context
 - **Results Counter**: Shows "n results" below search input
 - **Clear Button**: ✕ button appears when search has content
 - **Keyboard Shortcuts**: Esc clears search and refocuses input
@@ -71,6 +103,7 @@ The Settings page presents a card wall layout with tool management capabilities:
 - **Number Keys**: 1-6 to open corresponding tools
 - **Enter**: Opens first visible tool
 - **Escape**: Clears search and refocuses
+- **Tab Navigation**: Ctrl+1-5 to switch between tabs
 
 ---
 
