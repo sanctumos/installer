@@ -30,10 +30,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 textarea.value = '';
                 textarea.style.height = 'auto';
                 
-                // Simulate assistant response
-                setTimeout(() => {
-                    addAssistantMessage("I received your message: \"" + message + "\". This is a mockup - in the real interface, I'd process your request and respond accordingly.");
-                }, 1000);
+                // Send message to Flask API
+                fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        addAssistantMessage("Error: " + data.error);
+                    } else {
+                        addAssistantMessage(data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    addAssistantMessage("Sorry, there was an error processing your message.");
+                });
             }
         });
     }
