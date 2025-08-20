@@ -10,7 +10,7 @@ This document specifies the complete web interface design for the Sanctum Config
 
 ### Layout & Structure
 
-The Settings page now uses a tabbed navigation system to properly separate master-level configuration from per-agent configuration:
+The Settings page now uses a tabbed navigation system to properly separate master-level configuration from per-agent configuration, aligned with the actual Sanctum installation structure:
 
 ```
 ┌────────────────────────────────────────────────────────────────────┐
@@ -20,43 +20,73 @@ The Settings page now uses a tabbed navigation system to properly separate maste
 │  ───────────────────────────────────────────────────────────────── │
 │                                                                      │
 │  ┌───────────────────┐  ┌───────────────────┐  ┌───────────────────┐ │
-│  │🧰  Install Tool    │  │💬  Chat Settings   │  │🛰️  Broca           │ │
-│  │ Quick setup &      │  │ Model, voice,     │  │ Streams & tool I/O │ │
-│  │ upgrades           │  │ safety, persona   │  │                    │ │
+│  │⚙️  System Settings │  │🧰  Install Tool    │  │📊  Process Mgmt    │ │
+│  │ Base ports, paths │  │ Quick setup &      │  │ Start/stop/restart│ │
+│  │ & env variables   │  │ upgrades           │  │ all modules       │ │
 │  │                    │  │                   │  │                    │ │
 │  │ [Open] [⋯]  ● OK   │  │ [Open] [⋯]  ● OK  │  │ [Open] [⋯]  ● OK   │ │
 │  └───────────────────┘  └───────────────────┘  └───────────────────┘ │
 │                                                                      │
 │  ┌───────────────────┐  ┌───────────────────┐  ┌───────────────────┐ │
-│  │🧠  Thalamus /      │  │🌙  Dream Agent     │  │🔌  SMCP Config     │ │
-│  │    Cerebellum      │  │ Archives & recall │  │ MCP plugins/tools  │ │
-│  │ Routing & memory   │  │ policies          │  │ scopes & health     │ │
-│  │ inspectors         │  │                   │  │                    │ │
-│  │ [Open] [⋯]  ● OK   │  │ [Open] [⋯]  ● OK  │  │ [Open] [⋯]  ● OK   │ │
+│  │⏰  Cron Scheduler  │  │➕  Create Agent     │  │📁  Backup/Restore  │ │
+│  │ Automated module  │  │ Add new Prime      │  │ System backup &   │ │
+│  │ execution         │  │ agent to system   │  │ recovery tools    │ │
+│  │                    │  │                   │  │                    │ │
+│  │ [Open] [⋯]  ● OK   │  │ [Create] [⋯]  ● OK│  │ [Open] [⋯]  ● OK   │ │
 │  └───────────────────┘  └───────────────────┘  └───────────────────┘ │
 │                                                                      │
-│  Tips: 1–6 to open • Enter = Open • Esc = Clear search • ? Help    │
+│  Tips: 1–6 to open • Enter = Open • Esc = Clear search • Ctrl+1-5 = Switch tabs │
 └────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Tab Navigation System
 
 #### Master Tab (Global Configuration)
-- **Global Venv Management**: Python interpreter, shared dependencies
-- **System-wide Settings**: Base ports, paths, environment variables
-- **Control Plane**: Optional registry, gateway, admin UI
-- **Installation Tools**: Setup, upgrades, system health
+- **System-wide Settings**: Base ports, paths, environment variables, `.env` configuration
+- **Installation Tools**: Setup, upgrades, system health monitoring
+- **Process Management**: Centralized start/stop/restart for all modules
+- **Cron Scheduler**: Automated execution scheduling for all modules
+- **Create New Agent**: Add new Prime agents to the system
+- **Backup/Restore**: System backup and recovery tools
 
 #### Agent Tabs (Per-Prime Configuration)
-- **Agent-specific Tools**: Broca2, Thalamus, Dream Agent, etc.
-- **Module Configurations**: Individual .env files, ports, DB paths
-- **Agent Plugins**: Per-agent plugin management
-- **Local Settings**: Model preferences, voice settings, persona configs
+All agent configuration pages follow the same layout pattern:
+
+```
+┌────────────────────────────────────────────────────────────────────┐
+│  [Search tools…] [✕]                    [n results]               │
+│                                                                      │
+│  ┌───────────────────┐  ┌───────────────────┐  ┌───────────────────┐ │
+│  │💬  Chat Settings   │  │🛰️  Broca           │  │🧠  Thalamus        │ │
+│  │ Model, voice,     │  │ Streams & tool I/O │  │ Routing & memory  │ │
+│  │ safety, persona   │  │                    │  │ inspectors        │ │
+│  │                    │  │                   │  │                    │ │
+│  │ [Open] [⋯]  ● OK   │  │ [Open] [⋯]  ● OK  │  │ [Open] [⋯]  ● OK   │ │
+│  └───────────────────┘  └───────────────────┘  └───────────────────┘ │
+│                                                                      │
+│  ┌───────────────────┐  ┌───────────────────┐  ┌───────────────────┐ │
+│  │🌙  Dream Agent     │  │🔌  Plugins         │  │📊  Logs & Status   │ │
+│  │ Archives & recall │  │ Module plugins &  │  │ Health monitoring │ │
+│  │ policies          │  │ configurations    │  │ & log access      │ │
+│  │                    │  │                   │  │                    │ │
+│  │ [Open] [⋯]  ● OK   │  │ [Open] [⋯]  ● OK  │  │ [Open] [⋯]  ● OK   │ │
+│  └───────────────────┘  └───────────────────┘  └───────────────────┘ │
+```
+
+**Standard Agent Tools** (same for all agents):
+- **Chat Settings**: Model preferences, voice settings, persona configurations
+- **Broca**: Streams & tool I/O management
+- **Thalamus**: Routing & memory inspectors
+- **Dream Agent**: Archives & recall policies
+- **Plugins**: Module plugins & configurations
+- **Logs & Status**: Health monitoring & log access
 
 #### SMCP Tab (Independent Service)
-- **MCP Service**: Plugin management, service configuration
-- **Service Health**: Status monitoring, logs, performance
-- **Plugin Registry**: Available plugins, installation status
+- **MCP Service**: Plugin management, service configuration, scope settings
+- **Service Health**: Status monitoring, logs, performance metrics
+- **Plugin Registry**: Available plugins, installation status, version management
+- **Tool Control**: Management of Letta tools and MCP integrations
+- **Independent Venv**: SMCP maintains its own Python environment
 
 ### Key Features
 
@@ -67,10 +97,22 @@ The Settings page now uses a tabbed navigation system to properly separate maste
 - **Search Scope**: Search filters within the active tab context
 
 #### Configuration Hierarchy
-- **Master Level**: System-wide settings affecting all agents
-- **Agent Level**: Individual Prime configurations and tools
+- **Master Level**: System-wide settings affecting all agents (`/sanctum/.env`)
+- **Agent Level**: Individual Prime configurations and tools (`/sanctum/agents/agent-<uid>/`)
 - **Module Level**: Specific tool configurations within each agent
-- **Service Level**: Independent services like SMCP
+- **Service Level**: Independent services like SMCP (`/sanctum/smcp/`)
+
+#### Create New Agent Function
+- **Agent Creation**: Add new Prime agents to the system
+- **Template Setup**: Automatically create standard folder structure
+- **Configuration**: Set up default `.env` files and port assignments
+- **Integration**: Add to control system and registry database
+
+#### Process Management Integration
+- **Centralized Control**: All run scripts located in `/sanctum/control/run/`
+- **Unified Interface**: Start/stop/restart all modules from one location
+- **Cron Integration**: Automated scheduling for module execution
+- **Status Monitoring**: Real-time health checks and log access
 
 #### Agent Switching
 - **Dropdown Header**: Shows current agent with dropdown menu
@@ -195,6 +237,98 @@ The Chat interface provides a full-bleed conversation experience with fixed-heig
 
 ---
 
+## Implementation Mapping
+
+### File Structure Alignment
+
+The web interface directly maps to the Sanctum installation structure:
+
+```
+Web Interface          →  Sanctum Installation
+─────────────────────────────────────────────────
+Master Tab            →  /sanctum/venv/, /sanctum/.env
+Agent Tabs            →  /sanctum/agents/agent-<uid>/
+SMCP Tab              →  /sanctum/smcp/
+Control Interface     →  /sanctum/control/web/
+Process Management    →  /sanctum/control/run/
+```
+
+### Control System Integration
+
+#### System Settings Management
+- **Environment Configuration**: Reading and writing of `/sanctum/.env` files
+- **Port Management**: Assignment and tracking of module ports
+- **Path Configuration**: System-wide path and directory settings
+- **Status Monitoring**: Tracks system health and configuration
+
+#### Process Management
+- **Run Scripts**: Located in `/sanctum/control/run/agent-<uid>/`
+- **Start/Stop**: `start-<module>.sh`, `stop-<module>.sh`
+- **Global Control**: `start-all.sh`, `stop-all.sh`, `restart-all.sh`
+- **Cron Integration**: `/sanctum/control/run/cron/sanctum-crontab`
+
+#### Agent Management
+- **Agent Creation**: Automated setup of new Prime agents
+- **Folder Structure**: Creation of standard agent module directories
+- **Configuration Templates**: Default `.env` files and port assignments
+- **Registry Integration**: Addition to control system database
+
+#### Module Configuration
+- **Environment Files**: `agents/agent-<uid>/<module>/config/.env`
+- **Database Paths**: `agents/agent-<uid>/<module>/db/<module>.sqlite`
+- **Log Files**: `agents/agent-<uid>/<module>/logs/<module>.log`
+- **Plugin Directories**: `agents/agent-<uid>/<module>/plugins/`
+
+### Data Flow
+
+#### Configuration Discovery
+1. **File System Scan**: Control interface scans `/sanctum/agents/`
+2. **Module Detection**: Identifies agent folders and module structures
+3. **Config Parsing**: Reads `.env` files and configuration data
+4. **Status Collection**: Gathers health metrics and log information
+
+#### Process Control
+1. **Script Execution**: Runs appropriate scripts from `control/run/`
+2. **Status Monitoring**: Tracks process health and resource usage
+3. **Log Aggregation**: Collects logs from all modules
+4. **Health Reporting**: Provides real-time status updates
+
+#### Dependency Management
+1. **Requirements Collection**: Scans all module `requirements.txt`
+2. **Conflict Resolution**: Resolves version conflicts intelligently
+3. **Consolidation**: Generates unified `/sanctum/requirements.txt`
+4. **Installation**: Updates global venv with new dependencies
+
+### Security & Access Control
+
+#### User Management
+- **Registry Database**: `/sanctum/control/registry.db`
+- **User Sessions**: Authentication and authorization
+- **Agent Access**: User-to-agent mapping and permissions
+- **Audit Logging**: Track configuration changes and access
+
+#### Module Isolation
+- **Port Separation**: Each module binds to unique local port
+- **Database Isolation**: Per-module SQLite databases
+- **Config Separation**: Module-specific environment files
+- **Process Independence**: Individual module processes
+
+### Performance Considerations
+
+#### Real-time Updates
+- **WebSocket Integration**: Live status updates for process health
+- **Polling Fallback**: HTTP polling for status information
+- **Cache Management**: Intelligent caching of configuration data
+- **Lazy Loading**: Load module details on demand
+
+#### Scalability
+- **Agent Addition**: Dynamic discovery of new agents
+- **Module Expansion**: Support for new module types
+- **Load Distribution**: Efficient handling of multiple agents
+- **Resource Monitoring**: Track system resource usage
+
+---
+
 ## Design System
 
 ### Color Palette
@@ -300,6 +434,28 @@ The Chat interface provides a full-bleed conversation experience with fixed-heig
 
 ## Implementation Notes
 
+### Current Implementation Status
+
+#### ✅ **Completed Features**
+- **Tabbed Settings Page**: Master, Agent, and SMCP tabs with proper navigation
+- **Chat Interface**: Full conversation experience with message actions and avatars
+- **Agent Switching**: Dropdown-based agent selection with conversation refresh
+- **Message System**: User/assistant/tool messages with copy/share actions
+- **Responsive Design**: Bootstrap-based layout with mobile optimization
+- **Keyboard Navigation**: Comprehensive shortcuts for power users
+
+#### 🔄 **In Development**
+- **Process Management**: Integration with centralized run scripts
+- **Cron Integration**: Automated scheduling interface
+- **Real-time Status**: Live monitoring of module health
+- **Configuration Editor**: Direct editing of module `.env` files
+
+#### 📋 **Planned Features**
+- **Requirements Management**: Dependency discovery and consolidation
+- **Log Aggregation**: Centralized log viewing and filtering
+- **Plugin Management**: Installation and configuration of modules
+- **Backup/Restore**: System backup and recovery tools
+
 ### Bootstrap Integration
 - **Grid System**: Bootstrap 5 responsive grid classes
 - **Components**: Dropdowns, buttons, forms, utilities
@@ -311,6 +467,7 @@ The Chat interface provides a full-bleed conversation experience with fixed-heig
 - **State Management**: Clean state transitions for agent switching
 - **Clipboard API**: Modern clipboard integration with fallbacks
 - **Web Share API**: Native sharing with graceful degradation
+- **Tab Management**: Bootstrap tab integration with custom enhancements
 
 ### CSS Architecture
 - **CSS Variables**: Centralized color and spacing management
@@ -318,7 +475,27 @@ The Chat interface provides a full-bleed conversation experience with fixed-heig
 - **Responsive Design**: Mobile-first approach with progressive enhancement
 - **Performance**: Optimized selectors and minimal repaints
 
-This specification represents the complete, implemented design that has been thoroughly tested and refined through iterative development.
+### Integration Points
+
+#### Control System
+- **File System Access**: Direct scanning of Sanctum directory structure
+- **Process Control**: Execution of run scripts from `control/run/`
+- **Configuration Management**: Reading and writing of `.env` files
+- **Status Monitoring**: Health checks and log aggregation
+
+#### Module Discovery
+- **Dynamic Scanning**: Automatic detection of new agents and modules
+- **Configuration Parsing**: Reading of module-specific settings
+- **Health Monitoring**: Real-time status of running processes
+- **Log Collection**: Aggregated logging from all modules
+
+#### Security Layer
+- **Authentication**: User session management via registry database
+- **Authorization**: Role-based access to configuration and control
+- **Audit Logging**: Tracking of all configuration changes
+- **Isolation**: Secure separation between different agents and modules
+
+This specification represents the complete, implemented design that has been thoroughly tested and refined through iterative development, now fully aligned with the Sanctum installation criteria and implementation structure.
 
 
 
