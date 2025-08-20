@@ -249,7 +249,8 @@ Web Interface          →  Sanctum Installation
 Master Tab            →  /sanctum/venv/, /sanctum/.env
 Agent Tabs            →  /sanctum/agents/agent-<uid>/
 SMCP Tab              →  /sanctum/smcp/
-Control Interface     →  /sanctum/control/web/
+Flask App             →  /sanctum/control/web/ (runs on dedicated port)
+Reverse Proxy         →  https://<sanctumhost.com>/ui/ → Flask app
 Process Management    →  /sanctum/control/run/
 ```
 
@@ -260,6 +261,14 @@ Process Management    →  /sanctum/control/run/
 - **Port Management**: Assignment and tracking of module ports
 - **Path Configuration**: System-wide path and directory settings
 - **Status Monitoring**: Tracks system health and configuration
+
+#### Flask Application Architecture
+- **Dedicated Port**: Flask app runs on dedicated port (e.g., 5000) for development/debugging
+- **Reverse Proxy**: Nginx/Apache routes `https://<sanctumhost.com>/ui/` to Flask app
+- **Direct Module Integration**: Flask app directly imports and interacts with core modules via `/sanctum/venv/`
+- **No API Gateway**: Direct function calls and object access to module functionality
+- **Module Discovery**: Dynamic scanning of `/sanctum/agents/` for available modules
+- **Registry System**: Future mechanism for adding new modules and having them recognized by UI
 
 #### Process Management
 - **Run Scripts**: Located in `/sanctum/control/run/agent-<uid>/`
@@ -462,6 +471,16 @@ Process Management    →  /sanctum/control/run/
 - **Customization**: CSS variables override Bootstrap defaults
 - **Responsive**: Bootstrap breakpoints with custom adjustments
 
+### Flask Implementation
+- **Application Structure**: Flask app with blueprints for different sections (settings, chat, api)
+- **Template Engine**: Jinja2 templates for dynamic content generation
+- **Static Files**: CSS, JavaScript, and assets served from Flask static directory
+- **Route Structure**: `/ui/` prefix for all routes, matching reverse proxy configuration
+- **Development Server**: Flask development server on dedicated port for local development
+- **Production Deployment**: Flask built-in server behind nginx reverse proxy (sufficient for low-traffic system)
+- **Environment Management**: Flask app reads from `/sanctum/.env` for configuration
+- **Module Integration**: Direct Python imports from shared venv for all module functionality
+
 ### JavaScript Functionality
 - **Event Handling**: Comprehensive event listeners for all interactions
 - **State Management**: Clean state transitions for agent switching
@@ -478,16 +497,26 @@ Process Management    →  /sanctum/control/run/
 ### Integration Points
 
 #### Control System
+- **Flask Application**: Web interface built with Flask, running on dedicated port
+- **Direct Module Access**: Flask app directly imports and calls module functions via shared venv
 - **File System Access**: Direct scanning of Sanctum directory structure
 - **Process Control**: Execution of run scripts from `control/run/`
 - **Configuration Management**: Reading and writing of `.env` files
 - **Status Monitoring**: Health checks and log aggregation
 
 #### Module Discovery
-- **Dynamic Scanning**: Automatic detection of new agents and modules
+- **Dynamic Scanning**: Automatic detection of new agents and modules in `/sanctum/agents/`
+- **Direct Import**: Modules are imported directly when needed, no API calls
 - **Configuration Parsing**: Reading of module-specific settings
 - **Health Monitoring**: Real-time status of running processes
 - **Log Collection**: Aggregated logging from all modules
+
+#### Deployment & Access
+- **Development Port**: Flask app runs on dedicated port (e.g., 5000) for local development
+- **Production Setup**: Flask built-in server behind nginx reverse proxy (adequate for low-traffic system)
+- **URL Structure**: `https://<sanctumhost.com>/ui/` → Flask app
+- **SSL Termination**: HTTPS handled at nginx reverse proxy level
+- **Simple Architecture**: Single Flask instance sufficient for dozen users max
 
 #### Security Layer
 - **Authentication**: User session management via registry database
