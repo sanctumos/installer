@@ -17,8 +17,7 @@ This is the **single source of truth** for how a Sanctum install is laid out on 
 │  │  │  ├─ config/            # module .env / settings
 │  │  │  ├─ db/                # module SQLite (e.g., broca.sqlite)
 │  │  │  ├─ plugins/
-│  │  │  ├─ logs/
-│  │  │  └─ run/               # tiny start wrappers, pid/lock if needed
+│  │  │  └─ logs/
 │  │  ├─ thalamus/             # per-prime tool; same sub-layout as broca2
 │  │  └─ <other per-prime tools>/  # same sub-layout pattern
 │  └─ agent-<uid>/…
@@ -29,7 +28,21 @@ This is the **single source of truth** for how a Sanctum install is laid out on 
 ├─ control/                    # optional; thin auth/catalog + admin UI/proxy
 │  ├─ registry.db              # install-level users/sessions/agents/ports (if used)
 │  ├─ gateway/                 # proxy/auth layer (FastAPI/Flask or nginx+auth)
-│  └─ web/                     # admin/demo UI (not authoritative)
+│  ├─ web/                     # admin/demo UI (not authoritative)
+│  └─ run/                     # unified process management for all modules
+│     ├─ start-all.sh          # start all modules
+│     ├─ stop-all.sh           # stop all modules
+│     ├─ restart-all.sh        # restart all modules
+│     ├─ agent-athena/
+│     │  ├─ start-broca2.sh    # start specific module
+│     │  ├─ stop-broca2.sh     # stop specific module
+│     │  ├─ start-thalamus.sh
+│     │  └─ stop-thalamus.sh
+│     ├─ agent-monday/
+│     │  └─ ...
+│     └─ cron/                 # cron job definitions
+│        ├─ sanctum-crontab    # main crontab file
+│        └─ module-jobs/       # individual module cron jobs
 └─ .env                        # install-wide knobs (paths, base ports). keep secrets minimal
 ```
 
@@ -64,18 +77,50 @@ PLUGINS_DIR=../plugins
 
 ### Minimal Runner (per module)
 
-`agents/agent-<uid>/<module>/run/start.sh`:
+`control/run/agent-<uid>/start-<module>.sh`:
 
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-set -a; source "$ROOT/config/.env"; set +a
-exec "$SANCTUM_PY" -m <module>.main
+MODULE_ROOT="/sanctum/agents/agent-<uid>/<module>"
+set -a; source "$MODULE_ROOT/config/.env"; set +a
+exec /sanctum/venv/bin/python -m <module>.main
 ```
 
-> Replace `<module>.main` with the actual entry point (e.g., `broca2.main`, `thalamus.main`).
-> `chmod +x run/start.sh` after creation.
+> Replace `<agent-uid>`, `<module>`, and `<module>.main` with actual values.
+> `chmod +x control/run/agent-<uid>/start-<module>.sh` after creation.
+
+### Process Management
+
+The `control/run/` directory provides unified process management:
+
+```bash
+# Start all modules
+/sanctum/control/run/start-all.sh
+
+# Start specific agent's modules
+/sanctum/control/run/agent-athena/start-broca2.sh
+
+# Stop all modules
+/sanctum/control/run/stop-all.sh
+
+# Restart all modules
+/sanctum/control/run/restart-all.sh
+```
+
+### Cron Integration
+
+Most modules will eventually be cron-tabbed for automated execution:
+
+```bash
+# Install the main crontab
+crontab /sanctum/control/run/cron/sanctum-crontab
+
+# Example cron entries (in sanctum-crontab):
+# */5 * * * * /sanctum/control/run/agent-athena/start-broca2.sh
+# 0 */2 * * * /sanctum/control/run/agent-athena/start-thalamus.sh
+# 0 0 * * * /sanctum/control/run/restart-all.sh
+```
 
 ---
 
@@ -210,11 +255,12 @@ python3 -m venv /sanctum/venv
 
 ## Quick Checklist (when adding a new Prime)
 
-1. `mkdir -p /sanctum/agents/agent-<uid>/{broca2,thalamus}/{app,config,db,logs,run,plugins}`
+1. `mkdir -p /sanctum/agents/agent-<uid>/{broca2,thalamus}/{app,config,db,logs,plugins}`
 2. Put module `.env` files using `SANCTUM_PY=/sanctum/venv/bin/python` and pick ports.
 3. Ensure global venv exists and deps installed from `requirements.txt`.
-4. Create tiny `run/start.sh` per module with the template above.
+4. Create run scripts in `control/run/agent-<uid>/` for each module.
 5. (Optional) Add the agent + ports to `control/registry.db`.
+6. (Optional) Add cron entries to `/sanctum/control/run/cron/sanctum-crontab`.
 
 ---
 
