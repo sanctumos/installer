@@ -20,20 +20,20 @@ The Settings page now uses a tabbed navigation system to properly separate maste
 │  ───────────────────────────────────────────────────────────────── │
 │                                                                      │
 │  ┌───────────────────┐  ┌───────────────────┐  ┌───────────────────┐ │
-│  │⚙️  System Settings │  │🧰  Install Tool    │  │📊  Process Mgmt    │ │
-│  │ Base ports, paths │  │ Quick setup &      │  │ Start/stop/restart│ │
-│  │ & env variables   │  │ upgrades           │  │ all modules       │ │
+│  │⚙️  System Settings │  │🧰  Install Tool    │  │⏰  Cron Scheduler  │ │
+│  │ Base ports, paths │  │ Quick setup &      │  │ Automated module  │ │
+│  │ & env variables   │  │ upgrades           │  │ execution         │ │
 │  │                    │  │                   │  │                    │ │
 │  │ [Open] [⋯]  ● OK   │  │ [Open] [⋯]  ● OK  │  │ [Open] [⋯]  ● OK   │ │
 │  └───────────────────┘  └───────────────────┘  └───────────────────┘ │
 │                                                                      │
-│  ┌───────────────────┐  ┌───────────────────┐  ┌───────────────────┐ │
-│  │⏰  Cron Scheduler  │  │➕  Create Agent     │  │📁  Backup/Restore  │ │
-│  │ Automated module  │  │ Add new Prime      │  │ System backup &   │ │
-│  │ execution         │  │ agent to system   │  │ recovery tools    │ │
-│  │                    │  │                   │  │                    │ │
-│  │ [Open] [⋯]  ● OK   │  │ [Create] [⋯]  ● OK│  │ [Open] [⋯]  ● OK   │ │
-│  └───────────────────┘  └───────────────────┘  └───────────────────┘ │
+│  ┌───────────────────┐  ┌───────────────────┐                        │
+│  │➕  Create Agent     │  │📁  Backup/Restore  │                        │
+│  │ Add new Prime      │  │ System backup &   │                        │
+│  │ agent to system   │  │ recovery tools    │                        │
+│  │                    │  │                   │                        │
+│  │ [Create] [⋯]  ● OK│  │ [Open] [⋯]  ● OK   │                        │
+│  └───────────────────┘  └───────────────────┘                        │
 │                                                                      │
 │  Tips: 1–6 to open • Enter = Open • Esc = Clear search • Ctrl+1-5 = Switch tabs │
 └────────────────────────────────────────────────────────────────────┘
@@ -44,7 +44,6 @@ The Settings page now uses a tabbed navigation system to properly separate maste
 #### Master Tab (Global Configuration)
 - **System-wide Settings**: Base ports, paths, environment variables, `.env` configuration
 - **Installation Tools**: Setup, upgrades, system health monitoring
-- **Process Management**: Centralized start/stop/restart for all modules
 - **Cron Scheduler**: Automated execution scheduling for all modules
 - **Create New Agent**: Add new Prime agents to the system
 - **Backup/Restore**: System backup and recovery tools
@@ -109,7 +108,8 @@ All agent configuration pages follow the same layout pattern:
 - **Integration**: Add to control system and registry database
 
 #### Process Management Integration
-- **Centralized Control**: All run scripts located in `/sanctum/control/run/`
+- **Background Capabilities**: Centralized start/stop/restart for all modules (handled by control system)
+- **Run Scripts**: All run scripts located in `/sanctum/control/run/`
 - **Unified Interface**: Start/stop/restart all modules from one location
 - **Cron Integration**: Automated scheduling for module execution
 - **Status Monitoring**: Real-time health checks and log access
