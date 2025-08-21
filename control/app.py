@@ -28,6 +28,16 @@ def system_settings():
     """System settings and user management interface"""
     return render_template('system_settings.html')
 
+@app.route('/install-tool')
+def install_tool():
+    """Install tool interface"""
+    return render_template('install_tool.html')
+
+@app.route('/cron-scheduler')
+def cron_scheduler():
+    """CRON scheduler interface"""
+    return render_template('cron_scheduler.html')
+
 @app.route('/api/chat', methods=['POST'])
 def chat():
     """Handle chat messages"""
