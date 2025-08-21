@@ -43,6 +43,11 @@ def chat_settings():
     """Chat settings configuration interface"""
     return render_template('chat_settings.html')
 
+@app.route('/smcp-configurator')
+def smcp_configurator():
+    """SMCP Configurator interface"""
+    return render_template('smcp_configurator.html')
+
 @app.route('/api/chat', methods=['POST'])
 def chat():
     """Handle chat messages"""

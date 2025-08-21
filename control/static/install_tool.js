@@ -1,4 +1,4 @@
-// Install Tool JavaScript
+// Install Module JavaScript
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('searchModules');
     const clearSearchBtn = document.getElementById('clearSearch');

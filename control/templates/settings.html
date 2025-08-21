@@ -13,16 +13,7 @@
     <!-- Header -->
     <header class="d-flex align-items-center justify-content-between p-2 px-3 border-bottom">
         <div class="d-flex align-items-center gap-2">
-            <div class="dropdown">
-                <button class="btn btn-link text-light text-decoration-none p-0 fw-medium dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    Athena
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#" data-agent="athena">Athena</a></li>
-                    <li><a class="dropdown-item" href="#" data-agent="monday">Monday</a></li>
-                    <li><a class="dropdown-item" href="#" data-agent="timbre">Timbre</a></li>
-                </ul>
-            </div>
+            <span class="text-light fw-medium">Settings</span>
         </div>
         <div class="d-flex align-items-center gap-3">
             <span class="text-muted small">Status: <span class="text-success">● Healthy</span> v1.0.0</span>
@@ -47,7 +38,7 @@
                 <ul class="nav nav-tabs border-0" id="settingsTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="master-tab" data-bs-toggle="tab" data-bs-target="#master" type="button" role="tab" aria-controls="master" aria-selected="true">
-                            Master
+                            Global
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
@@ -80,7 +71,7 @@
                     <div class="mb-4">
                         <div class="input-group" style="max-width: 400px;">
                             <span class="input-group-text bg-dark border-0 text-muted">🔍</span>
-                            <input type="text" class="form-control bg-dark border-0 text-light" placeholder="Search master tools…" id="searchMasterTools">
+                            <input type="text" class="form-control bg-dark border-0 text-light" placeholder="Search global tools…" id="searchMasterTools">
                             <button class="btn search-clear d-none" id="clearMasterSearch" type="button">✕</button>
                         </div>
                         <div class="search-results" id="masterSearchResults"></div>
@@ -102,14 +93,14 @@
                             </div>
                         </div>
 
-                        <!-- Install Tool -->
-                        <div class="col-lg-4 col-md-6" data-tool-name="install tool" data-tool-desc="quick setup upgrades">
+                        <!-- Install Module -->
+                        <div class="col-lg-4 col-md-6" data-tool-name="install module" data-tool-desc="quick setup upgrades">
                             <div class="tool-card">
                                 <div class="tool-header">
-                                    <span class="tool-emoji">🧰</span>
+                                    <span class="emoji">🧰</span>
                                     <div class="tool-status ok" data-status="Healthy"></div>
                                 </div>
-                                <h3 class="tool-title">Install Tool</h3>
+                                <h3 class="tool-title">Install Module</h3>
                                 <p class="tool-description">Quick setup & upgrades</p>
                                 <div class="tool-actions">
                                     <a href="/install-tool" class="btn btn-primary btn-sm">Open</a>
@@ -132,20 +123,7 @@
                             </div>
                         </div>
 
-                        <!-- Chat Settings -->
-                        <div class="col-lg-4 col-md-6" data-tool-name="chat settings" data-tool-desc="configure agent chat parameters">
-                            <div class="tool-card">
-                                <div class="tool-header">
-                                    <span class="tool-emoji">💬</span>
-                                    <div class="tool-status ok" data-status="Healthy"></div>
-                                </div>
-                                <h3 class="tool-title">Chat Settings</h3>
-                                <p class="tool-description">Configure agent chat parameters</p>
-                                <div class="tool-actions">
-                                    <a href="/chat-settings" class="btn btn-primary btn-sm">Open</a>
-                                </div>
-                            </div>
-                        </div>
+
 
                         <!-- Create Agent -->
                         <div class="col-lg-4 col-md-6" data-tool-name="create agent" data-tool-desc="add new prime agent to system">
@@ -242,21 +220,7 @@
                             </div>
                         </div>
 
-                        <!-- Plugins -->
-                        <div class="col-lg-4 col-md-6" data-tool-name="plugins" data-tool-desc="module plugins configurations">
-                            <div class="tool-card">
-                                <div class="tool-header">
-                                    <span class="tool-emoji">🔌</span>
-                                    <div class="tool-status ok" data-status="Healthy"></div>
-                                </div>
-                                <h3 class="tool-title">Plugins</h3>
-                                <p class="tool-description">Module plugins & configurations</p>
-                                <div class="tool-actions">
-                                    <button class="btn btn-primary btn-sm">Open</button>
 
-                                </div>
-                            </div>
-                        </div>
 
                         <!-- Logs & Status -->
                         <div class="col-lg-4 col-md-6" data-tool-name="logs status" data-tool-desc="health monitoring log access">
@@ -337,21 +301,7 @@
                             </div>
                         </div>
 
-                        <!-- Plugins -->
-                        <div class="col-lg-4 col-md-6" data-tool-name="plugins" data-tool-desc="module plugins configurations">
-                            <div class="tool-card">
-                                <div class="tool-header">
-                                    <span class="tool-emoji">🔌</span>
-                                    <div class="tool-status ok" data-status="Healthy"></div>
-                                </div>
-                                <h3 class="tool-title">Plugins</h3>
-                                <p class="tool-description">Module plugins & configurations</p>
-                                <div class="tool-actions">
-                                    <button class="btn btn-primary btn-sm">Open</button>
 
-                                </div>
-                            </div>
-                        </div>
 
                         <!-- Logs & Status -->
                         <div class="col-lg-4 col-md-6" data-tool-name="logs status" data-tool-desc="health monitoring log access">
@@ -432,21 +382,7 @@
                             </div>
                         </div>
 
-                        <!-- Plugins -->
-                        <div class="col-lg-4 col-md-6" data-tool-name="plugins" data-tool-desc="module plugins configurations">
-                            <div class="tool-card">
-                                <div class="tool-header">
-                                    <span class="tool-emoji">🔌</span>
-                                    <div class="tool-status ok" data-status="Healthy"></div>
-                                </div>
-                                <h3 class="tool-title">Plugins</h3>
-                                <p class="tool-description">Module plugins & configurations</p>
-                                <div class="tool-actions">
-                                    <button class="btn btn-primary btn-sm">Open</button>
 
-                                </div>
-                            </div>
-                        </div>
 
                         <!-- Logs & Status -->
                         <div class="col-lg-4 col-md-6" data-tool-name="logs status" data-tool-desc="health monitoring log access">
@@ -478,21 +414,20 @@
                     </div>
 
                     <div class="row g-4" id="smcpToolsGrid">
-                        <!-- SMCP Configurator -->
-                        <div class="col-lg-4 col-md-6" data-tool-name="smcp config" data-tool-desc="mcp plugins scopes health">
-                            <div class="tool-card">
-                                <div class="tool-header">
-                                    <span class="tool-emoji">🔌</span>
-                                    <div class="tool-status off" data-status="Off"></div>
-                                </div>
-                                <h3 class="tool-title">SMCP Configurator</h3>
-                                <p class="tool-description">MCP plugins, scopes & health</p>
-                                <div class="tool-actions">
-                                    <button class="btn btn-primary btn-sm">Open</button>
-
-                                </div>
-                            </div>
-                        </div>
+                                                 <!-- SMCP Configurator -->
+                         <div class="col-lg-4 col-md-6" data-tool-name="smcp config" data-tool-desc="mcp plugins scopes health">
+                             <div class="tool-card">
+                                 <div class="tool-header">
+                                     <span class="tool-emoji">🔌</span>
+                                     <div class="tool-status off" data-status="Off"></div>
+                                 </div>
+                                 <h3 class="tool-title">SMCP Configurator</h3>
+                                 <p class="tool-description">MCP plugins, scopes & health</p>
+                                 <div class="tool-actions">
+                                     <a href="/smcp-configurator" class="btn btn-primary btn-sm">Open</a>
+                                 </div>
+                             </div>
+                         </div>
 
                         <!-- Tool Control -->
                         <div class="col-lg-4 col-md-6" data-tool-name="tool control" data-tool-desc="letta tools mcp integrations">
