@@ -140,7 +140,8 @@ function initializeToolCards() {
                 const toolTitle = card.querySelector('.tool-title').textContent;
                 console.log(`Opening ${toolTitle}...`);
                 // In a real app, this would navigate to the tool's interface
-                alert(`Opening ${toolTitle}... (This is a mockup)`);
+                // TODO: Implement tool opening functionality
+        console.log(`Opening ${toolTitle}...`);
             });
         }
     });

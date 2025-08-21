@@ -38,9 +38,9 @@ def chat():
         return jsonify({'error': 'Message is required'}), 400
     
     # TODO: Integrate with actual Sanctum backend
-    # For now, return a mock response
+    # For now, return a simple response
     response = {
-        'message': f"I received your message: \"{message}\". This is a mockup - in the real interface, I'd process your request and respond accordingly.",
+        'message': f"I received your message: \"{message}\". Processing...",
         'timestamp': datetime.now().isoformat(),
         'agent': 'athena'
     }

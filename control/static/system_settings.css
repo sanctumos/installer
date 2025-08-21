@@ -1,4 +1,16 @@
 /* System Settings Styles */
+:root {
+  --bg-page: #212121;
+  --bg-surface: #303030;
+  --fg: #f9f9fa;
+  --fg-dim: #c7c7c9;
+  --bubble-user: #3a3a3a;
+  --bubble-assistant: #252525;
+  --bubble-tool: #1f1f1f;
+  --border-subtle: #3b3b3b;
+  --ring: #8ab4f8;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -6,10 +18,10 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg-page);
     min-height: 100vh;
-    color: #333;
+    color: var(--fg);
 }
 
 .container {
@@ -20,21 +32,16 @@ body {
 
 /* Header */
 header {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
     padding: 20px;
     margin-bottom: 30px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 header h1 {
     font-size: 2.5rem;
     margin-bottom: 15px;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--fg);
 }
 
 nav {
@@ -44,16 +51,16 @@ nav {
 
 .nav-link {
     text-decoration: none;
-    color: #667eea;
+    color: var(--ring);
     padding: 8px 16px;
-    border-radius: 8px;
+    border-radius: 6px;
     transition: all 0.3s ease;
-    border: 2px solid transparent;
+    border: 1px solid transparent;
 }
 
 .nav-link:hover {
-    background: rgba(102, 126, 234, 0.1);
-    border-color: #667eea;
+    background: rgba(138, 180, 248, 0.1);
+    border-color: var(--ring);
 }
 
 /* Main Content */
@@ -63,25 +70,25 @@ main {
 }
 
 section {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 15px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
     padding: 30px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
 
 section h2 {
     font-size: 1.8rem;
     margin-bottom: 20px;
-    color: #667eea;
-    border-bottom: 2px solid #f0f0f0;
+    color: var(--fg);
+    border-bottom: 1px solid var(--border-subtle);
     padding-bottom: 10px;
 }
 
 section h3 {
     font-size: 1.3rem;
     margin-bottom: 15px;
-    color: #555;
+    color: var(--fg-dim);
 }
 
 .section-content {
@@ -91,15 +98,15 @@ section h3 {
 
 /* User Management */
 .user-discovery {
-    background: rgba(102, 126, 234, 0.05);
+    background: rgba(138, 180, 248, 0.05);
     padding: 20px;
-    border-radius: 10px;
-    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 6px;
+    border: 1px solid rgba(138, 180, 248, 0.2);
 }
 
 .user-discovery p {
     margin-bottom: 15px;
-    color: #666;
+    color: var(--fg-dim);
 }
 
 .user-list {
@@ -114,16 +121,17 @@ section h3 {
 }
 
 .user-card {
-    background: white;
+    background: var(--bubble-assistant);
     padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    border: 1px solid var(--border-subtle);
     transition: all 0.3s ease;
 }
 
 .user-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border-color: var(--ring);
+    box-shadow: 0 4px 15px rgba(138, 180, 248, 0.1);
 }
 
 .user-filters {
@@ -135,10 +143,12 @@ section h3 {
 
 .search-input, .filter-select {
     padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
     font-size: 14px;
     flex: 1;
+    background: var(--bg-page);
+    color: var(--fg);
 }
 
 .user-table {
@@ -148,34 +158,34 @@ section h3 {
 table {
     width: 100%;
     border-collapse: collapse;
-    background: white;
-    border-radius: 8px;
+    background: var(--bubble-assistant);
+    border-radius: 6px;
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-subtle);
 }
 
 th, td {
     padding: 12px 15px;
     text-align: left;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--border-subtle);
 }
 
 th {
-    background: #f8f9fa;
+    background: var(--bg-surface);
     font-weight: 600;
-    color: #555;
+    color: var(--fg);
 }
 
 tr:hover {
-    background: rgba(102, 126, 234, 0.05);
+    background: rgba(138, 180, 248, 0.05);
 }
 
 /* System Configuration */
 .config-category {
-    background: rgba(102, 126, 234, 0.05);
+    background: rgba(138, 180, 248, 0.05);
     padding: 20px;
-    border-radius: 10px;
-    border: 1px solid rgba(102, 126, 234, 0.2);
+    border-radius: 6px;
+    border: 1px solid rgba(138, 180, 248, 0.2);
 }
 
 .env-vars, .path-configs {
@@ -192,15 +202,17 @@ tr:hover {
 .env-var label, .path-config label {
     min-width: 150px;
     font-weight: 500;
-    color: #555;
+    color: var(--fg-dim);
 }
 
 .config-input {
     flex: 1;
     padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
     font-size: 14px;
+    background: var(--bg-page);
+    color: var(--fg);
 }
 
 .config-actions {
@@ -214,7 +226,7 @@ tr:hover {
 .btn {
     padding: 10px 20px;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
@@ -226,24 +238,26 @@ tr:hover {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
+    background: var(--ring);
+    color: var(--bg-page);
+    border: 1px solid var(--ring);
 }
 
 .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    background: #9bbdf9;
+    border-color: #9bbdf9;
+    transform: translateY(-1px);
 }
 
 .btn-secondary {
-    background: #f8f9fa;
-    color: #555;
-    border: 1px solid #ddd;
+    background: var(--bg-surface);
+    color: var(--fg);
+    border: 1px solid var(--border-subtle);
 }
 
 .btn-secondary:hover {
-    background: #e9ecef;
-    border-color: #adb5bd;
+    background: var(--bubble-user);
+    border-color: var(--ring);
 }
 
 .btn-small {
@@ -266,13 +280,14 @@ tr:hover {
 }
 
 .modal-content {
-    background: white;
+    background: var(--bg-surface);
     padding: 30px;
-    border-radius: 15px;
+    border-radius: 6px;
     max-width: 500px;
     width: 90%;
     position: relative;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 }
 
 .close {
@@ -281,11 +296,11 @@ tr:hover {
     right: 20px;
     font-size: 24px;
     cursor: pointer;
-    color: #999;
+    color: var(--fg-dim);
 }
 
 .close:hover {
-    color: #333;
+    color: var(--fg);
 }
 
 .form-group {
@@ -296,15 +311,17 @@ tr:hover {
     display: block;
     margin-bottom: 8px;
     font-weight: 500;
-    color: #555;
+    color: var(--fg-dim);
 }
 
 .form-group input, .form-group select {
     width: 100%;
     padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
     font-size: 14px;
+    background: var(--bg-page);
+    color: var(--fg);
 }
 
 .form-actions {
@@ -329,13 +346,13 @@ tr:hover {
 }
 
 .role-user {
-    background: #007bff;
-    color: white;
+    background: var(--ring);
+    color: var(--bg-page);
 }
 
 .role-viewer {
-    background: #6c757d;
-    color: white;
+    background: var(--fg-dim);
+    color: var(--bg-page);
 }
 
 .status-active {
@@ -344,8 +361,8 @@ tr:hover {
 }
 
 .status-inactive {
-    background: #6c757d;
-    color: white;
+    background: var(--fg-dim);
+    color: var(--bg-page);
 }
 
 /* Responsive */
