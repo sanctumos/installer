@@ -61,9 +61,18 @@ function setupEventListeners() {
         closeBtn.addEventListener('click', closeModal);
     }
     
+    // Edit user form submission
+    const editUserForm = document.getElementById('editUserForm');
+    if (editUserForm) {
+        editUserForm.addEventListener('submit', handleEditUserSubmit);
+    }
+    
     window.addEventListener('click', function(event) {
         if (event.target === document.getElementById('promotionModal')) {
             closeModal();
+        }
+        if (event.target === document.getElementById('editUserModal')) {
+            closeEditModal();
         }
     });
     
@@ -193,8 +202,45 @@ function displayFilteredUsers(users) {
 function editUser(userId) {
     const user = existingUsers.find(u => u.id === userId);
     if (user) {
-        // In a real app, this would open an edit modal
-        alert(`Edit user: ${user.username}`);
+        // Populate the edit modal with user data
+        document.getElementById('editUserId').value = user.id;
+        document.getElementById('editUsername').value = user.username;
+        document.getElementById('editEmail').value = user.email;
+        document.getElementById('editRole').value = user.role;
+        document.getElementById('editStatus').value = user.status;
+        document.getElementById('editPassword').value = '';
+        
+        // Show the edit modal
+        document.getElementById('editUserModal').style.display = 'flex';
+    }
+}
+
+function closeEditModal() {
+    document.getElementById('editUserModal').style.display = 'none';
+    document.getElementById('editUserForm').reset();
+}
+
+function toggleEditPassword() {
+    const input = document.getElementById('editPassword');
+    input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+function deleteUser() {
+    const userId = parseInt(document.getElementById('editUserId').value);
+    const user = existingUsers.find(u => u.id === userId);
+    
+    if (user && confirm(`Are you sure you want to delete user "${user.username}"? This action cannot be undone.`)) {
+        // Remove user from the array
+        existingUsers = existingUsers.filter(u => u.id !== userId);
+        
+        // Refresh the user table
+        loadExistingUsers();
+        
+        // Close the modal
+        closeEditModal();
+        
+        // Show success notification
+        showNotification(`User "${user.username}" deleted successfully!`, 'success');
     }
 }
 
@@ -350,3 +396,41 @@ document.getElementById('promotionForm').addEventListener('submit', function(e) 
     closeModal();
     showNotification(`User ${username} promoted successfully!`, 'success');
 });
+
+// Handle edit user form submission
+function handleEditUserSubmit(e) {
+    e.preventDefault();
+    
+    const userId = parseInt(document.getElementById('editUserId').value);
+    const username = document.getElementById('editUsername').value;
+    const email = document.getElementById('editEmail').value;
+    const role = document.getElementById('editRole').value;
+    const status = document.getElementById('editStatus').value;
+    const password = document.getElementById('editPassword').value;
+    
+    // Find and update the user
+    const userIndex = existingUsers.findIndex(u => u.id === userId);
+    if (userIndex !== -1) {
+        // Update user data
+        existingUsers[userIndex] = {
+            ...existingUsers[userIndex],
+            username,
+            email,
+            role,
+            status
+        };
+        
+        // In a real app, this would send to the backend
+        console.log('Updating user:', { userId, username, email, role, status, passwordChanged: !!password });
+        
+        // Refresh the user table
+        loadExistingUsers();
+        
+        // Close the modal
+        closeEditModal();
+        
+        // Show success notification
+        showNotification(`User "${username}" updated successfully!`, 'success');
+    }
+}
+

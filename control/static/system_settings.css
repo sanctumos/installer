@@ -265,6 +265,17 @@ tr:hover {
     font-size: 12px;
 }
 
+.btn-danger {
+    background: #dc3545;
+    color: white;
+    border: 1px solid #dc3545;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+    border-color: #c82333;
+}
+
 /* Modal */
 .modal {
     position: fixed;
@@ -322,6 +333,20 @@ tr:hover {
     font-size: 14px;
     background: var(--bg-page);
     color: var(--fg);
+}
+
+.form-group .btn-small {
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+
+.password-input-group {
+    display: flex;
+    align-items: center;
+}
+
+.password-input-group input {
+    flex: 1;
 }
 
 .form-actions {

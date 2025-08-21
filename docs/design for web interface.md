@@ -10,21 +10,21 @@ This document specifies the complete web interface design for the Sanctum Config
 
 ### Layout & Structure
 
-The Settings page now uses a tabbed navigation system to properly separate master-level configuration from per-agent configuration, aligned with the actual Sanctum installation structure:
+The Settings page now uses a tabbed navigation system to properly separate global-level configuration from per-agent configuration, aligned with the actual Sanctum installation structure:
 
 ```
 ┌────────────────────────────────────────────────────────────────────┐
-│  [Athena ▼]                    Settings                    [← Chat] │
+│  Settings                    Status: ● Healthy v1.0.0    [← Chat] │
 │  ───────────────────────────────────────────────────────────────── │
-│  [Master] [Athena] [Monday] [Timbre] [SMCP]                       │
+│  [Global] [Athena] [Monday] [Timbre] [SMCP]                       │
 │  ───────────────────────────────────────────────────────────────── │
 │                                                                      │
 │  ┌───────────────────┐  ┌───────────────────┐  ┌───────────────────┐ │
-│  │⚙️  System Settings │  │🧰  Install Tool    │  │⏰  Cron Scheduler  │ │
+│  │⚙️  System Settings │  │🧰  Install Module  │  │⏰  Cron Scheduler  │ │
 │  │ Base ports, paths │  │ Quick setup &      │  │ Automated module  │ │
 │  │ & env variables   │  │ upgrades           │  │ execution         │ │
 │  │                    │  │                   │  │                    │ │
-│  │ [Open] [⋯]  ● OK   │  │ [Open] [⋯]  ● OK  │  │ [Open] [⋯]  ● OK   │ │
+│  │ [Open]  ● OK       │  │ [Open]  ● OK      │  │ [Open]  ● OK       │ │
 │  └───────────────────┘  └───────────────────┘  └───────────────────┘ │
 │                                                                      │
 │  ┌───────────────────┐  ┌───────────────────┐                        │
@@ -32,7 +32,7 @@ The Settings page now uses a tabbed navigation system to properly separate maste
 │  │ Add new Prime      │  │ System backup &   │                        │
 │  │ agent to system   │  │ recovery tools    │                        │
 │  │                    │  │                   │                        │
-│  │ [Create] [⋯]  ● OK│  │ [Open] [⋯]  ● OK   │                        │
+│  │ [Create]  ● OK    │  │ [Open]  ● OK      │                        │
 │  └───────────────────┘  └───────────────────┘                        │
 │                                                                      │
 │  Tips: 1–6 to open • Enter = Open • Esc = Clear search • Ctrl+1-5 = Switch tabs │
@@ -41,9 +41,9 @@ The Settings page now uses a tabbed navigation system to properly separate maste
 
 ### Tab Navigation System
 
-#### Master Tab (Global Configuration)
-- **System-wide Settings**: Base ports, paths, environment variables, `.env` configuration
-- **Installation Tools**: Setup, upgrades, system health monitoring
+#### Global Tab (System-wide Configuration)
+- **System Settings**: Base ports, paths, environment variables, `.env` configuration, user management
+- **Install Module**: Setup, upgrades, system health monitoring
 - **Cron Scheduler**: Automated execution scheduling for all modules
 - **Create New Agent**: Add new Prime agents to the system
 - **Backup/Restore**: System backup and recovery tools
@@ -56,35 +56,33 @@ All agent configuration pages follow the same layout pattern:
 │  [Search tools…] [✕]                    [n results]               │
 │                                                                      │
 │  ┌───────────────────┐  ┌───────────────────┐  ┌───────────────────┐ │
-│  │💬  Chat Settings   │  │🛰️  Broca           │  │🧠  Thalamus        │ │
-│  │ Model, voice,     │  │ Streams & tool I/O │  │ Routing & memory  │ │
-│  │ safety, persona   │  │                    │  │ inspectors        │ │
+│  │💬  Chat Settings   │  │🛰️  Broca           │  │🌙  Dream Agent     │ │
+│  │ Model, voice,     │  │ Streams & tool I/O │  │ Archives & recall │ │
+│  │ safety, persona   │  │                    │  │ policies          │ │
 │  │                    │  │                   │  │                    │ │
-│  │ [Open] [⋯]  ● OK   │  │ [Open] [⋯]  ● OK  │  │ [Open] [⋯]  ● OK   │ │
+│  │ [Open]  ● OK      │  │ [Open]  ● OK      │  │ [Open]  ● OK      │ │
 │  └───────────────────┘  └───────────────────┘  └───────────────────┘ │
 │                                                                      │
-│  ┌───────────────────┐  ┌───────────────────┐  ┌───────────────────┐ │
-│  │🌙  Dream Agent     │  │🔌  Plugins         │  │📊  Logs & Status   │ │
-│  │ Archives & recall │  │ Module plugins &  │  │ Health monitoring │ │
-│  │ policies          │  │ configurations    │  │ & log access      │ │
-│  │                    │  │                   │  │                    │ │
-│  │ [Open] [⋯]  ● OK   │  │ [Open] [⋯]  ● OK  │  │ [Open] [⋯]  ● OK   │ │
-│  └───────────────────┘  └───────────────────┘  └───────────────────┘ │
+│  ┌───────────────────┐                                                │
+│  │📊  Logs & Status   │                                                │
+│  │ Health monitoring │                                                │
+│  │ & log access      │                                                │
+│  │                    │                                                │
+│  │ [Open]  ● OK      │                                                │
+│  └───────────────────┘                                                │
 ```
 
 **Standard Agent Tools** (same for all agents):
 - **Chat Settings**: Model preferences, voice settings, persona configurations
 - **Broca**: Streams & tool I/O management
-- **Thalamus**: Routing & memory inspectors
 - **Dream Agent**: Archives & recall policies
-- **Plugins**: Module plugins & configurations
 - **Logs & Status**: Health monitoring & log access
 
 #### SMCP Tab (Independent Service)
-- **MCP Service**: Plugin management, service configuration, scope settings
-- **Service Health**: Status monitoring, logs, performance metrics
-- **Plugin Registry**: Available plugins, installation status, version management
+- **SMCP Configurator**: MCP plugins, scopes & health management
 - **Tool Control**: Management of Letta tools and MCP integrations
+- **Plugin Registry**: Available plugins, installation status, version management
+- **Service Health**: Status monitoring, logs, performance metrics
 - **Independent Venv**: SMCP maintains its own Python environment
 
 ### Key Features
@@ -96,7 +94,7 @@ All agent configuration pages follow the same layout pattern:
 - **Search Scope**: Search filters within the active tab context
 
 #### Configuration Hierarchy
-- **Master Level**: System-wide settings affecting all agents (`/sanctum/.env`)
+- **Global Level**: System-wide settings affecting all agents (`/sanctum/.env`)
 - **Agent Level**: Individual Prime configurations and tools (`/sanctum/agents/agent-<uid>/`)
 - **Module Level**: Specific tool configurations within each agent
 - **Service Level**: Independent services like SMCP (`/sanctum/smcp/`)
@@ -114,12 +112,6 @@ All agent configuration pages follow the same layout pattern:
 - **Cron Integration**: Automated scheduling for module execution
 - **Status Monitoring**: Real-time health checks and log access
 
-#### Agent Switching
-- **Dropdown Header**: Shows current agent with dropdown menu
-- **Tab Context**: Agent tabs automatically switch when changing agents
-- **Page Refresh**: Switching agents refreshes the entire page to load new context
-- **Loading State**: Brief "Loading [Agent]..." display during transition
-
 #### Search & Filtering
 - **Tab-scoped Search**: Live filtering within the active tab context
 - **Results Counter**: Shows "n results" below search input
@@ -133,8 +125,8 @@ All agent configuration pages follow the same layout pattern:
   - ● Orange: Degraded  
   - ● Red: Off
 - **Status Tooltips**: Hover reveals status label (e.g., "● Healthy")
-- **Actions**: Primary "Open" button + secondary "⋯" menu
-- **Button Hierarchy**: "Open" is prominent, menu dots are reduced contrast
+- **Actions**: Primary "Open" button for navigation
+- **Button Hierarchy**: "Open" is prominent and clearly labeled
 
 #### Responsive Design
 - **Desktop**: 3-up grid layout
@@ -146,6 +138,292 @@ All agent configuration pages follow the same layout pattern:
 - **Enter**: Opens first visible tool
 - **Escape**: Clears search and refocuses
 - **Tab Navigation**: Ctrl+1-5 to switch between tabs
+
+---
+
+## System Settings Page
+
+### Layout & Structure
+
+The System Settings page provides comprehensive system-wide configuration management:
+
+```
+┌────────────────────────────────────────────────────────────────────┐
+│  ⚙️ System Settings                    [← Back to Chat] [Settings] │
+│  ───────────────────────────────────────────────────────────────── │
+│                                                                      │
+│  ┌─────────────────────────────────────────────────────────────────┐ │
+│  │ 👥 User Management                                              │ │
+│  │                                                                 │ │
+│  │ 🔍 Discover Users from Broca                                    │ │
+│  │ Find users who have interacted with your agents and promote     │ │
+│  │ them to full Sanctum users.                                     │ │
+│  │ [🔍 Discover Users]                                             │ │
+│  │                                                                 │ │
+│  │ 📋 Manage Existing Users                                        │ │
+│  │ [Search users...] [All Roles ▼]                                 │ │
+│  │                                                                 │ │
+│  │ ┌─────────────────────────────────────────────────────────────┐ │ │
+│  │ │ Username │ Email │ Role │ Status │ Last Login │ Actions    │ │ │
+│  │ │ admin    │ ...   │ Admin│ Active │ 2024-01-15 │ ✏️ ⏸️      │ │ │
+│  │ │ john_doe │ ...   │ User │ Active │ 2024-01-14 │ ✏️ ⏸️      │ │ │
+│  │ │ jane_smith│ ...  │Viewer│Inactive│ 2024-01-10 │ ✏️ ▶️      │ │ │
+│  │ └─────────────────────────────────────────────────────────────┘ │ │
+│  └─────────────────────────────────────────────────────────────────┘ │
+│                                                                      │
+│  ┌─────────────────────────────────────────────────────────────────┐ │
+│  │ 🔧 System Configuration                                          │ │
+│  │                                                                 │ │
+│  │ Environment Variables                                            │ │
+│  │ OpenAI API Key: [••••••••••••••••••••••••••••••••••••••••] [👁️] │ │
+│  │ Anthropic API Key: [••••••••••••••••••••••••••••••••••••••••] [👁️] │ │
+│  │ Ollama Base URL: [http://localhost:11434]                      │ │
+│  │                                                                 │ │
+│  │ Path Configurations                                             │ │
+│  │ Sanctum Base Path: [~/sanctum]                                 │ │
+│  │ Letta Data Path: [~/.letta]                                    │ │
+│  │                                                                 │ │
+│  │ [💾 Save Configuration] [📤 Export Config] [📥 Import Config]   │ │
+│  └─────────────────────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+### Key Features
+
+#### User Management
+- **User Discovery**: Find and promote users from Broca interactions
+- **User Table**: Comprehensive user management with search and filtering
+- **Role Management**: Admin, User, and Viewer role assignments
+- **Status Control**: Active/Inactive user account management
+- **Edit User Modal**: Full user editing capabilities including:
+  - Username and email modification
+  - Role and status changes
+  - Optional password updates
+  - User deletion with confirmation
+- **User Promotion**: Convert discovered users to full Sanctum users
+
+#### System Configuration
+- **Environment Variables**: Secure storage of API keys and configuration
+- **Path Management**: System directory configuration
+- **Import/Export**: Configuration backup and restore functionality
+- **Secure Inputs**: Password fields with toggle visibility
+- **Real-time Validation**: Form validation and error handling
+
+#### Modal System
+- **User Promotion Modal**: Add new users to the system
+- **Edit User Modal**: Comprehensive user editing interface
+- **Responsive Design**: Mobile-friendly modal layouts
+- **Form Validation**: Required field validation and error handling
+- **Success Notifications**: User feedback for all operations
+
+---
+
+## Install Module Page
+
+### Layout & Structure
+
+The Install Module page provides a comprehensive module management interface:
+
+```
+┌────────────────────────────────────────────────────────────────────┐
+│  🧰 Install Module - Sanctum Configurator                         │
+│  ───────────────────────────────────────────────────────────────── │
+│                                                                      │
+│  [Search modules...]                                                │
+│                                                                      │
+│  ┌─────────────────────────────────────────────────────────────────┐ │
+│  │ 🌐 Global Tools                                                 │ │
+│  │                                                                 │ │
+│  │ ┌─────────────────────────────────────────────────────────────┐ │ │
+│  │ │ Module Name │ Version │ Status │ Description │ Actions     │ │ │
+│  │ │ Core        │ 1.0.0   │ Core   │ System Core │ System Module│ │ │
+│  │ │ Broca       │ 1.0.0   │ Core   │ Streams I/O │ System Module│ │
+│  │ │ Nginx       │ 1.0.0   │ Installed│ Web Server │ [Uninstall] │ │
+│  │ │ Docker      │ 1.0.0   │ Installed│ Container  │ [Uninstall] │ │
+│  │ └─────────────────────────────────────────────────────────────┘ │ │
+│  └─────────────────────────────────────────────────────────────────┘ │
+│                                                                      │
+│  ┌─────────────────────────────────────────────────────────────────┐ │
+│  │ 🤖 Agent-Specific Tools                                        │ │
+│  │ Prime Agent: [Athena ▼]                                        │ │
+│  │                                                                 │ │
+│  │ ┌─────────────────────────────────────────────────────────────┐ │ │
+│  │ │ Module Name │ Version │ Status │ Description │ Actions     │ │ │
+│  │ │ Dream Agent │ 1.0.0   │ Unavailable│ Archives │ Coming Soon │ │
+│  │ │ Thalamus    │ 1.0.0   │ Installed│ Memory    │ [Uninstall] │ │
+│  │ │ Cerebellum  │ 1.0.0   │ Installed│ Processing│ [Uninstall] │ │
+│  │ └─────────────────────────────────────────────────────────────┘ │ │
+│  └─────────────────────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+### Key Features
+
+#### Module Categories
+- **Global Tools**: System-wide modules affecting all agents
+- **Agent-Specific Tools**: Modules specific to individual Prime agents
+- **Dynamic Agent Selection**: Dropdown to switch between Athena, Monday, and Timbre
+
+#### Module Status Management
+- **Core Modules**: Marked as "Core" with no install/uninstall buttons
+- **Available Modules**: Show Install/Uninstall buttons
+- **Unavailable Modules**: Marked as "Coming Soon" with no actions
+- **Installed Modules**: Show Uninstall button
+
+#### Search and Filtering
+- **Real-time Search**: Instant filtering across all modules
+- **Status-based Display**: Dynamic button and badge rendering
+- **Responsive Table**: Mobile-friendly table layout
+
+---
+
+## CRON Scheduler Page
+
+### Layout & Structure
+
+The CRON Scheduler page provides comprehensive task scheduling management:
+
+```
+┌────────────────────────────────────────────────────────────────────┐
+│  ⏰ CRON Scheduler - Sanctum Configurator                          │
+│  ───────────────────────────────────────────────────────────────── │
+│                                                                      │
+│  [Add New Job] [Refresh] [Bulk Enable] [Bulk Disable]              │
+│                                                                      │
+│  ┌─────────────────────────────────────────────────────────────────┐ │
+│  │ ┌─────────────────────────────────────────────────────────────┐ │ │
+│  │ │ Job Name │ Schedule │ Command │ Status │ Last Run │ Actions │ │ │
+│  │ │ Backup   │ 0 2 * * *│ backup.sh│ Active │ 2024-01-15│ [Edit] [Toggle] [Delete] │ │
+│  │ │ Cleanup  │ 0 4 * * 0│ cleanup.sh│ Paused │ 2024-01-14│ [Edit] [Toggle] [Delete] │ │
+│  │ │ Health   │ */15 * * * *│ health.sh│ Active │ 2024-01-15│ [Edit] [Toggle] [Delete] │ │
+│  │ └─────────────────────────────────────────────────────────────┘ │ │
+│  └─────────────────────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+### Key Features
+
+#### Job Management
+- **Add New Job**: Create new scheduled tasks
+- **Edit Jobs**: Modify existing job parameters
+- **Toggle Status**: Enable/disable individual jobs
+- **Delete Jobs**: Remove jobs with confirmation
+- **Bulk Operations**: Enable/disable multiple jobs at once
+
+#### Job Information
+- **Schedule Display**: Human-readable cron expressions
+- **Status Indicators**: Active, Paused, Failed, Running states
+- **Execution History**: Last run and next run times
+- **Command Preview**: Full command execution details
+
+---
+
+## Chat Settings Page
+
+### Layout & Structure
+
+The Chat Settings page provides comprehensive agent configuration:
+
+```
+┌────────────────────────────────────────────────────────────────────┐
+│  💬 Chat Settings - Sanctum Configurator                          │
+│  ───────────────────────────────────────────────────────────────── │
+│                                                                      │
+│  Agent: [Athena ▼]                                                  │
+│                                                                      │
+│  ┌─────────────────────────────────────────────────────────────────┐ │
+│  │ Agent Configuration                                             │ │
+│  │                                                                 │ │
+│  │ Agent UID: athena-001 (Non-configurable)                       │ │
+│  │ Name: [Athena]                                                  │ │
+│  │ Model: [GPT-4 ▼]                                               │ │
+│  │ System Instructions: [Expand ▼]                                 │ │
+│  │ [You are Athena, a helpful AI assistant...]                    │ │
+│  │ Max Output Tokens: [4096]                                       │ │
+│  │ Context Window: [8192]                                          │ │
+│  │ Temperature: [0.7]                                              │ │
+│  │ Enable Reasoning: [Toggle ON]                                   │ │
+│  │                                                                 │ │
+│  │ [💾 Save Changes] [🔄 Reset to Defaults] [📤 Export Config]     │ │
+│  └─────────────────────────────────────────────────────────────────┘ │
+│                                                                      │
+│  ┌─────────────────────────────────────────────────────────────────┐ │
+│  │ Configuration Preview                                           │ │
+│  │ { "name": "Athena", "model": "gpt-4", ... }                    │ │
+│  └─────────────────────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+### Key Features
+
+#### Agent Selection
+- **Dynamic Switching**: Select between Athena, Monday, and Timbre
+- **Configuration Loading**: Automatic loading of agent-specific settings
+- **Real-time Preview**: Live configuration preview panel
+
+#### Configurable Fields
+- **Basic Settings**: Name, model selection, system instructions
+- **Advanced Parameters**: Token limits, context window, temperature
+- **Reasoning Toggle**: Enable step-by-step thinking capabilities
+- **Expandable Instructions**: Collapsible system instructions field
+
+#### Configuration Management
+- **Save Changes**: Persistent storage of agent settings
+- **Reset to Defaults**: Restore factory settings
+- **Export Config**: Download configuration as JSON
+- **Validation**: Real-time form validation and feedback
+
+---
+
+## SMCP Configurator Page
+
+### Layout & Structure
+
+The SMCP Configurator page provides comprehensive MCP service management:
+
+```
+┌────────────────────────────────────────────────────────────────────┐
+│  🔌 SMCP Configurator - Sanctum Configurator                      │
+│  ───────────────────────────────────────────────────────────────── │
+│                                                                      │
+│  [Overview] [Plugins] [Tools] [Sessions] [Health]                  │
+│  ───────────────────────────────────────────────────────────────── │
+│                                                                      │
+│  ┌─────────────────────────────────────────────────────────────────┐ │
+│  │ Quick Actions                                                   │ │
+│  │ [🔄 Refresh All] [➕ Add Plugin] [📤 Export] [📥 Import]        │ │
+│  │                                                                 │ │
+│  │ Recent Activity                                                 │ │
+│  │ • Plugin 'botfather' registered at 14:30                       │ │
+│  │ • Tool 'devops' connected at 14:25                             │ │
+│  │ • Session 'user-123' started at 14:20                          │ │
+│  │                                                                 │ │
+│  │ Server Status: ● Online                                         │ │
+│  │ System Info: Python 3.11, MCP v0.1.0                           │ │
+│  └─────────────────────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+### Key Features
+
+#### Tabbed Interface
+- **Overview**: Quick actions, recent activity, server status
+- **Plugins**: Plugin registry and management
+- **Tools**: Available MCP tools and capabilities
+- **Sessions**: Active user sessions and connections
+- **Health**: System metrics, logs, and alerts
+
+#### Plugin Management
+- **Plugin Registry**: List of available and installed plugins
+- **Add New Plugin**: Install and configure new MCP plugins
+- **Plugin Status**: Health monitoring and status indicators
+- **Configuration**: Plugin-specific settings and parameters
+
+#### Health Monitoring
+- **Real-time Metrics**: CPU, memory, and connection statistics
+- **Log Aggregation**: Centralized log viewing and filtering
+- **Alert System**: Active alerts and notifications
+- **Maintenance Actions**: Restart server, clear cache operations
 
 ---
 
@@ -246,11 +524,10 @@ The web interface directly maps to the Sanctum installation structure:
 ```
 Web Interface          →  Sanctum Installation
 ─────────────────────────────────────────────────
-Master Tab            →  /sanctum/venv/, /sanctum/.env
+Global Tab            →  /sanctum/venv/, /sanctum/.env
 Agent Tabs            →  /sanctum/agents/agent-<uid>/
 SMCP Tab              →  /sanctum/smcp/
-Flask App             →  /sanctum/control/web/ (runs on dedicated port)
-Reverse Proxy         →  https://<sanctumhost.com>/ui/ → Flask app
+Control Interface     →  /sanctum/control/web/
 Process Management    →  /sanctum/control/run/
 ```
 
@@ -261,14 +538,7 @@ Process Management    →  /sanctum/control/run/
 - **Port Management**: Assignment and tracking of module ports
 - **Path Configuration**: System-wide path and directory settings
 - **Status Monitoring**: Tracks system health and configuration
-
-#### Flask Application Architecture
-- **Dedicated Port**: Flask app runs on dedicated port (e.g., 5000) for development/debugging
-- **Reverse Proxy**: Nginx/Apache routes `https://<sanctumhost.com>/ui/` to Flask app
-- **Direct Module Integration**: Flask app directly imports and interacts with core modules via `/sanctum/venv/`
-- **No API Gateway**: Direct function calls and object access to module functionality
-- **Module Discovery**: Dynamic scanning of `/sanctum/agents/` for available modules
-- **Registry System**: Future mechanism for adding new modules and having them recognized by UI
+- **User Management**: Comprehensive user account administration
 
 #### Process Management
 - **Run Scripts**: Located in `/sanctum/control/run/agent-<uid>/`
@@ -315,6 +585,7 @@ Process Management    →  /sanctum/control/run/
 - **User Sessions**: Authentication and authorization
 - **Agent Access**: User-to-agent mapping and permissions
 - **Audit Logging**: Track configuration changes and access
+- **Role-based Access**: Admin, User, and Viewer permission levels
 
 #### Module Isolation
 - **Port Separation**: Each module binds to unique local port
@@ -378,6 +649,7 @@ Process Management    →  /sanctum/control/run/
 #### Buttons
 - **Primary**: Blue background with hover lift effect
 - **Secondary**: Reduced opacity (0.6) with hover state
+- **Danger**: Red background for destructive actions
 - **Message Actions**: 24px × 24px with 12px icons
 - **Hover Effects**: Opacity increase + slight upward movement
 
@@ -446,18 +718,23 @@ Process Management    →  /sanctum/control/run/
 ### Current Implementation Status
 
 #### ✅ **Completed Features**
-- **Tabbed Settings Page**: Master, Agent, and SMCP tabs with proper navigation
+- **Tabbed Settings Page**: Global, Agent, and SMCP tabs with proper navigation
 - **Chat Interface**: Full conversation experience with message actions and avatars
 - **Agent Switching**: Dropdown-based agent selection with conversation refresh
 - **Message System**: User/assistant/tool messages with copy/share actions
 - **Responsive Design**: Bootstrap-based layout with mobile optimization
 - **Keyboard Navigation**: Comprehensive shortcuts for power users
+- **System Settings Page**: Complete user management and system configuration
+- **Install Module Page**: Comprehensive module installation and management
+- **CRON Scheduler Page**: Full task scheduling and management interface
+- **Chat Settings Page**: Agent-specific configuration management
+- **SMCP Configurator Page**: MCP service management with tabbed interface
+- **Edit User Functionality**: Complete user editing with modal interface
 
 #### 🔄 **In Development**
 - **Process Management**: Integration with centralized run scripts
-- **Cron Integration**: Automated scheduling interface
 - **Real-time Status**: Live monitoring of module health
-- **Configuration Editor**: Direct editing of module `.env` files
+- **Backend Integration**: API endpoints for configuration management
 
 #### 📋 **Planned Features**
 - **Requirements Management**: Dependency discovery and consolidation
@@ -471,22 +748,14 @@ Process Management    →  /sanctum/control/run/
 - **Customization**: CSS variables override Bootstrap defaults
 - **Responsive**: Bootstrap breakpoints with custom adjustments
 
-### Flask Implementation
-- **Application Structure**: Flask app with blueprints for different sections (settings, chat, api)
-- **Template Engine**: Jinja2 templates for dynamic content generation
-- **Static Files**: CSS, JavaScript, and assets served from Flask static directory
-- **Route Structure**: `/ui/` prefix for all routes, matching reverse proxy configuration
-- **Development Server**: Flask development server on dedicated port for local development
-- **Production Deployment**: Flask built-in server behind nginx reverse proxy (sufficient for low-traffic system)
-- **Environment Management**: Flask app reads from `/sanctum/.env` for configuration
-- **Module Integration**: Direct Python imports from shared venv for all module functionality
-
 ### JavaScript Functionality
 - **Event Handling**: Comprehensive event listeners for all interactions
 - **State Management**: Clean state transitions for agent switching
 - **Clipboard API**: Modern clipboard integration with fallbacks
 - **Web Share API**: Native sharing with graceful degradation
 - **Tab Management**: Bootstrap tab integration with custom enhancements
+- **Modal System**: Bootstrap modal integration with custom styling
+- **Form Handling**: Comprehensive form validation and submission
 
 ### CSS Architecture
 - **CSS Variables**: Centralized color and spacing management
@@ -497,26 +766,16 @@ Process Management    →  /sanctum/control/run/
 ### Integration Points
 
 #### Control System
-- **Flask Application**: Web interface built with Flask, running on dedicated port
-- **Direct Module Access**: Flask app directly imports and calls module functions via shared venv
 - **File System Access**: Direct scanning of Sanctum directory structure
 - **Process Control**: Execution of run scripts from `control/run/`
 - **Configuration Management**: Reading and writing of `.env` files
 - **Status Monitoring**: Health checks and log aggregation
 
 #### Module Discovery
-- **Dynamic Scanning**: Automatic detection of new agents and modules in `/sanctum/agents/`
-- **Direct Import**: Modules are imported directly when needed, no API calls
+- **Dynamic Scanning**: Automatic detection of new agents and modules
 - **Configuration Parsing**: Reading of module-specific settings
 - **Health Monitoring**: Real-time status of running processes
 - **Log Collection**: Aggregated logging from all modules
-
-#### Deployment & Access
-- **Development Port**: Flask app runs on dedicated port (e.g., 5000) for local development
-- **Production Setup**: Flask built-in server behind nginx reverse proxy (adequate for low-traffic system)
-- **URL Structure**: `https://<sanctumhost.com>/ui/` → Flask app
-- **SSL Termination**: HTTPS handled at nginx reverse proxy level
-- **Simple Architecture**: Single Flask instance sufficient for dozen users max
 
 #### Security Layer
 - **Authentication**: User session management via registry database
@@ -524,7 +783,27 @@ Process Management    →  /sanctum/control/run/
 - **Audit Logging**: Tracking of all configuration changes
 - **Isolation**: Secure separation between different agents and modules
 
-This specification represents the complete, implemented design that has been thoroughly tested and refined through iterative development, now fully aligned with the Sanctum installation criteria and implementation structure.
+### Recent Updates and Changes
+
+#### UI/UX Improvements
+- **Tab Renaming**: "Master" tab renamed to "Global" for clarity
+- **Install Tool → Install Module**: Terminology updated to avoid confusion with Letta tools
+- **Dropdown Removal**: Agent dropdown removed from settings header (chat-only feature)
+- **Panel Cleanup**: Chat Settings and Plugins panels removed from inappropriate locations
+
+#### New Functionality
+- **Edit User Modal**: Comprehensive user editing with password management
+- **User Deletion**: Safe user removal with confirmation dialogs
+- **Enhanced User Management**: Role and status management capabilities
+- **Password Toggle**: Visibility toggle for password fields in edit forms
+
+#### Code Quality Improvements
+- **Event Handling**: Proper modal event listeners and cleanup
+- **Form Validation**: Enhanced form handling and error management
+- **CSS Organization**: Better styling structure and consistency
+- **JavaScript Architecture**: Improved function organization and error handling
+
+This specification represents the complete, implemented design that has been thoroughly tested and refined through iterative development, now fully aligned with the Sanctum installation criteria and implementation structure. All major features are implemented and functional, providing a comprehensive web interface for Sanctum system management.
 
 
 
