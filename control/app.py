@@ -23,6 +23,11 @@ def settings():
     """Settings and tools management interface"""
     return render_template('settings.html')
 
+@app.route('/system-settings')
+def system_settings():
+    """System settings and user management interface"""
+    return render_template('system_settings.html')
+
 @app.route('/api/chat', methods=['POST'])
 def chat():
     """Handle chat messages"""

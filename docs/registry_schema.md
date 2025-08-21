@@ -11,9 +11,11 @@ The primary entities that users interact with - Athena, Monday, Timbre, etc.
 ```sql
 agents
 - id (PRIMARY KEY)
-- name (VARCHAR) - e.g., "Athena", "Monday", "Timbre"
+- letta_uid (VARCHAR, UNIQUE, NOT NULL) - Letta agent UID (required unique identifier)
+- name (VARCHAR, NULL) - e.g., "Athena", "Monday", "Timbre" (optional but preferred)
 - description (TEXT) - e.g., "Sanctum Configuration Assistant"
 - status (ENUM) - "Healthy", "Degraded", "Off", "Ready"
+- created_by (INTEGER, FOREIGN KEY -> users.id) - Who created this agent
 - created_at (TIMESTAMP)
 - updated_at (TIMESTAMP)
 - config (JSON) - Agent-specific configuration
@@ -31,8 +33,9 @@ tools
 - emoji (VARCHAR) - e.g., "⚙️", "🌐", "🔒"
 - category (VARCHAR) - "master", "athena", "monday", "timbre", "smcp"
 - status (ENUM) - "Healthy", "Degraded", "Off", "Ready"
-- tool_type (VARCHAR) - "config", "plugin", "service", "utility"
+- module_scope (ENUM) - "global" or "agent" - Whether module is system-wide or agent-specific
 - config_schema (JSON) - Tool configuration schema
+- created_by (INTEGER, FOREIGN KEY -> users.id) - Who created this tool
 - created_at (TIMESTAMP)
 - updated_at (TIMESTAMP)
 - is_enabled (BOOLEAN)
@@ -45,16 +48,21 @@ Individual instances of tools with their specific configurations.
 tool_instances
 - id (PRIMARY KEY)
 - tool_id (FOREIGN KEY -> tools.id)
-- agent_id (FOREIGN KEY -> agents.id) - NULL for master tools
+- agent_id (FOREIGN KEY -> agents.id) - NULL for master tools, required for agent tools
 - name (VARCHAR) - Instance-specific name
 - config (JSON) - Instance configuration
 - status (ENUM) - "Healthy", "Degraded", "Off", "Ready"
 - last_run (TIMESTAMP)
 - next_run (TIMESTAMP) - For scheduled tools
+- created_by (INTEGER, FOREIGN KEY -> users.id) - Who created this instance
 - created_at (TIMESTAMP)
 - updated_at (TIMESTAMP)
 - is_active (BOOLEAN)
 ```
+
+**Note**: 
+- Global tools (MCP, Broca) can have multiple instances across agents
+- Agent-specific tools have exactly one instance per agent (installed in agent's private folder)
 
 ### 4. Configurations
 System-wide and agent-specific configuration settings.
@@ -69,108 +77,78 @@ configurations
 - scope_id (INTEGER) - ID of the scope entity (NULL for system)
 - description (TEXT) - What this config controls
 - is_encrypted (BOOLEAN) - For sensitive values
+- created_by (INTEGER, FOREIGN KEY -> users.id) - Who created this config
 - created_at (TIMESTAMP)
 - updated_at (TIMESTAMP)
 ```
 
 ### 5. Plugins
-MCP plugins and their configurations.
+Tool-specific plugins and their configurations.
 
 ```sql
 plugins
 - id (PRIMARY KEY)
+- tool_id (FOREIGN KEY -> tools.id, NOT NULL) - Parent tool this plugin belongs to
 - name (VARCHAR) - Plugin name
-- type (VARCHAR) - "mcp", "extension", "integration"
+- module_scope (ENUM) - "global" or "agent" - Inherits from parent tool
 - version (VARCHAR) - Plugin version
 - status (ENUM) - "Active", "Inactive", "Error"
 - config (JSON) - Plugin configuration
-- dependencies (JSON) - Required dependencies
+- dependencies (JSON) - Required dependencies (within same tool)
+- created_by (INTEGER, FOREIGN KEY -> users.id) - Who created this plugin
 - created_at (TIMESTAMP)
 - updated_at (TIMESTAMP)
 - is_enabled (BOOLEAN)
 ```
 
-### 6. Scheduled Jobs
-Cron jobs and scheduled tasks.
+**Note**: Plugins are always tied to a specific tool/module and cannot be shared across different tools.
 
-```sql
-scheduled_jobs
-- id (PRIMARY KEY)
-- name (VARCHAR) - Job name
-- description (TEXT) - Job description
-- cron_expression (VARCHAR) - Cron schedule
-- tool_instance_id (FOREIGN KEY -> tool_instances.id)
-- agent_id (FOREIGN KEY -> agents.id)
-- status (ENUM) - "Active", "Paused", "Error"
-- last_run (TIMESTAMP)
-- next_run (TIMESTAMP)
-- created_at (TIMESTAMP)
-- updated_at (TIMESTAMP)
-- is_enabled (BOOLEAN)
-```
 
-### 7. Logs
-System and tool execution logs.
-
-```sql
-logs
-- id (PRIMARY KEY)
-- level (ENUM) - "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"
-- source (VARCHAR) - "system", "agent", "tool", "plugin"
-- source_id (INTEGER) - ID of the source entity
-- message (TEXT) - Log message
-- details (JSON) - Additional log data
-- timestamp (TIMESTAMP)
-- user_id (INTEGER) - Who triggered this (if applicable)
-```
-
-### 8. Backups
-System backup and restore points.
-
-```sql
-backups
-- id (PRIMARY KEY)
-- name (VARCHAR) - Backup name
-- description (TEXT) - Backup description
-- type (ENUM) - "full", "incremental", "config_only"
-- status (ENUM) - "In Progress", "Completed", "Failed"
-- file_path (VARCHAR) - Backup file location
-- size_bytes (BIGINT) - Backup size
-- checksum (VARCHAR) - File integrity check
-- created_at (TIMESTAMP)
-- expires_at (TIMESTAMP) - Auto-cleanup date
-- is_auto (BOOLEAN) - Was this an automatic backup?
-```
-
-### 9. Users
-User accounts and permissions (if multi-user support is needed).
+### 6. Users
+User accounts and permissions for system access control.
 
 ```sql
 users
 - id (PRIMARY KEY)
-- username (VARCHAR) - Unique username
-- email (VARCHAR) - User email
-- role (ENUM) - "admin", "user", "viewer"
-- permissions (JSON) - User permissions
+- username (VARCHAR, UNIQUE, NOT NULL) - Unique username
+- email (VARCHAR, UNIQUE, NOT NULL) - User email
+- password_hash (VARCHAR, NOT NULL) - Hashed password
+- role (ENUM, NOT NULL) - "admin", "user", "viewer"
+- permissions (JSON) - User-specific permissions
 - last_login (TIMESTAMP)
 - created_at (TIMESTAMP)
 - updated_at (TIMESTAMP)
-- is_active (BOOLEAN)
+- is_active (BOOLEAN, DEFAULT true)
+- failed_login_attempts (INTEGER, DEFAULT 0) - Track failed logins
+- locked_until (TIMESTAMP, NULL) - Account lockout timestamp
 ```
+
+
 
 ## Relationships
 
 ### Agent-Tool Relationships
-- **One-to-Many**: An agent can have multiple tools
-- **Many-to-Many**: Tools can be shared between agents (through tool_instances)
+- **Global Tools** (module_scope = "global"): Available to all agents and master system
+  - Examples: MCP, Broca, system-wide utilities
+  - One tool definition, multiple tool_instances across agents
+- **Agent-Specific Tools** (module_scope = "agent"): Installed in agent's private folder
+  - Examples: Agent-specific modules, custom tools
+  - One tool definition, one tool_instance per agent (or none)
+- **Tool Instances**: Each agent gets their own instance of a tool with agent-specific configuration
 
 ### Configuration Relationships
 - **One-to-Many**: System/agent/tool can have multiple configs
 - **Hierarchical**: System → Agent → Tool → Instance configuration inheritance
 
 ### Plugin Relationships
-- **Many-to-Many**: Plugins can be associated with multiple agents/tools
-- **Dependency**: Plugins can depend on other plugins
+- **Tool-Specific**: Each tool/module manages its own plugins
+- **No Cross-Tool Sharing**: Plugins belong to their parent tool, not shared across tools
+- **Module Scope**: Plugin scope follows the tool's module_scope (global vs agent)
+- **Dependencies**: Plugins can depend on other plugins within the same tool
+- **Examples**: 
+  - MCP tool has MCP-specific plugins
+  - Broca tool has Broca-specific plugins
+  - Agent tools have agent-specific plugins
 
 ## Key Design Principles
 
@@ -179,17 +157,35 @@ users
 3. **Scalability**: Efficient indexing on frequently queried fields
 4. **Security**: Encryption support for sensitive configuration values
 5. **Extensibility**: Easy to add new agent types, tools, and plugins
+6. **System Integration**: Cron jobs, logs, and backups managed directly at OS level to avoid sync issues and database bloat
+
+## Security Features
+
+1. **User Authentication**: Required login with password hashing
+2. **Role-Based Access Control**: Admin, user, and viewer roles
+3. **Stateless Authentication**: JWT tokens without server-side session storage
+4. **Audit Trail**: All changes tracked by user
+5. **Account Lockout**: Failed login attempt tracking
+6. **Encrypted Configs**: Sensitive values can be encrypted
+7. **Access Control**: All entities linked to creating user
 
 ## Indexes
 
 ```sql
 -- Performance indexes
+CREATE INDEX idx_agents_letta_uid ON agents(letta_uid);
+CREATE INDEX idx_agents_created_by ON agents(created_by);
 CREATE INDEX idx_tools_category ON tools(category);
+CREATE INDEX idx_tools_module_scope ON tools(module_scope);
+CREATE INDEX idx_tools_created_by ON tools(created_by);
 CREATE INDEX idx_tool_instances_agent ON tool_instances(agent_id);
+CREATE INDEX idx_tool_instances_created_by ON tool_instances(created_by);
 CREATE INDEX idx_configurations_scope ON configurations(scope, scope_id);
-CREATE INDEX idx_logs_source ON logs(source, source_id);
-CREATE INDEX idx_logs_timestamp ON logs(timestamp);
-CREATE INDEX idx_scheduled_jobs_next_run ON scheduled_jobs(next_run);
+CREATE INDEX idx_configurations_created_by ON configurations(created_by);
+CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_plugins_tool ON plugins(tool_id);
+CREATE INDEX idx_plugins_module_scope ON plugins(module_scope);
 ```
 
 ## Future Considerations
@@ -200,6 +196,56 @@ CREATE INDEX idx_scheduled_jobs_next_run ON scheduled_jobs(next_run);
 4. **API Keys**: External service integrations
 5. **Metrics**: Performance and usage statistics
 6. **Notifications**: Alert system for system events
+
+## Module Discovery & Integration
+
+### Manifest Requirements
+Modules are discovered by Sanctum through `manifest.json` files. The format is designed to be minimal but extensible.
+
+#### **Minimal Required Fields**
+```json
+{
+  "name": "my-module",
+  "type": "tool"
+}
+```
+
+#### **Recommended Fields**
+```json
+{
+  "name": "my-module",
+  "type": "tool",
+  "description": "Optional description",
+  "version": "1.0.0",
+  "module_scope": "agent"
+}
+```
+
+#### **Advanced Fields (Optional)**
+```json
+{
+  "name": "my-module",
+  "type": "tool",
+  "description": "Optional description",
+  "version": "1.0.0",
+  "module_scope": "agent",
+  "config_schema": {}, // Optional config validation
+  "dependencies": [], // Optional dependency list
+  "entry_point": "main.py" // Optional if different from default
+}
+```
+
+### Discovery Process
+Sanctum automatically scans these locations for manifest files:
+- `~/sanctum/agents/*/modules/*/manifest.json` - Agent-specific modules
+- `~/sanctum/tools/*/manifest.json` - Global tools
+- `~/sanctum/plugins/*/manifest.json` - Global plugins
+
+### Design Philosophy
+- **Low Barrier to Entry**: Just 2 fields required to get started
+- **Progressive Enhancement**: Add more fields as needed
+- **Graceful Fallbacks**: Sanctum handles missing optional fields
+- **Developer Friendly**: No complex validation or rigid requirements
 
 ## Questions for Discussion
 

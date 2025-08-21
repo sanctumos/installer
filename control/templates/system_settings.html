@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Settings - Sanctum</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='system_settings.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚙️ System Settings</h1>
+            <nav>
+                <a href="/" class="nav-link">← Back to Chat</a>
+                <a href="/settings" class="nav-link">Settings</a>
+            </nav>
+        </header>
+
+        <main>
+            <!-- User Management Section -->
+            <section class="user-management">
+                <h2>👥 User Management</h2>
+                <div class="section-content">
+                    <div class="user-discovery">
+                        <h3>Discover Users from Broca</h3>
+                        <p>Find users who have interacted with your agents and promote them to full Sanctum users.</p>
+                        <button id="discoverUsers" class="btn btn-primary">🔍 Discover Users</button>
+                        
+                        <div id="discoveredUsers" class="user-list" style="display: none;">
+                            <h4>Discovered Users</h4>
+                            <div class="user-grid" id="userGrid">
+                                <!-- Users will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="user-management-tools">
+                        <h3>Manage Existing Users</h3>
+                        <div class="user-filters">
+                            <input type="text" id="userSearch" placeholder="Search users..." class="search-input">
+                            <select id="roleFilter" class="filter-select">
+                                <option value="">All Roles</option>
+                                <option value="admin">Admin</option>
+                                <option value="user">User</option>
+                                <option value="viewer">Viewer</option>
+                            </select>
+                        </div>
+                        
+                        <div class="user-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Status</th>
+                                        <th>Last Login</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="userTableBody">
+                                    <!-- Users will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Configuration Section -->
+            <section class="system-config">
+                <h2>🔧 System Configuration</h2>
+                <div class="section-content">
+                    <div class="config-category">
+                        <h3>Environment Variables</h3>
+                        <div class="env-vars">
+                            <div class="env-var">
+                                <label>OpenAI API Key:</label>
+                                <input type="password" id="openaiKey" placeholder="sk-..." class="config-input">
+                                <button class="btn btn-small" onclick="togglePassword('openaiKey')">👁️</button>
+                            </div>
+                            <div class="env-var">
+                                <label>Anthropic API Key:</label>
+                                <input type="password" id="anthropicKey" placeholder="sk-ant..." class="config-input">
+                                <button class="btn btn-small" onclick="togglePassword('anthropicKey')">👁️</button>
+                            </div>
+                            <div class="env-var">
+                                <label>Ollama Base URL:</label>
+                                <input type="text" id="ollamaUrl" placeholder="http://localhost:11434" class="config-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="config-category">
+                        <h3>Path Configurations</h3>
+                        <div class="path-configs">
+                            <div class="path-config">
+                                <label>Sanctum Base Path:</label>
+                                <input type="text" id="sanctumPath" value="~/sanctum" class="config-input">
+                            </div>
+                            <div class="path-config">
+                                <label>Letta Data Path:</label>
+                                <input type="text" id="lettaPath" value="~/.letta" class="config-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="config-actions">
+                        <button id="saveConfig" class="btn btn-primary">💾 Save Configuration</button>
+                        <button id="exportConfig" class="btn btn-secondary">📤 Export Config</button>
+                        <button id="importConfig" class="btn btn-secondary">📥 Import Config</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- User Promotion Modal -->
+    <div id="promotionModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Promote User to Sanctum</h3>
+            <form id="promotionForm">
+                <div class="form-group">
+                    <label>Username:</label>
+                    <input type="text" id="promoteUsername" required>
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="promoteEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Role:</label>
+                    <select id="promoteRole" required>
+                        <option value="viewer">Viewer</option>
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Promote User</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='system_settings.js') }}"></script>
+</body>
+</html>
