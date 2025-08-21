@@ -6,36 +6,25 @@ document.addEventListener('DOMContentLoaded', function() {
     const agentToolsTable = document.getElementById('agentToolsTable');
     const noModulesMessage = document.getElementById('noModulesMessage');
     const installButtons = document.querySelectorAll('.install-btn');
+    const uninstallButtons = document.querySelectorAll('.uninstall-btn');
     const agentSelector = document.getElementById('agentSelector');
 
     // Mock data for different agents' installation states
     const agentInstallationStates = {
         'default': {
-            'broca': 'installed',
-            'thalamus': 'available',
-            'cerebellum': 'available',
-            'dream-agent': 'available',
+            'broca': 'core',
             'plugins': 'available'
         },
         'athena': {
-            'broca': 'installed',
-            'thalamus': 'installed',
-            'cerebellum': 'available',
-            'dream-agent': 'installed',
+            'broca': 'core',
             'plugins': 'available'
         },
         'monday': {
-            'broca': 'installed',
-            'thalamus': 'available',
-            'cerebellum': 'installed',
-            'dream-agent': 'available',
+            'broca': 'core',
             'plugins': 'installed'
         },
         'timbre': {
-            'broca': 'installed',
-            'thalamus': 'available',
-            'cerebellum': 'available',
-            'dream-agent': 'available',
+            'broca': 'core',
             'plugins': 'available'
         }
     };
@@ -108,6 +97,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Uninstall button functionality
+    uninstallButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const moduleName = this.getAttribute('data-module');
+            uninstallModule(moduleName, this);
+        });
+    });
+
     // Function to update agent tools display based on selected agent
     function updateAgentToolsDisplay(selectedAgent) {
         const agentRows = agentToolsTable.querySelectorAll('tbody tr[data-module-name]');
@@ -116,28 +113,65 @@ document.addEventListener('DOMContentLoaded', function() {
         agentRows.forEach(row => {
             const moduleName = row.getAttribute('data-module-name');
             const moduleKey = moduleName === 'dream agent' ? 'dream-agent' : moduleName;
-            const status = agentStates[moduleKey] || 'available';
+            const status = agentStates[moduleKey];
             
             // Update status badge
             const statusBadge = row.querySelector('.badge');
             if (status === 'installed') {
                 statusBadge.className = 'badge bg-success';
                 statusBadge.textContent = 'Installed';
+            } else if (status === 'core') {
+                statusBadge.className = 'badge bg-primary';
+                statusBadge.textContent = 'Core';
+            } else if (status === undefined && moduleName === 'dream agent') {
+                // Dream Agent is unavailable
+                statusBadge.className = 'badge bg-warning';
+                statusBadge.textContent = 'Unavailable';
             } else {
                 statusBadge.className = 'badge bg-secondary';
                 statusBadge.textContent = 'Available';
             }
 
-            // Update action button
-            const actionButton = row.querySelector('button');
+            // Update action buttons
+            const installBtn = row.querySelector('.install-btn');
+            const uninstallBtn = row.querySelector('.uninstall-btn');
+            
             if (status === 'installed') {
-                actionButton.textContent = 'Installed';
-                actionButton.className = 'btn btn-success btn-sm';
-                actionButton.disabled = true;
+                if (installBtn) {
+                    installBtn.textContent = 'Installed';
+                    installBtn.className = 'btn btn-success btn-sm';
+                    installBtn.disabled = true;
+                }
+                if (uninstallBtn) {
+                    uninstallBtn.disabled = false;
+                }
+            } else if (status === 'core') {
+                // Core modules have no action buttons - they're always present
+                if (installBtn) {
+                    installBtn.style.display = 'none';
+                }
+                if (uninstallBtn) {
+                    uninstallBtn.style.display = 'none';
+                }
+            } else if (status === undefined && moduleName === 'dream agent') {
+                // Unavailable modules have no action buttons
+                if (installBtn) {
+                    installBtn.style.display = 'none';
+                }
+                if (uninstallBtn) {
+                    uninstallBtn.style.display = 'none';
+                }
             } else {
-                actionButton.textContent = 'Install';
-                actionButton.className = 'btn btn-primary btn-sm install-btn';
-                actionButton.disabled = false;
+                if (installBtn) {
+                    installBtn.textContent = 'Install';
+                    installBtn.className = 'btn btn-primary btn-sm install-btn';
+                    installBtn.disabled = false;
+                    installBtn.style.display = 'inline-block';
+                }
+                if (uninstallBtn) {
+                    uninstallBtn.disabled = true;
+                    uninstallBtn.style.display = 'inline-block';
+                }
             }
         });
 
@@ -147,10 +181,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Install module function
     function installModule(moduleName, button) {
-        // Store original button state
-        const originalText = button.textContent;
-        const originalClass = button.className;
-
         // Show loading state
         button.textContent = 'Installing...';
         button.className = 'btn btn-warning btn-sm install-btn';
@@ -168,7 +198,13 @@ document.addEventListener('DOMContentLoaded', function() {
             statusBadge.className = 'badge bg-success';
             statusBadge.textContent = 'Installed';
 
-            // Update the agent installation states
+            // Enable uninstall button
+            const uninstallBtn = button.closest('tr').querySelector('.uninstall-btn');
+            if (uninstallBtn) {
+                uninstallBtn.disabled = false;
+            }
+
+            // Update the agent installation states for agent-specific tools
             const selectedAgent = agentSelector.value;
             const moduleKey = moduleName === 'dream-agent' ? 'dream-agent' : moduleName;
             if (agentInstallationStates[selectedAgent]) {
@@ -176,14 +212,57 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Show success message
-            showNotification(`Successfully installed ${moduleName} module on ${agentSelector.options[agentSelector.selectedIndex].text}`, 'success');
-
-            // Optional: Remove install button after a delay
-            setTimeout(() => {
-                button.remove();
-            }, 2000);
+            const moduleType = button.closest('tr').getAttribute('data-module-type');
+            if (moduleType === 'global') {
+                showNotification(`Successfully installed ${moduleName} module`, 'success');
+            } else {
+                showNotification(`Successfully installed ${moduleName} module on ${agentSelector.options[agentSelector.selectedIndex].text}`, 'success');
+            }
 
         }, 2000); // Simulate 2 second installation
+    }
+
+    // Uninstall module function
+    function uninstallModule(moduleName, button) {
+        // Show loading state
+        button.textContent = 'Uninstalling...';
+        button.className = 'btn btn-warning btn-sm uninstall-btn';
+        button.disabled = true;
+
+        // Simulate uninstallation process
+        setTimeout(() => {
+            // Success state
+            button.disabled = true;
+
+            // Update status indicator
+            const statusBadge = button.closest('tr').querySelector('.badge');
+            statusBadge.className = 'badge bg-secondary';
+            statusBadge.textContent = 'Available';
+
+            // Reset install button
+            const installBtn = button.closest('tr').querySelector('.install-btn');
+            if (installBtn) {
+                installBtn.textContent = 'Install';
+                installBtn.className = 'btn btn-primary btn-sm install-btn';
+                installBtn.disabled = false;
+            }
+
+            // Update the agent installation states for agent-specific tools
+            const selectedAgent = agentSelector.value;
+            const moduleKey = moduleName === 'dream-agent' ? 'dream-agent' : moduleName;
+            if (agentInstallationStates[selectedAgent]) {
+                agentInstallationStates[selectedAgent][moduleKey] = 'available';
+            }
+
+            // Show success message
+            const moduleType = button.closest('tr').getAttribute('data-module-type');
+            if (moduleType === 'global') {
+                showNotification(`Successfully uninstalled ${moduleName} module`, 'success');
+            } else {
+                showNotification(`Successfully uninstalled ${moduleName} module from ${agentSelector.options[agentSelector.selectedIndex].text}`, 'success');
+            }
+
+        }, 2000); // Simulate 2 second uninstallation
     }
 
     // Notification function
@@ -226,4 +305,47 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize the display with the default agent
     updateAgentToolsDisplay('default');
+    
+    // Initialize global tools display
+    updateGlobalToolsDisplay();
+    
+    // Function to update global tools display
+    function updateGlobalToolsDisplay() {
+        const globalRows = globalToolsTable.querySelectorAll('tbody tr[data-module-name]');
+        
+        globalRows.forEach(row => {
+            const moduleName = row.getAttribute('data-module-name');
+            const statusBadge = row.querySelector('.badge');
+            const installBtn = row.querySelector('.install-btn');
+            const uninstallBtn = row.querySelector('.uninstall-btn');
+            
+            if (statusBadge.textContent === 'Installed') {
+                if (installBtn) {
+                    installBtn.textContent = 'Installed';
+                    installBtn.className = 'btn btn-success btn-sm';
+                    installBtn.disabled = true;
+                }
+                if (uninstallBtn) {
+                    uninstallBtn.disabled = false;
+                }
+            } else if (statusBadge.textContent === 'Core') {
+                // Core modules have no action buttons - they're always present
+                if (installBtn) {
+                    installBtn.style.display = 'none';
+                }
+                if (uninstallBtn) {
+                    uninstallBtn.style.display = 'none';
+                }
+            } else {
+                if (installBtn) {
+                    installBtn.textContent = 'Install';
+                    installBtn.className = 'btn btn-primary btn-sm install-btn';
+                    installBtn.disabled = false;
+                }
+                if (uninstallBtn) {
+                    uninstallBtn.disabled = true;
+                }
+            }
+        });
+    }
 });

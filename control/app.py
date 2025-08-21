@@ -38,6 +38,11 @@ def cron_scheduler():
     """CRON scheduler interface"""
     return render_template('cron_scheduler.html')
 
+@app.route('/chat-settings')
+def chat_settings():
+    """Chat settings configuration interface"""
+    return render_template('chat_settings.html')
+
 @app.route('/api/chat', methods=['POST'])
 def chat():
     """Handle chat messages"""
