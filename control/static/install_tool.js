@@ -175,8 +175,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Show notification of agent change
-        showNotification(`Switched to ${agentSelector.options[agentSelector.selectedIndex].text}`, 'info');
+        // Show notification of agent change (but not on initial load)
+        if (selectedAgent !== 'default' || document.readyState === 'complete') {
+            showNotification(`Switched to ${agentSelector.options[agentSelector.selectedIndex].text}`, 'info');
+        }
     }
 
     // Install module function
@@ -270,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Create notification element
         const notification = document.createElement('div');
         notification.className = `alert alert-${type === 'success' ? 'success' : 'info'} alert-dismissible fade show position-fixed`;
-        notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        notification.style.cssText = 'top: 80px; right: 20px; z-index: 9999; min-width: 300px; max-width: 400px;';
         notification.innerHTML = `
             ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>

@@ -143,6 +143,20 @@ h4 { font-size: 1.25rem; }
 h5 { font-size: 1.1rem; }
 h6 { font-size: 1rem; }
 
+/* Heading utility classes */
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--fg);
+}
+
+.h1 { font-size: 2.5rem; }
+.h2 { font-size: 2rem; }
+.h3 { font-size: 1.75rem; }
+.h4 { font-size: 1.5rem; }
+.h5 { font-size: 1.25rem; }
+.h6 { font-size: 1rem; }
+
 p {
   margin-bottom: var(--spacing-md);
   line-height: 1.6;
@@ -197,6 +211,306 @@ p {
   color: var(--fg-dim);
   font-size: 0.875rem;
   margin-top: var(--spacing-xs);
+}
+
+/* Small text styling */
+small, .small {
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: var(--fg-dim);
+}
+
+/* Inline elements */
+span {
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Block elements */
+div {
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Form elements */
+input, textarea, select {
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Textarea specific styling */
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Button base styling */
+button {
+  color: inherit;
+  line-height: inherit;
+  cursor: pointer;
+}
+
+/* Select option styling */
+option {
+  color: var(--fg);
+  background-color: var(--bg-surface);
+}
+
+/* Text emphasis */
+strong, b {
+  font-weight: 600;
+  color: var(--fg);
+}
+
+em, i {
+  font-style: italic;
+  color: var(--fg);
+}
+
+code, pre {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  color: var(--fg);
+  background-color: var(--bg-darker);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+}
+
+/* Links */
+a {
+  color: var(--accent-blue);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--accent-blue);
+  text-decoration: underline;
+}
+
+/* Lists */
+ul, ol {
+  color: var(--fg);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-md);
+}
+
+li {
+  color: var(--fg);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-xs);
+}
+
+/* Table rows */
+tr {
+  color: var(--fg);
+  line-height: 1.6;
+}
+
+/* Table sections */
+thead, tbody {
+  color: var(--fg);
+  line-height: 1.6;
+}
+
+/* Table caption */
+caption {
+  color: var(--fg-dim);
+  font-size: 0.875rem;
+  text-align: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+/* Form fieldset */
+fieldset {
+  color: var(--fg);
+  line-height: 1.6;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+legend {
+  color: var(--fg);
+  font-weight: 600;
+  padding: 0 var(--spacing-sm);
+}
+
+/* Details and summary */
+details {
+  color: var(--fg);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-md);
+}
+
+summary {
+  color: var(--fg);
+  font-weight: 600;
+  cursor: pointer;
+  padding: var(--spacing-sm);
+  background-color: var(--bg-darker);
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+summary:hover {
+  background-color: var(--bg-card);
+}
+
+/* Text highlighting */
+mark {
+  background-color: var(--accent-yellow);
+  color: var(--bg-page);
+  padding: 0.1em 0.2em;
+  border-radius: var(--radius-sm);
+}
+
+/* Text modifications */
+del {
+  color: var(--accent-red);
+  text-decoration: line-through;
+}
+
+ins {
+  color: var(--accent-green);
+  text-decoration: underline;
+}
+
+/* Subscript and superscript */
+sub, sup {
+  color: var(--fg-dim);
+  font-size: 0.75em;
+  line-height: 1;
+}
+
+/* Abbreviations */
+abbr, acronym {
+  color: var(--accent-blue);
+  text-decoration: underline dotted;
+  cursor: help;
+}
+
+/* Citations and quotes */
+cite {
+  color: var(--fg-dim);
+  font-style: italic;
+}
+
+q {
+  color: var(--fg-dim);
+  font-style: italic;
+  quotes: '"' '"' "'" "'";
+}
+
+q::before {
+  content: open-quote;
+}
+
+q::after {
+  content: close-quote;
+}
+
+/* Blockquotes */
+blockquote {
+  color: var(--fg-dim);
+  font-style: italic;
+  border-left: 4px solid var(--accent-blue);
+  padding-left: var(--spacing-md);
+  margin: var(--spacing-md) 0;
+  background-color: var(--bg-darker);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-sm);
+}
+
+/* Horizontal rule */
+hr {
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  margin: var(--spacing-lg) 0;
+  opacity: 0.5;
+}
+
+/* Address */
+address {
+  color: var(--fg-dim);
+  font-style: italic;
+  line-height: 1.6;
+  margin-bottom: var(--spacing-md);
+}
+
+/* Time */
+time {
+  color: var(--fg-dim);
+  font-size: 0.875rem;
+}
+
+/* Keyboard and sample output */
+kbd {
+  background-color: var(--bg-darker);
+  color: var(--fg);
+  padding: 0.1em 0.3em;
+  border-radius: var(--radius-sm);
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.875rem;
+}
+
+samp {
+  background-color: var(--bg-darker);
+  color: var(--fg);
+  padding: 0.1em 0.3em;
+  border-radius: var(--radius-sm);
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.875rem;
+}
+
+/* Variables */
+var {
+  color: var(--accent-purple);
+  font-style: italic;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+/* Definitions */
+dfn {
+  color: var(--accent-blue);
+  font-style: italic;
+  font-weight: 600;
+}
+
+/* Strikethrough and underline */
+s {
+  color: var(--accent-red);
+  text-decoration: line-through;
+}
+
+u {
+  color: var(--accent-blue);
+  text-decoration: underline;
+}
+
+/* Bidirectional text */
+bdi, bdo {
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Ruby annotations */
+ruby {
+  color: inherit;
+  line-height: inherit;
+}
+
+rt {
+  color: var(--fg-dim);
+  font-size: 0.75em;
+  line-height: 1;
+}
+
+rp {
+  color: var(--fg-dim);
+  font-size: 0.75em;
+  line-height: 1;
 }
 
 /* Form Check */
@@ -480,6 +794,17 @@ p {
 /* ==========================================================================
    TABLES
    ========================================================================== */
+.table {
+  color: var(--fg);
+  background-color: var(--bg-surface);
+  border-color: var(--border-subtle);
+}
+
+.table th,
+.table td {
+  border-color: var(--border-subtle);
+}
+
 .table-dark {
   background-color: var(--bg-card);
   color: var(--fg);
@@ -500,6 +825,11 @@ p {
 
 .table-hover tbody tr:hover {
   background-color: var(--bg-darker);
+}
+
+.table-responsive {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
 }
 
 /* ==========================================================================
@@ -598,6 +928,14 @@ p {
   background-color: rgba(138, 180, 248, 0.1);
   border-color: var(--accent-blue);
   color: var(--accent-blue);
+}
+
+/* Fixed position notifications */
+.alert.position-fixed {
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-subtle);
+  backdrop-filter: blur(10px);
+  background-color: var(--bg-card);
 }
 
 /* ==========================================================================
@@ -769,6 +1107,20 @@ p {
 .text-center { text-align: center !important; }
 .text-left { text-align: left !important; }
 .text-right { text-align: right !important; }
+
+/* Font weights */
+.fw-bold { font-weight: 700 !important; }
+.fw-semibold { font-weight: 600 !important; }
+.fw-medium { font-weight: 500 !important; }
+.fw-normal { font-weight: 400 !important; }
+.fw-light { font-weight: 300 !important; }
+
+/* Position utilities */
+.position-relative { position: relative !important; }
+.position-absolute { position: absolute !important; }
+.position-fixed { position: fixed !important; }
+.top-0 { top: 0 !important; }
+.end-0 { right: 0 !important; }
 
 /* Loading states */
 .loading {
