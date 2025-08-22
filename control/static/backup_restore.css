@@ -1,0 +1,385 @@
+/* Backup & Restore Page Styles */
+:root {
+    --bg-page: #0f0f23;
+    --bg-card: #1a1a2e;
+    --bg-surface: #16213e;
+    --fg: #ffffff;
+    --fg-dim: #b8bcc8;
+    --border-subtle: #2d3748;
+    --primary: #3b82f6;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #06b6d4;
+}
+
+body {
+    background-color: var(--bg-page);
+    color: var(--fg);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+    background-color: var(--bg-card) !important;
+    border-color: var(--border-subtle) !important;
+    color: var(--fg) !important;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: var(--bg-card) !important;
+    border-color: var(--primary) !important;
+    color: var(--fg) !important;
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+}
+
+.form-control::placeholder {
+    color: var(--fg-dim) !important;
+}
+
+/* Form Text */
+.form-text {
+    color: var(--fg-dim) !important;
+}
+
+.form-text.text-warning {
+    color: var(--warning) !important;
+}
+
+/* Form Check */
+.form-check-input {
+    background-color: var(--bg-card);
+    border-color: var(--border-subtle);
+}
+
+.form-check-input:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+}
+
+.form-check-label {
+    color: var(--fg);
+}
+
+/* Form Switch */
+.form-switch .form-check-input {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba%28255, 255, 255, 0.25%29'/%3e%3c/svg%3e");
+}
+
+.form-switch .form-check-input:checked {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e");
+}
+
+/* Cards */
+.card {
+    background-color: var(--bg-card);
+    border-color: var(--border-subtle);
+}
+
+.card-header {
+    background-color: var(--bg-surface);
+    border-bottom-color: var(--border-subtle);
+}
+
+/* Tables */
+.table {
+    color: var(--fg);
+    background-color: transparent;
+}
+
+.table thead th {
+    background-color: var(--bg-surface);
+    border-bottom-color: var(--border-subtle);
+    color: var(--fg);
+    font-weight: 600;
+    padding: 1rem 0.75rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.table tbody td {
+    background-color: var(--bg-card);
+    border-bottom-color: var(--border-subtle);
+    padding: 1rem 0.75rem;
+    vertical-align: middle;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(138, 180, 248, 0.08);
+}
+
+.table tbody tr:hover td {
+    background-color: rgba(138, 180, 248, 0.08);
+}
+
+/* Buttons */
+.btn {
+    font-weight: 500;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+.btn-outline-info {
+    color: var(--info);
+    border-color: var(--info);
+    background-color: transparent;
+}
+
+.btn-outline-info:hover {
+    background-color: var(--info);
+    border-color: var(--info);
+    color: #fff;
+}
+
+.btn-outline-warning {
+    color: var(--warning);
+    border-color: var(--warning);
+    background-color: transparent;
+}
+
+.btn-outline-warning:hover {
+    background-color: var(--warning);
+    border-color: var(--warning);
+    color: #000;
+}
+
+.btn-outline-danger {
+    color: var(--danger);
+    border-color: var(--danger);
+    background-color: transparent;
+}
+
+.btn-outline-danger:hover {
+    background-color: var(--danger);
+    border-color: var(--danger);
+    color: #fff;
+}
+
+.btn-outline-secondary {
+    color: var(--fg-dim);
+    border-color: var(--border-subtle);
+    background-color: transparent;
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--border-subtle);
+    border-color: var(--border-subtle);
+    color: var(--fg);
+}
+
+/* Badges */
+.badge {
+    font-weight: 500;
+    padding: 0.5em 0.75em;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+.badge.bg-success {
+    background-color: var(--success) !important;
+    color: #fff;
+}
+
+.badge.bg-warning {
+    background-color: var(--warning) !important;
+    color: #000;
+}
+
+.badge.bg-danger {
+    background-color: var(--danger) !important;
+    color: #fff;
+}
+
+.badge.bg-info {
+    background-color: var(--info) !important;
+    color: #fff;
+}
+
+.badge.bg-primary {
+    background-color: var(--primary) !important;
+    color: #fff;
+}
+
+/* Progress Bar */
+.progress {
+    background-color: var(--bg-surface);
+    border-radius: 6px;
+    height: 8px;
+}
+
+.progress-bar {
+    background-color: var(--primary);
+    border-radius: 6px;
+}
+
+/* Modals */
+.modal-content {
+    background-color: var(--bg-card);
+    border-color: var(--border-subtle);
+}
+
+.modal-header {
+    border-bottom-color: var(--border-subtle);
+}
+
+.modal-footer {
+    border-top-color: var(--border-subtle);
+}
+
+.btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Status Cards */
+.card.bg-dark {
+    background-color: var(--bg-card) !important;
+}
+
+.card.border-secondary {
+    border-color: var(--border-subtle) !important;
+}
+
+/* File Input Styling */
+input[type="file"]::-webkit-file-upload-button {
+    background-color: var(--bg-surface);
+    color: var(--fg);
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    padding: 0.375rem 0.75rem;
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover {
+    background-color: var(--border-subtle);
+}
+
+/* Time Input Styling */
+input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .row.g-4 > [class*="col-"] {
+        margin-bottom: 1rem;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .btn-group .btn {
+        border-radius: 4px !important;
+        margin: 0 !important;
+    }
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Loading States */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--primary);
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Hover Effects */
+.card:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    transition: transform 0.2s ease;
+}
+
+/* Focus States */
+.btn:focus, .form-control:focus, .form-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+}
+
+/* Disabled States */
+.form-control:disabled, .form-select:disabled {
+    background-color: var(--bg-surface) !important;
+    color: var(--fg-dim) !important;
+    cursor: not-allowed;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Success/Error States */
+.form-control.is-valid {
+    border-color: var(--success) !important;
+}
+
+.form-control.is-invalid {
+    border-color: var(--danger) !important;
+}
+
+.valid-feedback {
+    color: var(--success) !important;
+}
+
+.invalid-feedback {
+    color: var(--danger) !important;
+}

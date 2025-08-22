@@ -1,0 +1,430 @@
+/* Create Agent Page Styles */
+:root {
+    --bg-page: #0f0f23;
+    --bg-card: #1a1a2e;
+    --bg-surface: #16213e;
+    --fg: #ffffff;
+    --fg-dim: #b8bcc8;
+    --border-subtle: #2d3748;
+    --primary: #3b82f6;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --info: #06b6d4;
+}
+
+body {
+    background-color: var(--bg-page);
+    color: var(--fg);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+    background-color: var(--bg-card) !important;
+    border-color: var(--border-subtle) !important;
+    color: var(--fg) !important;
+}
+
+.form-control:focus, .form-select:focus {
+    background-color: var(--bg-card) !important;
+    border-color: var(--primary) !important;
+    color: var(--fg) !important;
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+}
+
+.form-control::placeholder {
+    color: var(--fg-dim) !important;
+}
+
+/* Form Text */
+.form-text {
+    color: var(--fg-dim) !important;
+}
+
+/* Form Check */
+.form-check-input {
+    background-color: var(--bg-card);
+    border-color: var(--border-subtle);
+}
+
+.form-check-input:checked {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+}
+
+.form-check-label {
+    color: var(--fg);
+}
+
+.form-check-label.text-muted {
+    color: var(--fg-dim) !important;
+}
+
+/* Form Range */
+.form-range {
+    background-color: transparent;
+}
+
+.form-range::-webkit-slider-track {
+    background-color: var(--bg-surface);
+    border-radius: 4px;
+    height: 6px;
+}
+
+.form-range::-webkit-slider-thumb {
+    background-color: var(--primary);
+    border: none;
+    border-radius: 50%;
+    height: 18px;
+    width: 18px;
+    margin-top: -6px;
+}
+
+.form-range::-moz-range-track {
+    background-color: var(--bg-surface);
+    border-radius: 4px;
+    height: 6px;
+}
+
+.form-range::-moz-range-thumb {
+    background-color: var(--primary);
+    border: none;
+    border-radius: 50%;
+    height: 18px;
+    width: 18px;
+}
+
+/* Cards */
+.card {
+    background-color: var(--bg-card);
+    border-color: var(--border-subtle);
+}
+
+.card-header {
+    background-color: var(--bg-surface);
+    border-bottom-color: var(--border-subtle);
+}
+
+/* Buttons */
+.btn {
+    font-weight: 500;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+    transition: all 0.2s ease;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+}
+
+.btn-outline-primary {
+    color: var(--primary);
+    border-color: var(--primary);
+    background-color: transparent;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+
+.btn-outline-info {
+    color: var(--info);
+    border-color: var(--info);
+    background-color: transparent;
+}
+
+.btn-outline-info:hover {
+    background-color: var(--info);
+    border-color: var(--info);
+    color: #fff;
+}
+
+.btn-outline-success {
+    color: var(--success);
+    border-color: var(--success);
+    background-color: transparent;
+}
+
+.btn-outline-success:hover {
+    background-color: var(--success);
+    border-color: var(--success);
+    color: #000;
+}
+
+.btn-outline-warning {
+    color: var(--warning);
+    border-color: var(--warning);
+    background-color: transparent;
+}
+
+.btn-outline-warning:hover {
+    background-color: var(--warning);
+    border-color: var(--warning);
+    color: #000;
+}
+
+.btn-outline-secondary {
+    color: var(--fg-dim);
+    border-color: var(--border-subtle);
+    background-color: transparent;
+}
+
+.btn-outline-secondary:hover {
+    background-color: var(--border-subtle);
+    border-color: var(--border-subtle);
+    color: var(--fg);
+}
+
+/* Modals */
+.modal-content {
+    background-color: var(--bg-card);
+    border-color: var(--border-subtle);
+}
+
+.modal-header {
+    border-bottom-color: var(--border-subtle);
+}
+
+.modal-footer {
+    border-top-color: var(--border-subtle);
+}
+
+.btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* Progress Bar */
+.progress {
+    background-color: var(--bg-surface);
+    border-radius: 6px;
+    height: 8px;
+}
+
+.progress-bar {
+    background-color: var(--primary);
+    border-radius: 6px;
+}
+
+/* Section Headers */
+.text-primary {
+    color: var(--primary) !important;
+}
+
+/* Form Validation */
+.form-control.is-valid {
+    border-color: var(--success) !important;
+}
+
+.form-control.is-invalid {
+    border-color: var(--danger) !important;
+}
+
+.valid-feedback {
+    color: var(--success) !important;
+}
+
+.invalid-feedback {
+    color: var(--danger) !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .row.g-4 > [class*="col-"] {
+        margin-bottom: 1rem;
+    }
+    
+    .d-flex.gap-3 {
+        flex-direction: column;
+        gap: 0.5rem !important;
+    }
+    
+    .d-flex.gap-3 .btn {
+        width: 100%;
+    }
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Hover Effects */
+.card:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    transition: transform 0.2s ease;
+}
+
+/* Focus States */
+.btn:focus, .form-control:focus, .form-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+}
+
+/* Disabled States */
+.form-control:disabled, .form-select:disabled {
+    background-color: var(--bg-surface) !important;
+    color: var(--fg-dim) !important;
+    cursor: not-allowed;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Loading States */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--primary);
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Template Buttons */
+.d-grid.gap-2 .btn {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.d-grid.gap-2 .btn:hover {
+    transform: translateX(5px);
+}
+
+/* Preview Cards */
+#agentPreview, #configSummary {
+    min-height: 120px;
+}
+
+/* Form Sections */
+.row.mb-4 {
+    padding: 1.5rem;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.row.mb-4:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Required Field Indicators */
+.text-danger {
+    color: var(--danger) !important;
+}
+
+/* Form Group Spacing */
+.mb-3 {
+    margin-bottom: 1.5rem !important;
+}
+
+.mb-4 {
+    margin-bottom: 2rem !important;
+}
+
+/* Sidebar Styling */
+.col-lg-4 .card {
+    margin-bottom: 1.5rem;
+}
+
+.col-lg-4 .card:last-child {
+    margin-bottom: 0;
+}
+
+/* Temperature Range Labels */
+.form-range + .d-flex {
+    margin-top: 0.5rem;
+}
+
+.form-range + .d-flex small {
+    font-size: 0.75rem;
+    color: var(--fg-dim);
+}
+
+/* Checkbox Groups */
+.form-check {
+    margin-bottom: 0.75rem;
+}
+
+.form-check:last-child {
+    margin-bottom: 0;
+}
+
+/* Textarea Enhancements */
+textarea.form-control {
+    resize: vertical;
+    min-height: 80px;
+}
+
+textarea.form-control#systemInstructions {
+    min-height: 120px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-surface);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-subtle);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}

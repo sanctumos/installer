@@ -135,8 +135,7 @@
                                 <h3 class="tool-title">Create Agent</h3>
                                 <p class="tool-description">Add new Prime agent to system</p>
                                 <div class="tool-actions">
-                                    <button class="btn btn-primary btn-sm">Create</button>
-
+                                    <a href="/create-agent" class="btn btn-primary btn-sm">Create</a>
                                 </div>
                             </div>
                         </div>
@@ -151,8 +150,7 @@
                                 <h3 class="tool-title">Backup/Restore</h3>
                                 <p class="tool-description">System backup & recovery tools</p>
                                 <div class="tool-actions">
-                                    <button class="btn btn-primary btn-sm">Open</button>
-
+                                    <a href="/backup-restore" class="btn btn-primary btn-sm">Open</a>
                                 </div>
                             </div>
                         </div>
@@ -232,7 +230,7 @@
                                 <h3 class="tool-title">Logs & Status</h3>
                                 <p class="tool-description">Health monitoring & log access</p>
                                 <div class="tool-actions">
-                                    <button class="btn btn-primary btn-sm">Open</button>
+                                    <a href="/logs-status" class="btn btn-primary btn-sm">Open</a>
 
                                 </div>
                             </div>
@@ -313,7 +311,7 @@
                                 <h3 class="tool-title">Logs & Status</h3>
                                 <p class="tool-description">Health monitoring & log access</p>
                                 <div class="tool-actions">
-                                    <button class="btn btn-primary btn-sm">Open</button>
+                                    <a href="/logs-status" class="btn btn-primary btn-sm">Open</a>
 
                                 </div>
                             </div>
@@ -394,7 +392,7 @@
                                 <h3 class="tool-title">Logs & Status</h3>
                                 <p class="tool-description">Health monitoring & log access</p>
                                 <div class="tool-actions">
-                                    <button class="btn btn-primary btn-sm">Open</button>
+                                    <a href="/logs-status" class="btn btn-primary btn-sm">Open</a>
 
                                 </div>
                             </div>
@@ -414,20 +412,229 @@
                     </div>
 
                     <div class="row g-4" id="smcpToolsGrid">
-                                                 <!-- SMCP Configurator -->
-                         <div class="col-lg-4 col-md-6" data-tool-name="smcp config" data-tool-desc="mcp plugins scopes health">
-                             <div class="tool-card">
-                                 <div class="tool-header">
-                                     <span class="tool-emoji">🔌</span>
-                                     <div class="tool-status off" data-status="Off"></div>
-                                 </div>
-                                 <h3 class="tool-title">SMCP Configurator</h3>
-                                 <p class="tool-description">MCP plugins, scopes & health</p>
-                                 <div class="tool-actions">
-                                     <a href="/smcp-configurator" class="btn btn-primary btn-sm">Open</a>
-                                 </div>
-                             </div>
-                         </div>
+                        <!-- Overview Panel -->
+                        <div class="col-12 mb-4">
+                            <div class="card bg-dark border-secondary">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0">📊 Overview</h5>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-success btn-sm" onclick="refreshAllSmcp()">🔄 Refresh All</button>
+                                        <button class="btn btn-primary btn-sm" onclick="addNewPlugin()">➕ Add Plugin</button>
+                                        <button class="btn btn-outline-info btn-sm" onclick="exportSmcpConfig()">📤 Export</button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="text-center">
+                                                <div class="h4 mb-1 text-success" id="totalPlugins">0</div>
+                                                <small class="text-muted">Active Plugins</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="text-center">
+                                                <div class="h4 mb-1 text-info" id="totalTools">0</div>
+                                                <small class="text-muted">Available Tools</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="text-center">
+                                                <div class="h4 mb-1 text-warning" id="activeSessions">0</div>
+                                                <small class="text-muted">Active Sessions</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="text-center">
+                                                <div class="h4 mb-1 text-primary" id="serverStatus">Online</div>
+                                                <small class="text-muted">Server Status</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="my-3">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6>Recent Activity</h6>
+                                            <div class="list-group list-group-flush bg-transparent" id="recentActivity">
+                                                <div class="list-group-item bg-transparent border-secondary text-muted">
+                                                    <small>No recent activity</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6>System Info</h6>
+                                            <div class="list-group list-group-flush bg-transparent">
+                                                <div class="list-group-item bg-transparent border-secondary d-flex justify-content-between">
+                                                    <span>Version</span>
+                                                    <span class="text-muted">v1.0.0</span>
+                                                </div>
+                                                <div class="list-group-item bg-transparent border-secondary d-flex justify-content-between">
+                                                    <span>Last Updated</span>
+                                                    <span class="text-muted" id="lastUpdated">Just now</span>
+                                                </div>
+                                                <div class="list-group-item bg-transparent border-secondary d-flex justify-content-between">
+                                                    <span>Uptime</span>
+                                                    <span class="text-muted" id="uptime">0d 0h 0m</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Plugins Panel -->
+                        <div class="col-12 mb-4">
+                            <div class="card bg-dark border-secondary">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0">🔌 Plugin Registry</h5>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-success btn-sm" onclick="refreshPlugins()">🔄 Refresh</button>
+                                        <button class="btn btn-primary btn-sm" onclick="addNewPlugin()">➕ Add Plugin</button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-dark table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Plugin Name</th>
+                                                    <th>Status</th>
+                                                    <th>Version</th>
+                                                    <th>Last Updated</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="pluginsTableBody">
+                                                <tr>
+                                                    <td colspan="5" class="text-center text-muted">Loading plugins...</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tools Panel -->
+                        <div class="col-12 mb-4">
+                            <div class="card bg-dark border-secondary">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0">🛠️ Available Tools</h5>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-success btn-sm" onclick="refreshTools()">🔄 Refresh</button>
+                                        <button class="btn btn-outline-info btn-sm" onclick="testConnection()">🔗 Test Connection</button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table table-dark table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Tool Name</th>
+                                                    <th>Category</th>
+                                                    <th>Status</th>
+                                                    <th>Last Used</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="toolsTableBody">
+                                                <tr>
+                                                    <td colspan="5" class="text-center text-muted">Loading tools...</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sessions Panel -->
+                        <div class="col-12 mb-4">
+                            <div class="card bg-dark border-secondary">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0">💬 Active Sessions</h5>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-success btn-sm" onclick="refreshSessions()">🔄 Refresh</button>
+                                        <button class="btn btn-warning btn-sm" onclick="clearOldSessions()">🗑️ Clear Old</button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="list-group list-group-flush bg-transparent" id="sessionsList">
+                                        <div class="list-group-item bg-transparent border-secondary text-muted text-center">
+                                            <small>No active sessions</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Health Panel -->
+                        <div class="col-12 mb-4">
+                            <div class="card bg-dark border-secondary">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0">📊 Health Monitoring</h5>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-success btn-sm" onclick="refreshHealth()">🔄 Refresh</button>
+                                        <button class="btn btn-warning btn-sm" onclick="clearCache()">🗑️ Clear Cache</button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6>Health Metrics</h6>
+                                            <div class="list-group list-group-flush bg-transparent">
+                                                <div class="list-group-item bg-transparent border-secondary d-flex justify-content-between">
+                                                    <span>CPU Usage</span>
+                                                    <span class="text-success" id="cpuUsage">12%</span>
+                                                </div>
+                                                <div class="list-group-item bg-transparent border-secondary d-flex justify-content-between">
+                                                    <span>Memory Usage</span>
+                                                    <span class="text-warning" id="memoryUsage">45%</span>
+                                                </div>
+                                                <div class="list-group-item bg-transparent border-secondary d-flex justify-content-between">
+                                                    <span>Disk Usage</span>
+                                                    <span class="text-info" id="diskUsage">23%</span>
+                                                </div>
+                                                <div class="list-group-item bg-transparent border-secondary d-flex justify-content-between">
+                                                    <span>Network</span>
+                                                    <span class="text-success" id="networkStatus">Active</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6>Recent Logs</h6>
+                                            <div class="list-group list-group-flush bg-transparent" id="recentLogs">
+                                                <div class="list-group-item bg-transparent border-secondary text-muted">
+                                                    <small>No recent logs</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="my-3">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h6>Active Alerts</h6>
+                                            <div class="list-group list-group-flush bg-transparent" id="activeAlerts">
+                                                <div class="list-group-item bg-transparent border-secondary text-muted text-center">
+                                                    <small>No active alerts</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="my-3">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h6>Maintenance Actions</h6>
+                                            <div class="d-flex gap-2">
+                                                <button class="btn btn-warning btn-sm" onclick="restartServer()">🔄 Restart Server</button>
+                                                <button class="btn btn-info btn-sm" onclick="clearCache()">🗑️ Clear Cache</button>
+                                                <button class="btn btn-secondary btn-sm" onclick="backupConfig()">💾 Backup Config</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
 
 

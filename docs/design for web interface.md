@@ -45,7 +45,7 @@ The Settings page now uses a tabbed navigation system to properly separate globa
 - **System Settings**: Base ports, paths, environment variables, `.env` configuration, user management
 - **Install Module**: Setup, upgrades, system health monitoring
 - **Cron Scheduler**: Automated execution scheduling for all modules
-- **Create New Agent**: Add new Prime agents to the system
+- **Create Agent**: Add new Prime agents to the system
 - **Backup/Restore**: System backup and recovery tools
 
 #### Agent Tabs (Per-Prime Configuration)
@@ -730,6 +730,8 @@ Process Management    →  /sanctum/control/run/
 - **Chat Settings Page**: Agent-specific configuration management
 - **SMCP Configurator Page**: MCP service management with tabbed interface
 - **Edit User Functionality**: Complete user editing with modal interface
+- **Backup/Restore Page**: Comprehensive system backup and recovery interface
+- **Create Agent Page**: Complete Prime agent creation and configuration interface
 
 #### 🔄 **In Development**
 - **Process Management**: Integration with centralized run scripts
@@ -796,6 +798,40 @@ Process Management    →  /sanctum/control/run/
 - **User Deletion**: Safe user removal with confirmation dialogs
 - **Enhanced User Management**: Role and status management capabilities
 - **Password Toggle**: Visibility toggle for password fields in edit forms
+- **Backup/Restore System**: Complete backup creation, restoration, and management
+- **Agent Creation Interface**: Comprehensive Prime agent configuration and deployment
+
+#### Create Agent Page Details
+The Create Agent page provides a complete interface for configuring and deploying new Prime agents to the Sanctum system:
+
+**Form Sections:**
+- **Basic Information**: Agent name, display name, description
+- **AI Model Configuration**: Primary/fallback models, temperature, max tokens
+- **System Instructions**: Core behavior definition and additional context
+- **Capabilities & Modules**: Core modules (Core, Broca) and optional modules
+- **Security & Access**: Access levels, API permissions, network restrictions
+- **Deployment Options**: Strategy, resource allocation, monitoring settings
+
+**Features:**
+- **Real-time Preview**: Live agent preview as configuration is entered
+- **Configuration Summary**: Dynamic summary of selected options
+- **Quick Templates**: Pre-built configurations for common use cases
+- **Form Validation**: Comprehensive validation with visual feedback
+- **Progress Simulation**: Realistic agent creation process simulation
+- **Template System**: Assistant, Developer, Analyst, Creative, and Custom templates
+
+**Template Examples:**
+- **General Assistant**: Balanced AI helper for general tasks
+- **Developer Helper**: Specialized for software development with elevated access
+- **Data Analyst**: Focused on data analysis and insights
+- **Creative Writer**: High creativity for content generation
+- **Custom**: Blank template for custom configurations
+
+**Deployment Options:**
+- **Immediate**: Deploy agent immediately after creation
+- **Scheduled**: Schedule deployment for specific time
+- **Manual**: Manual deployment control
+- **Resource Allocation**: Minimal, Standard, Enhanced, High Performance options
 
 #### Code Quality Improvements
 - **Event Handling**: Proper modal event listeners and cleanup
