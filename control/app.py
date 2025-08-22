@@ -65,6 +65,26 @@ def logs_status():
     """Logs & Status interface"""
     return render_template('logs_status.html')
 
+@app.route('/smcp-plugins')
+def smcp_plugins():
+    """SMCP Plugins management interface"""
+    return render_template('smcp_plugins.html')
+
+@app.route('/smcp-tools')
+def smcp_tools():
+    """SMCP Tools management interface"""
+    return render_template('smcp_tools.html')
+
+@app.route('/smcp-sessions')
+def smcp_sessions():
+    """SMCP Sessions management interface"""
+    return render_template('smcp_sessions.html')
+
+@app.route('/smcp-health')
+def smcp_health():
+    """SMCP Health monitoring interface"""
+    return render_template('smcp_health.html')
+
 @app.route('/api/chat', methods=['POST'])
 def chat():
     """Handle chat messages"""
