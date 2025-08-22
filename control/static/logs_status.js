@@ -639,66 +639,10 @@ function showNotification(message, type = 'info') {
     }, 5000);
 }
 
-// Add new plugin (placeholder)
-function addNewPlugin() {
-    showNotification('Add plugin functionality would be implemented here', 'info');
-}
 
-// Test connection (placeholder)
-function testConnection() {
-    showNotification('Connection test would be performed here', 'info');
-}
 
-// Clear cache (placeholder)
-function clearCache() {
-    showNotification('Cache cleared successfully', 'success');
-}
 
-// Restart server (placeholder)
-function restartServer() {
-    if (confirm('Are you sure you want to restart the server? This will cause temporary downtime.')) {
-        showNotification('Server restart initiated', 'warning');
-    }
-}
 
-// Backup config (placeholder)
-function backupConfig() {
-    showNotification('Configuration backup created successfully', 'success');
-}
 
-// Export SMCP config (placeholder)
-function exportSmcpConfig() {
-    showNotification('SMCP configuration exported successfully', 'success');
-}
 
-// Refresh all SMCP (placeholder)
-function refreshAllSmcp() {
-    showNotification('All SMCP components refreshed', 'success');
-}
 
-// Refresh plugins (placeholder)
-function refreshPlugins() {
-    showNotification('Plugins refreshed successfully', 'success');
-}
-
-// Refresh tools (placeholder)
-function refreshTools() {
-    showNotification('Tools refreshed successfully', 'success');
-}
-
-// Refresh sessions (placeholder)
-function refreshSessions() {
-    showNotification('Sessions refreshed successfully', 'success');
-}
-
-// Refresh health (placeholder)
-function refreshHealth() {
-    showNotification('Health metrics refreshed', 'success');
-}
-
-// Clear old sessions (placeholder)
-function clearOldSessions() {
-    if (confirm('Are you sure you want to clear old sessions?')) {
-        showNotification('Old sessions cleared successfully', 'success');
-    }
-}

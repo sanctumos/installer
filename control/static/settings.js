@@ -411,18 +411,6 @@ function updateHealthPanel() {
 }
 
 // Action functions
-function refreshAllSmcp() {
-    console.log('Refreshing all SMCP data...');
-    // Simulate API call
-    setTimeout(() => {
-        updateOverviewPanel();
-        updatePluginsPanel();
-        updateToolsPanel();
-        updateSessionsPanel();
-        updateHealthPanel();
-        showNotification('All SMCP data refreshed successfully', 'success');
-    }, 1000);
-}
 
 function refreshPlugins() {
     console.log('Refreshing plugins...');
@@ -456,41 +444,13 @@ function refreshHealth() {
     }, 500);
 }
 
-function addNewPlugin() {
-    console.log('Adding new plugin...');
-    showNotification('Plugin creation dialog would open here', 'info');
-}
 
-function exportSmcpConfig() {
-    console.log('Exporting SMCP config...');
-    const config = {
-        plugins: smcpData.plugins,
-        tools: smcpData.tools,
-        timestamp: new Date().toISOString()
-    };
-    
-    const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'smcp-config.json';
-    a.click();
-    URL.revokeObjectURL(url);
-    
-    showNotification('SMCP configuration exported successfully', 'success');
-}
 
-function testConnection() {
-    console.log('Testing connection...');
-    showNotification('Connection test completed successfully', 'success');
-}
 
-function clearOldSessions() {
-    console.log('Clearing old sessions...');
-    smcpData.sessions = smcpData.sessions.filter(s => s.status === 'active');
-    updateSessionsPanel();
-    showNotification('Old sessions cleared successfully', 'success');
-}
+
+
+
+
 
 function clearCache() {
     console.log('Clearing cache...');

@@ -764,6 +764,20 @@ article, section, nav, aside {
   margin-bottom: var(--spacing-md);
 }
 
+/* Article */
+article {
+  color: var(--fg);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-md);
+}
+
+/* Navigation */
+nav {
+  color: var(--fg);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-md);
+}
+
 /* Template */
 template {
   color: inherit;
@@ -778,6 +792,36 @@ slot {
 
 /* Script elements */
 script, noscript {
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Style */
+style {
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Head elements */
+title, meta {
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Link and base */
+link, base {
+  color: inherit;
+  line-height: inherit;
+}
+
+/* HTML root */
+html {
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Head */
+head {
   color: inherit;
   line-height: inherit;
 }
