@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMCP Sessions - Sanctum</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    {% set page_title = "SMCP Sessions" %}
+    {% set back_url = "/settings" %}
+    {% set back_text = "Back to Settings" %}
+    {% set page_heading = "SMCP Sessions Management" %}
+    {% set page_description = "Monitor and manage active SMCP sessions and connections" %}
+    
+    {% include 'includes/page_header.html' %}
+
+            <!-- Session Overview -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div class="h4 mb-1 text-success" id="totalSessions">0</div>
+                            <small class="text-muted">Total Sessions</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div class="h4 mb-1 text-primary" id="activeSessions">0</div>
+                            <small class="text-muted">Active Sessions</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div class="h4 mb-1 text-warning" id="idleSessions">0</div>
+                            <small class="text-muted">Idle Sessions</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <div class="h4 mb-1 text-info" id="totalUsers">0</div>
+                            <small class="text-muted">Unique Users</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Sessions -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Active Sessions</h5>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-secondary btn-sm" onclick="refreshSessions()">
+                            🔄 Refresh
+                        </button>
+                        <button class="btn btn-outline-warning btn-sm" onclick="clearIdleSessions()">
+                            🗑️ Clear Idle
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Session ID</th>
+                                    <th>User</th>
+                                    <th>Status</th>
+                                    <th>Last Activity</th>
+                                    <th>Duration</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sessionsTableBody">
+                                <!-- Sessions will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Session History -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Session History</h5>
+                    <div class="d-flex gap-2">
+                        <select class="form-select form-select-sm" id="historyFilter" style="width: auto;">
+                            <option value="all">All Sessions</option>
+                            <option value="active">Active Only</option>
+                            <option value="terminated">Terminated</option>
+                            <option value="error">Error</option>
+                        </select>
+                        <button class="btn btn-outline-info btn-sm" onclick="exportSessionHistory()">
+                            📤 Export
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Session ID</th>
+                                    <th>User</th>
+                                    <th>Status</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th>Duration</th>
+                                    <th>Reason</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                                <!-- History will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connection Statistics -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">Connection Trends</h6>
+                        </div>
+                        <div class="card-body">
+                            <div id="connectionChart" class="chart-placeholder">
+                                <div class="text-center text-muted py-4">
+                                    <div class="h4 mb-2">📈</div>
+                                    <p class="mb-0">Connection trends over time</p>
+                                    <small>Peak: 25 | Average: 12</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">User Activity</h6>
+                        </div>
+                        <div class="card-body">
+                            <div id="userActivityChart" class="chart-placeholder">
+                                <div class="text-center text-muted py-4">
+                                    <div class="h4 mb-2">👥</div>
+                                    <p class="mb-0">User activity distribution</p>
+                                    <small>Most Active: rizzn</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='smcp_sessions.js') }}"></script>
+</body>
+</html>

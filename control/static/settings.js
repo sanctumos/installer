@@ -452,20 +452,11 @@ function refreshHealth() {
 
 
 
-function clearCache() {
-    console.log('Clearing cache...');
-    showNotification('Cache cleared successfully', 'success');
-}
 
-function restartServer() {
-    console.log('Restarting server...');
-    showNotification('Server restart initiated', 'warning');
-}
 
-function backupConfig() {
-    console.log('Backing up configuration...');
-    showNotification('Configuration backup completed successfully', 'success');
-}
+
+
+
 
 function togglePlugin(pluginName) {
     const plugin = smcpData.plugins.find(p => p.name === pluginName);
@@ -477,20 +468,7 @@ function togglePlugin(pluginName) {
     }
 }
 
-function viewPluginConfig(pluginName) {
-    console.log(`Viewing config for plugin: ${pluginName}`);
-    showNotification(`Configuration for ${pluginName} would open here`, 'info');
-}
 
-function testTool(toolName) {
-    console.log(`Testing tool: ${toolName}`);
-    showNotification(`Tool ${toolName} test completed successfully`, 'success');
-}
-
-function viewToolDocs(toolName) {
-    console.log(`Viewing docs for tool: ${toolName}`);
-    showNotification(`Documentation for ${toolName} would open here`, 'info');
-}
 
 function terminateSession(sessionId) {
     smcpData.sessions = smcpData.sessions.filter(s => s.id !== sessionId);

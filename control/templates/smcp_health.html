@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMCP Health - Sanctum</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    {% set page_title = "SMCP Health" %}
+    {% set back_url = "/settings" %}
+    {% set back_text = "Back to Settings" %}
+    {% set page_heading = "SMCP Health Monitoring" %}
+    {% set page_description = "Monitor SMCP system health, performance metrics, and system status" %}
+    
+    {% include 'includes/page_header.html' %}
+
+        <!-- Health Overview -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="h4 mb-1 text-success" id="serverStatus">Online</div>
+                        <small class="text-muted">Server Status</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="h4 mb-1 text-info" id="uptime">0d 0h 15m</div>
+                        <small class="text-muted">Uptime</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="h4 mb-1 text-primary" id="cpuUsage">12%</div>
+                        <small class="text-muted">CPU Usage</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="h4 mb-1 text-warning" id="memoryUsage">45%</div>
+                        <small class="text-muted">Memory Usage</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">System Resources</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">CPU Usage</label>
+                            <div class="progress">
+                                <div class="progress-bar bg-primary" id="cpuProgress" role="progressbar" style="width: 12%"></div>
+                            </div>
+                            <small class="text-muted">12% of 8 cores</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Memory Usage</label>
+                            <div class="progress">
+                                <div class="progress-bar bg-warning" id="memoryProgress" role="progressbar" style="width: 45%"></div>
+                            </div>
+                            <small class="text-muted">3.6GB of 8GB</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Disk Usage</label>
+                            <div class="progress">
+                                <div class="progress-bar bg-success" id="diskProgress" role="progressbar" style="width: 23%"></div>
+                            </div>
+                            <small class="text-muted">46GB of 200GB</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Network Status</label>
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-success me-2">Active</span>
+                                <small class="text-muted">1000 Mbps</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Service Health</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-secondary">
+                                <span>SMCP Core</span>
+                                <span class="badge bg-success">Healthy</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-secondary">
+                                <span>Plugin Manager</span>
+                                <span class="badge bg-success">Healthy</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-secondary">
+                                <span>Tool Registry</span>
+                                <span class="badge bg-success">Healthy</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-secondary">
+                                <span>Session Manager</span>
+                                <span class="badge bg-success">Healthy</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-secondary">
+                                <span>Database</span>
+                                <span class="badge bg-success">Healthy</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Logs -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Recent System Logs</h5>
+                <div class="d-flex gap-2">
+                    <select class="form-select form-select-sm" id="logLevel" style="width: auto;">
+                        <option value="all">All Levels</option>
+                        <option value="info">Info</option>
+                        <option value="warning">Warning</option>
+                        <option value="error">Error</option>
+                    </select>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="refreshLogs()">
+                        🔄 Refresh
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="recentLogs">
+                    <!-- Logs will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Alerts -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Active Alerts</h5>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-success btn-sm" onclick="acknowledgeAllAlerts()">
+                        ✅ Acknowledge All
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="refreshAlerts()">
+                        🔄 Refresh
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="activeAlerts">
+                    <!-- Alerts will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='smcp_health.js') }}"></script>
+</body>
+</html>
