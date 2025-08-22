@@ -7,14 +7,15 @@
 
 </head>
 <body>
+    {% set page_title = "System Settings" %}
+    {% set back_url = "/" %}
+    {% set back_text = "Back to Chat" %}
+    {% set page_heading = "⚙️ System Settings" %}
+    {% set page_description = "Manage system-wide configuration and user accounts" %}
+    
+    {% include 'includes/page_header.html' %}
+    
     <div class="container">
-        <header>
-            <h1>⚙️ System Settings</h1>
-            <nav>
-                <a href="/" class="nav-link">← Back to Chat</a>
-                <a href="/settings" class="nav-link">Settings</a>
-            </nav>
-        </header>
 
         <main>
             <!-- User Management Section -->

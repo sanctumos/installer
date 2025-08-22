@@ -408,88 +408,92 @@
 
                     <div class="row g-4" id="smcpToolsGrid">
                         <!-- Plugins Management -->
-                        <div class="col-lg-4 col-md-6">
-                            <div class="card h-100">
-                                <div class="card-body text-center">
-                                    <div class="mb-3">
-                                        <span class="display-4">🔌</span>
-                                    </div>
-                                    <h5 class="card-title">Plugin Registry</h5>
-                                    <p class="card-text text-muted">Manage SMCP plugins, install new ones, and configure existing plugins</p>
-                                    <a href="/smcp-plugins" class="btn btn-primary">Manage Plugins</a>
+                        <div class="col-lg-4 col-md-6" data-tool-name="plugin registry" data-tool-desc="manage smcp plugins install new ones configure existing plugins">
+                            <div class="tool-card">
+                                <div class="tool-header">
+                                    <span class="tool-emoji">🔌</span>
+                                    <div class="tool-status ok" data-status="Healthy"></div>
+                                </div>
+                                <h3 class="tool-title">Plugin Registry</h3>
+                                <p class="tool-description">Manage SMCP plugins, install new ones, and configure existing plugins</p>
+                                <div class="tool-actions">
+                                    <a href="/smcp-plugins" class="btn btn-primary btn-sm">Manage Plugins</a>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Tools Management -->
-                        <div class="col-lg-4 col-md-6">
-                            <div class="card h-100">
-                                <div class="card-body text-center">
-                                    <div class="mb-3">
-                                        <span class="display-4">🛠️</span>
-                                    </div>
-                                    <h5 class="card-title">Available Tools</h5>
-                                    <p class="card-text text-muted">Configure and manage available SMCP tools and their capabilities</p>
-                                    <a href="/smcp-tools" class="btn btn-primary">Manage Tools</a>
+                        <div class="col-lg-4 col-md-6" data-tool-name="available tools" data-tool-desc="configure and manage available smcp tools and their capabilities">
+                            <div class="tool-card">
+                                <div class="tool-header">
+                                    <span class="tool-emoji">🛠️</span>
+                                    <div class="tool-status ok" data-status="Healthy"></div>
+                                </div>
+                                <h3 class="tool-title">Available Tools</h3>
+                                <p class="tool-description">Configure and manage available SMCP tools and their capabilities</p>
+                                <div class="tool-actions">
+                                    <a href="/smcp-tools" class="btn btn-primary btn-sm">Manage Tools</a>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Sessions Management -->
-                        <div class="col-lg-4 col-md-6">
-                            <div class="card h-100">
-                                <div class="card-body text-center">
-                                    <div class="mb-3">
-                                        <span class="display-4">💬</span>
-                                    </div>
-                                    <h5 class="card-title">Active Sessions</h5>
-                                    <p class="card-text text-muted">Monitor and manage active SMCP sessions and connections</p>
-                                    <a href="/smcp-sessions" class="btn btn-primary">Manage Sessions</a>
+                        <div class="col-lg-4 col-md-6" data-tool-name="active sessions" data-tool-desc="monitor and manage active smcp sessions and connections">
+                            <div class="tool-card">
+                                <div class="tool-header">
+                                    <span class="tool-emoji">💬</span>
+                                    <div class="tool-status ok" data-status="Healthy"></div>
+                                </div>
+                                <h3 class="tool-title">Active Sessions</h3>
+                                <p class="tool-description">Monitor and manage active SMCP sessions and connections</p>
+                                <div class="tool-actions">
+                                    <a href="/smcp-sessions" class="btn btn-primary btn-sm">Manage Sessions</a>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Health Monitoring -->
-                        <div class="col-lg-4 col-md-6">
-                            <div class="card h-100">
-                                <div class="card-body text-center">
-                                    <div class="mb-3">
-                                        <span class="display-4">📊</span>
-                                    </div>
-                                    <h5 class="card-title">Health Monitoring</h5>
-                                    <p class="card-text text-muted">Monitor SMCP system health, performance metrics, and system status</p>
-                                    <a href="/smcp-health" class="btn btn-primary">View Health</a>
+                        <div class="col-lg-4 col-md-6" data-tool-name="health monitoring" data-tool-desc="monitor smcp system health performance metrics and system status">
+                            <div class="tool-card">
+                                <div class="tool-header">
+                                    <span class="tool-emoji">📊</span>
+                                    <div class="tool-status ok" data-status="Healthy"></div>
+                                </div>
+                                <h3 class="tool-title">Health Monitoring</h3>
+                                <p class="tool-description">Monitor SMCP system health, performance metrics, and system status</p>
+                                <div class="tool-actions">
+                                    <a href="/smcp-health" class="btn btn-primary btn-sm">View Health</a>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Quick Actions -->
-                        <div class="col-lg-4 col-md-6">
-                            <div class="card h-100">
-                                <div class="card-body text-center">
-                                    <div class="mb-3">
-                                        <span class="display-4">⚡</span>
-                                    </div>
-                                    <h5 class="card-title">Quick Actions</h5>
-                                    <p class="card-text text-muted">Common SMCP operations and system maintenance tasks</p>
-                                    <div class="d-grid gap-2">
-                                        <button class="btn btn-success btn-sm" onclick="refreshAllSmcp()">🔄 Refresh All</button>
-                                        <button class="btn btn-outline-info btn-sm" onclick="exportSmcpConfig()">📤 Export Config</button>
-                                        <button class="btn btn-warning btn-sm" onclick="clearSmcpCache()">🗑️ Clear Cache</button>
-                                    </div>
+                        <div class="col-lg-4 col-md-6" data-tool-name="quick actions" data-tool-desc="common smcp operations and system maintenance tasks">
+                            <div class="tool-card">
+                                <div class="tool-header">
+                                    <span class="tool-emoji">⚡</span>
+                                    <div class="tool-status ok" data-status="Ready"></div>
+                                </div>
+                                <h3 class="tool-title">Quick Actions</h3>
+                                <p class="tool-description">Common SMCP operations and system maintenance tasks</p>
+                                <div class="tool-actions">
+                                    <button class="btn btn-success btn-sm" onclick="refreshAllSmcp()">🔄 Refresh All</button>
+                                    <button class="btn btn-outline-info btn-sm" onclick="exportSmcpConfig()">📤 Export Config</button>
+                                    <button class="btn btn-warning btn-sm" onclick="clearSmcpCache()">🗑️ Clear Cache</button>
                                 </div>
                             </div>
                         </div>
 
                         <!-- System Info -->
-                        <div class="col-lg-4 col-md-6">
-                            <div class="card h-100">
-                                <div class="card-body text-center">
-                                    <div class="mb-3">
-                                        <span class="display-4">ℹ️</span>
-                                    </div>
-                                    <h5 class="card-title">System Information</h5>
-                                    <p class="card-text text-muted">View SMCP version, status, and system configuration details</p>
+                        <div class="col-lg-4 col-md-6" data-tool-name="system information" data-tool-desc="view smcp version status and system configuration details">
+                            <div class="tool-card">
+                                <div class="tool-header">
+                                    <span class="tool-emoji">ℹ️</span>
+                                    <div class="tool-status ok" data-status="Online"></div>
+                                </div>
+                                <h3 class="tool-title">System Information</h3>
+                                <p class="tool-description">View SMCP version, status, and system configuration details</p>
+                                <div class="tool-actions">
                                     <div class="list-group list-group-flush">
                                         <div class="list-group-item d-flex justify-content-between">
                                             <span>Version</span>

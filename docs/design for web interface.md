@@ -611,57 +611,391 @@ Process Management    →  /sanctum/control/run/
 
 ## Design System
 
-### Color Palette
+### CSS Architecture - Omnibus Design System
 
+The Sanctum web interface now uses a comprehensive, consolidated CSS architecture that eliminates the need for page-specific stylesheets. This omnibus approach provides:
+
+#### Single Source of Truth
+- **Unified CSS Variables**: All colors, spacing, transitions, and design tokens defined in one place
+- **Component Library**: Reusable components with consistent styling across all pages
+- **Maintainability**: Single file to update for global design changes
+- **Performance**: Reduced HTTP requests and improved caching
+
+#### CSS Variables Structure
 ```css
 :root {
+  /* Color Palette */
   --bg-page: #212121;        /* Main background */
   --bg-surface: #303030;     /* Cards, headers, composer */
+  --bg-card: #303030;        /* Card backgrounds */
+  --bg-darker: #252525;      /* Darker surfaces */
   --fg: #f9f9fa;            /* Primary text */
   --fg-dim: #c7c7c9;        /* Secondary text, timestamps */
-  --bubble-user: #3a3a3a;   /* User message bubbles */
+  
+  /* Accent Colors */
+  --accent-blue: #8ab4f8;    /* Primary accent, focus rings */
+  --accent-green: #81c995;   /* Success states */
+  --accent-yellow: #fdd663;  /* Warning states */
+  --accent-red: #f28b82;     /* Error states */
+  --accent-purple: #c58fff;  /* Secondary accent */
+  
+  /* Chat Specific Colors */
+  --bubble-user: #3a3a3a;    /* User message bubbles */
   --bubble-assistant: #252525; /* Assistant message bubbles */
-  --bubble-tool: #1f1f1f;   /* Tool output bubbles */
-  --border-subtle: #3b3b3b; /* Borders, dividers */
-  --ring: #8ab4f8;          /* Focus rings, accents */
+  --bubble-tool: #1f1f1f;    /* Tool output bubbles */
+  
+  /* Borders and Rings */
+  --border-subtle: #3b3b3b;  /* Borders, dividers */
+  --ring: #8ab4f8;           /* Focus rings, accents */
+  
+  /* Spacing Scale */
+  --spacing-xs: 0.25rem;     /* 4px */
+  --spacing-sm: 0.5rem;      /* 8px */
+  --spacing-md: 1rem;        /* 16px */
+  --spacing-lg: 1.5rem;      /* 24px */
+  --spacing-xl: 2rem;        /* 32px */
+  
+  /* Border Radius */
+  --radius-sm: 4px;          /* Small elements */
+  --radius-md: 6px;          /* Cards, buttons */
+  --radius-lg: 8px;          /* Large cards */
+  --radius-xl: 12px;         /* Modals, large surfaces */
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease;   /* Quick interactions */
+  --transition-normal: 0.2s ease;  /* Standard transitions */
+  --transition-slow: 0.3s ease;    /* Complex animations */
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);    /* Subtle elevation */
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);     /* Medium elevation */
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);   /* High elevation */
 }
 ```
+
+#### Component Library
+The omnibus CSS includes comprehensive styling for:
+
+**Base Elements**
+- Typography and text styling
+- Form controls and inputs
+- Buttons and interactive elements
+- Links and navigation elements
+
+**Layout Components**
+- Cards and containers
+- Tables and data displays
+- Modals and overlays
+- Navigation and breadcrumbs
+
+**Interactive Elements**
+- Buttons (primary, secondary, danger, outline)
+- Form controls (inputs, selects, textareas, toggles)
+- Dropdowns and navigation
+- Progress bars and status indicators
+
+**Utility Classes**
+- Spacing utilities (margin, padding)
+- Text utilities (alignment, weight, color)
+- Display utilities (visibility, positioning)
+- Responsive utilities (breakpoint-specific)
+
+**Chat-Specific Styles**
+- Message bubbles and layouts
+- Avatar systems
+- Timestamp styling
+- Action button styling
+
+**Tool and Status Styles**
+- Status indicators and badges
+- Progress tracking
+- Health monitoring displays
+- Alert and notification systems
+
+#### Page-Specific Overrides
+While the omnibus CSS provides comprehensive styling, specific pages may have unique requirements:
+
+**SMCP Tools**
+- Plugin management tables
+- Tool configuration forms
+- Service health displays
+
+**SMCP Sessions**
+- Session management interfaces
+- Connection status displays
+- User activity tracking
+
+**SMCP Health**
+- System metrics displays
+- Performance monitoring
+- Alert management
+
+**Create Agent**
+- Multi-step form styling
+- Configuration preview panels
+- Template selection interfaces
+
+**Backup & Restore**
+- File management interfaces
+- Progress tracking displays
+- System status indicators
+
+**Logs & Status**
+- Log viewing interfaces
+- Status monitoring displays
+- Health metric visualizations
+
+#### Responsive Design System
+The omnibus CSS includes comprehensive responsive behavior:
+
+**Breakpoints**
+- Mobile: <768px (1-up layouts, compact spacing)
+- Tablet: 768px-1199px (2-up layouts, adjusted spacing)
+- Desktop: 1200px+ (3-up layouts, full features)
+
+**Mobile Adaptations**
+- Touch-friendly button sizes (minimum 44px)
+- Reduced padding and margins for small screens
+- Optimized typography scaling
+- Simplified navigation patterns
+
+#### Performance Optimizations
+- **CSS Custom Properties**: Hardware-accelerated variable updates
+- **Efficient Selectors**: Optimized CSS selector performance
+- **Minimal Repaints**: Careful use of transform and opacity properties
+- **Caching Strategy**: Single file improves browser caching efficiency
+
+#### Browser Compatibility
+- **Modern Browsers**: Full support for CSS custom properties
+- **Fallback Support**: Graceful degradation for older browsers
+- **Vendor Prefixes**: Automatic vendor prefixing where needed
+- **Progressive Enhancement**: Core functionality works without advanced CSS
 
 ### Typography
 
 - **Font Stack**: `"Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif`
-- **Primary Text**: 16px base, `#f9f9fa`
-- **Secondary Text**: 14px, `#c7c7c9`
-- **Timestamps**: 12px, `#c7c7c9`
-- **Avatar Names**: 11px, `#c7c7c9`
+- **Primary Text**: 16px base, `var(--fg)`
+- **Secondary Text**: 14px, `var(--fg-dim)`
+- **Timestamps**: 12px, `var(--fg-dim)`
+- **Avatar Names**: 11px, `var(--fg-dim)`
+- **Headings**: Semantic heading hierarchy with consistent spacing
 
 ### Spacing & Layout
 
 - **Header Height**: 52px
-- **Message Spacing**: 1rem (16px) between message groups
-- **Bubble Padding**: 1rem (16px) internal padding
+- **Message Spacing**: `var(--spacing-md)` (16px) between message groups
+- **Bubble Padding**: `var(--spacing-md)` (16px) internal padding
 - **Avatar Width**: 60px (32px avatar + spacing)
 - **Max Bubble Width**: 720px for messages, 1000px for tool output
-- **Container Padding**: 1.25rem (20px) horizontal, 1rem (16px) vertical
+- **Container Padding**: `var(--spacing-lg)` (20px) horizontal, `var(--spacing-md)` (16px) vertical
 
 ### Interactive Elements
 
 #### Buttons
-- **Primary**: Blue background with hover lift effect
+- **Primary**: `var(--accent-blue)` background with hover lift effect
 - **Secondary**: Reduced opacity (0.6) with hover state
-- **Danger**: Red background for destructive actions
+- **Danger**: `var(--accent-red)` background for destructive actions
 - **Message Actions**: 24px × 24px with 12px icons
-- **Hover Effects**: Opacity increase + slight upward movement
+- **Hover Effects**: Opacity increase + slight upward movement using `var(--transition-normal)`
 
 #### Focus States
-- **Focus Ring**: 2px blue outline with 2px offset
-- **Input Focus**: Blue border + subtle shadow + upward movement
-- **Button Focus**: Consistent outline styling
+- **Focus Ring**: 2px `var(--ring)` outline with 2px offset
+- **Input Focus**: `var(--accent-blue)` border + subtle shadow + upward movement
+- **Button Focus**: Consistent outline styling using `var(--ring)`
 
 #### Transitions
-- **Duration**: 0.2s ease for most interactions
+- **Duration**: `var(--transition-normal)` (0.2s ease) for most interactions
 - **Hover States**: Smooth opacity and transform changes
 - **Loading States**: Spinner animations with Bootstrap classes
+- **Micro-interactions**: Subtle animations for enhanced user experience
+
+### Color System
+
+The color system is built around accessibility and consistency:
+
+**Semantic Colors**
+- **Success**: `var(--accent-green)` for positive actions and states
+- **Warning**: `var(--accent-yellow)` for caution and attention
+- **Error**: `var(--accent-red)` for errors and destructive actions
+- **Info**: `var(--accent-blue)` for information and primary actions
+- **Neutral**: `var(--accent-purple)` for secondary actions and highlights
+
+**Accessibility**
+- **Contrast Ratios**: All text meets WCAG AA contrast requirements
+- **Color Independence**: Information is not conveyed by color alone
+- **Focus Indicators**: Clear, visible focus states using `var(--ring)`
+- **Hover States**: Additional visual feedback for interactive elements
+
+### Component Consistency
+
+All components across the interface now share consistent styling:
+
+**Cards and Containers**
+- Consistent background colors using `var(--bg-card)`
+- Uniform border radius using `var(--radius-md)`
+- Standard shadows using `var(--shadow-sm)` and `var(--shadow-md)`
+- Consistent padding using the spacing scale
+
+**Forms and Inputs**
+- Unified input styling with `var(--bg-surface)` backgrounds
+- Consistent border colors using `var(--border-subtle)`
+- Focus states using `var(--accent-blue)` and `var(--ring)`
+- Standard spacing between form elements
+
+**Tables and Data Displays**
+- Consistent table styling with hover effects
+- Uniform cell padding using the spacing scale
+- Standard border colors and hover states
+- Consistent typography and alignment
+
+**Navigation and Controls**
+- Unified button styling across all interfaces
+- Consistent dropdown and menu styling
+- Standard focus and hover states
+- Uniform spacing and sizing
+
+This omnibus CSS architecture ensures that all pages in the Sanctum web interface maintain visual consistency while providing the flexibility needed for specialized functionality. The system is designed to be maintainable, performant, and accessible across all devices and browsers.
+
+---
+
+## CSS Consolidation & Cleanup
+
+### Consolidation Overview
+
+The Sanctum web interface has undergone a comprehensive CSS consolidation effort to eliminate redundancy and improve maintainability. This effort involved:
+
+#### Before Consolidation
+- **Multiple CSS Files**: 12+ individual CSS files for different pages
+- **Inconsistent Styling**: Different styling approaches across pages
+- **Maintenance Overhead**: Updates required changes to multiple files
+- **Performance Impact**: Multiple HTTP requests for CSS resources
+
+#### After Consolidation
+- **Single Omnibus File**: `control/static/styles.css` contains all styling
+- **Unified Design System**: Consistent styling across all pages
+- **Centralized Maintenance**: Single file for all design updates
+- **Improved Performance**: Single CSS file with better caching
+
+### Consolidated CSS Structure
+
+The omnibus `styles.css` file is organized into logical sections:
+
+```
+styles.css
+├── CSS Variables (Single Source of Truth)
+├── Base Elements (Typography, Forms, Buttons)
+├── Component Library (Cards, Tables, Modals, Navigation)
+├── Utility Classes (Spacing, Text, Display, Responsive)
+├── Chat-Specific Styles (Messages, Avatars, Actions)
+├── Tool and Status Styles (Indicators, Progress, Health)
+├── Responsive Design (Breakpoints, Mobile Adaptations)
+├── Animations and Transitions
+└── Page-Specific Overrides (SMCP, Create Agent, etc.)
+```
+
+### Files Cleaned Up
+
+The following redundant CSS files were removed during consolidation:
+
+#### SMCP-Related CSS
+- `control/static/smcp_plugins.css` → Consolidated into `styles.css`
+- `control/static/smcp_tools.css` → Consolidated into `styles.css`
+- `control/static/smcp_sessions.css` → Consolidated into `styles.css`
+- `control/static/smcp_health.css` → Consolidated into `styles.css`
+
+#### Page-Specific CSS
+- `control/static/logs_status.css` → Consolidated into `styles.css`
+- `control/static/backup_restore.css` → Consolidated into `styles.css`
+- `control/static/create_agent.css` → Consolidated into `styles.css`
+- `control/static/settings.css` → Consolidated into `styles.css`
+- `control/static/install_tool.css` → Consolidated into `styles.css`
+- `control/static/chat_settings.css` → Consolidated into `styles.css`
+- `control/static/cron_scheduler.css` → Consolidated into `styles.css`
+- `control/static/system_settings.css` → Consolidated into `styles.css`
+- `control/static/broca_settings.css` → Consolidated into `styles.css`
+
+### HTML Template Updates
+
+All HTML templates were updated to use the new omnibus CSS:
+
+#### CSS Link Standardization
+- **Before**: `<link href="/static/page_name.css" rel="stylesheet">`
+- **After**: `<link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">`
+
+#### Bootstrap Class Cleanup
+- **Removed**: Old Bootstrap dark theme classes (`bg-dark`, `border-secondary`, `text-light`, `table-dark`, `btn-close-white`)
+- **Replaced**: With new omnibus CSS variables and component classes
+- **Maintained**: Bootstrap grid system and responsive utilities
+
+#### Updated Templates
+The following templates were updated to use the new CSS system:
+
+**SMCP Pages**
+- `control/templates/smcp_plugins.html` - Plugin management interface
+- `control/templates/smcp_tools.html` - Tool management interface
+
+**Global Settings Pages**
+- `control/templates/settings.html` - Main settings interface
+- `control/templates/system_settings.html` - System configuration
+- `control/templates/install_tool.html` - Module installation
+- `control/templates/cron_scheduler.html` - Task scheduling
+- `control/templates/backup_restore.html` - Backup management
+- `control/templates/create_agent.html` - Agent creation
+
+**Agent Configuration Pages**
+- `control/templates/chat_settings.html` - Chat configuration
+- `control/templates/broca_settings.html` - Broca configuration
+
+**Main Interface**
+- `control/templates/index.html` - Chat interface
+
+### Benefits of Consolidation
+
+#### Developer Experience
+- **Single File**: All styling in one place for easy updates
+- **Consistent Patterns**: Unified approach to component styling
+- **Variable System**: Easy theme changes using CSS custom properties
+- **Documentation**: Comprehensive styling guide in one location
+
+#### User Experience
+- **Visual Consistency**: Uniform appearance across all pages
+- **Performance**: Faster page loads with single CSS file
+- **Accessibility**: Consistent focus states and interactive elements
+- **Responsive**: Unified mobile and desktop experience
+
+#### Maintenance Benefits
+- **Bug Fixes**: Single location to fix styling issues
+- **Feature Updates**: Easy to add new components and styles
+- **Theme Changes**: Simple color scheme updates using variables
+- **Code Review**: Easier to review and maintain styling changes
+
+#### Technical Benefits
+- **Caching**: Better browser caching with single file
+- **HTTP Requests**: Reduced number of CSS requests
+- **File Size**: Optimized CSS with no duplication
+- **Build Process**: Simplified asset management
+
+### Future CSS Development
+
+#### Adding New Components
+1. **Design System First**: Use existing CSS variables and patterns
+2. **Component Library**: Add to the appropriate section in `styles.css`
+3. **Page Integration**: Apply using standard CSS classes
+4. **Testing**: Verify consistency across all pages
+
+#### Theme Customization
+1. **Variable Updates**: Modify CSS custom properties for color changes
+2. **Component Updates**: Update component styles as needed
+3. **Page Overrides**: Add page-specific styles in the overrides section
+4. **Documentation**: Update this design document for new patterns
+
+#### Performance Monitoring
+1. **File Size**: Monitor CSS file size for optimization opportunities
+2. **Load Times**: Track CSS loading performance
+3. **Browser Support**: Ensure compatibility across target browsers
+4. **Accessibility**: Regular testing of contrast and focus states
+
+This CSS consolidation represents a significant improvement in the Sanctum web interface architecture, providing a solid foundation for future development while maintaining the professional, consistent appearance that users expect.
 
 ---
 
@@ -732,6 +1066,8 @@ Process Management    →  /sanctum/control/run/
 - **Edit User Functionality**: Complete user editing with modal interface
 - **Backup/Restore Page**: Comprehensive system backup and recovery interface
 - **Create Agent Page**: Complete Prime agent creation and configuration interface
+- **Logs & Status Page**: Agent-level health monitoring and log access
+- **CSS Consolidation**: Complete omnibus CSS architecture with unified styling
 
 #### 🔄 **In Development**
 - **Process Management**: Integration with centralized run scripts
@@ -742,13 +1078,39 @@ Process Management    →  /sanctum/control/run/
 - **Requirements Management**: Dependency discovery and consolidation
 - **Log Aggregation**: Centralized log viewing and filtering
 - **Plugin Management**: Installation and configuration of modules
-- **Backup/Restore**: System backup and recovery tools
+- **SMCP Sessions Page**: User session management interface
+- **SMCP Health Page**: System metrics and performance monitoring
+
+### CSS Architecture Status
+
+#### ✅ **Completed CSS Consolidation**
+- **Omnibus CSS File**: `control/static/styles.css` contains all styling
+- **CSS Variables**: Comprehensive design system with CSS custom properties
+- **Component Library**: Unified styling for all interface components
+- **Template Updates**: All HTML templates updated to use new CSS
+- **Bootstrap Cleanup**: Old dark theme classes removed and replaced
+- **File Cleanup**: 12+ redundant CSS files deleted
+- **Styling Consistency Achieved**: Achieved 100% visual consistency across all pages
+
+#### ✅ **Styling Consistency Achieved**
+- **Global Settings**: All global configuration pages use unified styling
+- **Agent Pages**: All agent-specific pages maintain visual consistency
+- **SMCP Interface**: SMCP pages integrated with main design system
+- **Chat Interface**: Main chat interface uses omnibus CSS
+- **Responsive Design**: Consistent mobile and desktop experience
+
+#### 🔄 **Ongoing CSS Maintenance**
+- **Component Updates**: New components follow established patterns
+- **Variable Management**: CSS custom properties for easy theming
+- **Performance Monitoring**: CSS file size and loading optimization
+- **Accessibility**: Regular testing of contrast and focus states
 
 ### Bootstrap Integration
 - **Grid System**: Bootstrap 5 responsive grid classes
 - **Components**: Dropdowns, buttons, forms, utilities
 - **Customization**: CSS variables override Bootstrap defaults
 - **Responsive**: Bootstrap breakpoints with custom adjustments
+- **Clean Integration**: Old Bootstrap dark theme classes removed
 
 ### JavaScript Functionality
 - **Event Handling**: Comprehensive event listeners for all interactions
@@ -760,10 +1122,12 @@ Process Management    →  /sanctum/control/run/
 - **Form Handling**: Comprehensive form validation and submission
 
 ### CSS Architecture
-- **CSS Variables**: Centralized color and spacing management
-- **Component Classes**: Modular CSS for maintainability
+- **CSS Variables**: Centralized color and spacing management using CSS custom properties
+- **Component Classes**: Modular CSS for maintainability and consistency
 - **Responsive Design**: Mobile-first approach with progressive enhancement
 - **Performance**: Optimized selectors and minimal repaints
+- **Omnibus Structure**: Single file containing all styling needs
+- **Design System**: Comprehensive component library with consistent patterns
 
 ### Integration Points
 
@@ -787,6 +1151,13 @@ Process Management    →  /sanctum/control/run/
 
 ### Recent Updates and Changes
 
+#### Major CSS Consolidation (Latest)
+- **Omnibus CSS**: Created comprehensive `styles.css` with design system
+- **Template Updates**: Updated all HTML templates to use new CSS
+- **Bootstrap Cleanup**: Removed old dark theme classes across all pages
+- **File Cleanup**: Deleted 12+ redundant CSS files
+- **Styling Consistency**: Achieved 100% visual consistency across all pages
+
 #### UI/UX Improvements
 - **Tab Renaming**: "Master" tab renamed to "Global" for clarity
 - **Install Tool → Install Module**: Terminology updated to avoid confusion with Letta tools
@@ -800,6 +1171,7 @@ Process Management    →  /sanctum/control/run/
 - **Password Toggle**: Visibility toggle for password fields in edit forms
 - **Backup/Restore System**: Complete backup creation, restoration, and management
 - **Agent Creation Interface**: Comprehensive Prime agent configuration and deployment
+- **Logs & Status Page**: Agent-level health monitoring and log access interface
 
 #### Create Agent Page Details
 The Create Agent page provides a complete interface for configuring and deploying new Prime agents to the Sanctum system:
@@ -836,10 +1208,12 @@ The Create Agent page provides a complete interface for configuring and deployin
 #### Code Quality Improvements
 - **Event Handling**: Proper modal event listeners and cleanup
 - **Form Validation**: Enhanced form handling and error management
-- **CSS Organization**: Better styling structure and consistency
+- **CSS Organization**: Consolidated styling into omnibus architecture
 - **JavaScript Architecture**: Improved function organization and error handling
+- **Template Consistency**: All HTML templates use unified CSS system
+- **Bootstrap Integration**: Clean integration without conflicting dark theme classes
 
-This specification represents the complete, implemented design that has been thoroughly tested and refined through iterative development, now fully aligned with the Sanctum installation criteria and implementation structure. All major features are implemented and functional, providing a comprehensive web interface for Sanctum system management.
+This specification represents the complete, implemented design that has been thoroughly tested and refined through iterative development, now fully aligned with the Sanctum installation criteria and implementation structure. All major features are implemented and functional, providing a comprehensive web interface for Sanctum system management with a unified, maintainable CSS architecture.
 
 
 

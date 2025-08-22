@@ -9,21 +9,15 @@
     <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
 </head>
 <body>
+    {% set page_title = "Broca Settings" %}
+    {% set back_url = "/settings" %}
+    {% set back_text = "Back to Settings" %}
+    {% set page_heading = "🛰️ Broca Settings (Per-Agent)" %}
+    {% set page_description = "Configure Broca message processing and plugin management" %}
+    
+    {% include 'includes/page_header.html' %}
+    
     <div class="container-fluid">
-        <!-- Header -->
-        <header class="d-flex align-items-center justify-content-between p-3 border-bottom">
-            <div class="d-flex align-items-center gap-3">
-                <a href="/settings" class="btn btn-outline-secondary btn-sm">
-                    ← Back to Settings
-                </a>
-                <h1 class="h4 mb-0">🛰️ Broca Settings (Per-Agent)</h1>
-                <span class="badge bg-success">v0.10.0</span>
-            </div>
-            <div class="d-flex align-items-center gap-2">
-                <span class="text-muted small">Status:</span>
-                <span class="badge bg-success">● Online</span>
-            </div>
-        </header>
 
         <!-- Navigation Tabs -->
         <nav class="nav nav-tabs mt-3 px-3">

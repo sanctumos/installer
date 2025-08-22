@@ -903,16 +903,48 @@ footer form {
   margin-bottom: var(--spacing-sm);
 }
 
-.tool-chip {
-  background: var(--bubble-tool);
-  color: var(--fg-dim);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--radius-xl);
-  font-size: 0.65rem;
+.tool-emoji {
+  font-size: 2rem;
+  margin-right: var(--spacing-sm);
+}
+
+.tool-status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-left: auto;
+}
+
+.tool-status.ok {
+  background-color: var(--accent-green);
+}
+
+.tool-status.degraded {
+  background-color: var(--accent-yellow);
+}
+
+.tool-status.error {
+  background-color: var(--accent-red);
+}
+
+.tool-title {
+  font-size: 1.1rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border: 1px solid var(--border-subtle);
+  color: var(--fg);
+  margin-bottom: var(--spacing-sm);
+}
+
+.tool-description {
+  color: var(--fg-dim);
+  font-size: 0.875rem;
+  margin-bottom: var(--spacing-md);
+  line-height: 1.4;
+}
+
+.tool-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
 }
 
 /* Jump to bottom button */
