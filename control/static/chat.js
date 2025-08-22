@@ -24,12 +24,15 @@ document.addEventListener('DOMContentLoaded', function() {
     if (form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+            console.log('Form submitted');
             const message = textarea.value.trim();
+            console.log('Message:', message);
             if (message) {
                 addUserMessage(message);
                 textarea.value = '';
                 textarea.style.height = 'auto';
                 
+                console.log('Sending message to API...');
                 // Send message to Flask API
                 fetch('/api/chat', {
                     method: 'POST',
@@ -38,8 +41,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     body: JSON.stringify({ message: message })
                 })
-                .then(response => response.json())
+                .then(response => {
+                    console.log('API response status:', response.status);
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('API response data:', data);
                     if (data.error) {
                         addAssistantMessage("Error: " + data.error);
                     } else {
@@ -56,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add user message to transcript
     function addUserMessage(text) {
+        console.log('Adding user message:', text);
         const messageDiv = document.createElement('div');
         messageDiv.className = 'd-flex justify-content-end mb-3';
         const timestamp = getCurrentTimestamp();
@@ -95,6 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add assistant message to transcript
     function addAssistantMessage(text) {
+        console.log('Adding assistant message:', text);
         const messageDiv = document.createElement('div');
         messageDiv.className = 'd-flex mb-3';
         const timestamp = getCurrentTimestamp();

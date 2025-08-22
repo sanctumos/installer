@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
 // Global state
 let currentSettings = {};
 let plugins = [];
-let agents = [];
 let queueItems = [];
 let users = [];
 
@@ -14,7 +13,6 @@ let users = [];
 function initializeBrocaSettings() {
     loadCoreSettings();
     loadPlugins();
-    loadAgents();
     loadQueue();
     loadUsers();
     setupEventListeners();
@@ -44,9 +42,6 @@ function handleTabSwitch(event) {
     switch(targetId) {
         case '#plugins':
             loadPlugins();
-            break;
-        case '#agents':
-            loadAgents();
             break;
         case '#queue':
             loadQueue();
@@ -322,190 +317,7 @@ function viewPluginConfig(pluginName) {
     }
 }
 
-// ============================================================================
-// MULTI-AGENT MANAGEMENT
-// ============================================================================
 
-async function loadAgents() {
-    try {
-        // Mock data based on actual Broca-2 multi-agent architecture
-        agents = [
-            {
-                id: '721679f6-c8af-4e01-8677-dc042dc80368',
-                name: 'Athena',
-                status: 'running',
-                message_mode: 'live',
-                plugins: ['telegram', 'cli_test'],
-                database: 'sanctum.db'
-            },
-            {
-                id: '9a2b3c4d-5e6f-7890-abcd-ef1234567890',
-                name: 'Monday',
-                status: 'running',
-                message_mode: 'echo',
-                plugins: ['telegram'],
-                database: 'sanctum.db'
-            }
-        ];
-        
-        populateAgentsTable();
-        updateAgentCount();
-        
-    } catch (error) {
-        showNotification('Failed to load agents', 'error');
-        console.error('Error loading agents:', error);
-    }
-}
-
-function populateAgentsTable() {
-    const tbody = document.getElementById('agentsTableBody');
-    if (!tbody) return;
-    
-    tbody.innerHTML = '';
-    
-    agents.forEach(agent => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td><code class="text-truncate">${agent.id}</code></td>
-            <td><strong>${agent.name}</strong></td>
-            <td>
-                <span class="status-indicator status-online"></span>
-                <span class="badge bg-success">${agent.status}</span>
-            </td>
-            <td><span class="badge bg-primary">${agent.message_mode}</span></td>
-            <td>${agent.plugins.join(', ')}</td>
-            <td><code>${agent.database}</code></td>
-            <td>
-                <div class="btn-group btn-group-sm">
-                    <button class="btn btn-outline-info" onclick="viewAgentConfig('${agent.id}')">
-                        ⚙️ Config
-                    </button>
-                    <button class="btn btn-outline-warning" onclick="stopAgent('${agent.id}')" ${agent.status !== 'running' ? 'disabled' : ''}>
-                        ⏸️ Stop
-                    </button>
-                    <button class="btn btn-outline-success" onclick="startAgent('${agent.id}')" ${agent.status === 'running' ? 'disabled' : ''}>
-                        ▶️ Start
-                    </button>
-                    <button class="btn btn-outline-danger" onclick="deleteAgent('${agent.id}')">
-                        🗑️ Delete
-                    </button>
-                </div>
-            </td>
-        `;
-        tbody.appendChild(row);
-    });
-}
-
-function updateAgentCount() {
-    const runningCount = agents.filter(a => a.status === 'running').length;
-    document.getElementById('agentCount').textContent = `${runningCount} Instances`;
-}
-
-function refreshAgents() {
-    loadAgents();
-    showNotification('Agents refreshed', 'success');
-}
-
-function createNewAgent() {
-    const modal = new bootstrap.Modal(document.getElementById('createAgentModal'));
-    modal.show();
-}
-
-function submitCreateAgent() {
-    const id = document.getElementById('agentId').value;
-    const name = document.getElementById('agentName').value;
-    const messageMode = document.getElementById('agentMessageMode').value;
-    
-    if (!id || !name) {
-        showNotification('Please fill in all required fields', 'warning');
-        return;
-    }
-    
-    // In a real implementation, this would create the agent directory structure
-    const newAgent = {
-        id: id,
-        name: name,
-        status: 'stopped',
-        message_mode: messageMode,
-        plugins: ['telegram'],
-        database: 'sanctum.db'
-    };
-    
-    agents.push(newAgent);
-    populateAgentsTable();
-    updateAgentCount();
-    
-    // Close modal
-    const modal = bootstrap.Modal.getInstance(document.getElementById('createAgentModal'));
-    modal.hide();
-    
-    // Clear form
-    document.getElementById('createAgentForm').reset();
-    
-    showNotification(`Agent ${name} created successfully`, 'success');
-    
-    // Simulate CLI command execution
-    console.log(`Creating agent instance: ${id}`);
-    console.log(`mkdir -p agent-${id}`);
-    console.log(`cp .env.example agent-${id}/.env`);
-    console.log(`cp settings.json agent-${id}/settings.json`);
-}
-
-function startAgent(agentId) {
-    const agent = agents.find(a => a.id === agentId);
-    if (agent) {
-        agent.status = 'running';
-        populateAgentsTable();
-        updateAgentCount();
-        showNotification(`Agent ${agent.name} started`, 'success');
-        
-        // Simulate CLI command execution
-        console.log(`Starting agent: ${agentId}`);
-        console.log(`cd agent-${agentId} && python ../main.py`);
-    }
-}
-
-function stopAgent(agentId) {
-    const agent = agents.find(a => a.id === agentId);
-    if (agent) {
-        agent.status = 'stopped';
-        populateAgentsTable();
-        updateAgentCount();
-        showNotification(`Agent ${agent.name} stopped`, 'warning');
-        
-        // Simulate CLI command execution
-        console.log(`Stopping agent: ${agentId}`);
-        console.log(`pkill -f "agent-${agentId}"`);
-    }
-}
-
-function deleteAgent(agentId) {
-    const agent = agents.find(a => a.id === agentId);
-    if (agent && confirm(`Are you sure you want to delete agent ${agent.name}? This will remove all data.`)) {
-        agents = agents.filter(a => a.id !== agentId);
-        populateAgentsTable();
-        updateAgentCount();
-        showNotification(`Agent ${agent.name} deleted`, 'success');
-        
-        // Simulate CLI command execution
-        console.log(`Deleting agent: ${agentId}`);
-        console.log(`rm -rf agent-${agentId}`);
-    }
-}
-
-function viewAgentConfig(agentId) {
-    const agent = agents.find(a => a.id === agentId);
-    if (agent) {
-        const configStr = JSON.stringify({
-            id: agent.id,
-            name: agent.name,
-            message_mode: agent.message_mode,
-            plugins: agent.plugins,
-            database: agent.database
-        }, null, 2);
-        alert(`Agent Configuration for ${agent.name}:\n\n${configStr}`);
-    }
-}
 
 // ============================================================================
 // QUEUE MANAGEMENT
@@ -652,7 +464,8 @@ function deleteQueueItem(id) {
 
 async function loadUsers() {
     try {
-        // Mock data based on actual Broca-2 user management
+        // In a real implementation, this pulls users live from the Broca database
+        // Mock data for demonstration
         users = [
             {
                 id: 1,
@@ -723,29 +536,7 @@ function refreshUsers() {
     showNotification('Users refreshed', 'success');
 }
 
-function discoverUsers() {
-    // Simulate user discovery from Broca interactions
-    showNotification('Discovering users from Broca interactions...', 'info');
-    
-    // In a real implementation, this would call the Broca-2 CLI tools
-    console.log('Discovering users:');
-    console.log('python -m cli.utool list --json');
-    
-    // Simulate finding new users
-    setTimeout(() => {
-        const newUser = {
-            id: users.length + 1,
-            username: 'new_user_' + Date.now(),
-            display_name: 'New User',
-            status: 'active',
-            last_interaction: new Date().toLocaleString()
-        };
-        
-        users.push(newUser);
-        populateUsersTable();
-        showNotification('New user discovered and added', 'success');
-    }, 2000);
-}
+
 
 function viewUserDetails(id) {
     const user = users.find(u => u.id === id);
@@ -806,7 +597,6 @@ function startStatusUpdates() {
     setInterval(() => {
         updateSystemStatus();
         updatePluginCount();
-        updateAgentCount();
     }, 30000);
 }
 
@@ -819,13 +609,7 @@ window.stopPlugin = stopPlugin;
 window.removePlugin = removePlugin;
 window.viewPluginConfig = viewPluginConfig;
 
-window.refreshAgents = refreshAgents;
-window.createNewAgent = createNewAgent;
-window.submitCreateAgent = submitCreateAgent;
-window.startAgent = startAgent;
-window.stopAgent = stopAgent;
-window.deleteAgent = deleteAgent;
-window.viewAgentConfig = viewAgentConfig;
+
 
 window.refreshQueue = refreshQueue;
 window.flushQueue = flushQueue;
@@ -833,7 +617,6 @@ window.viewQueueItem = viewQueueItem;
 window.deleteQueueItem = deleteQueueItem;
 
 window.refreshUsers = refreshUsers;
-window.discoverUsers = discoverUsers;
 window.viewUserDetails = viewUserDetails;
 window.toggleUserStatus = toggleUserStatus;
 

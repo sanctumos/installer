@@ -77,6 +77,26 @@ header {
     padding: 1.25rem;
 }
 
+/* System Status Panel - Improved Readability */
+.card-body .text-muted {
+    color: var(--fg-dim) !important;
+    font-weight: 500;
+}
+
+.card-body small.text-muted {
+    color: #b8bcc8 !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
+}
+
+/* Status labels with better contrast */
+.card-body .d-flex .text-muted {
+    color: #9ca3af !important;
+    font-weight: 500;
+}
+
 /* Form Controls */
 .form-control, .form-select {
     background-color: var(--bg-page);
@@ -181,34 +201,145 @@ header {
     font-size: 0.875rem;
 }
 
+/* Button groups in tables */
+.table .btn-group .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    margin: 0 1px;
+}
+
+.table .btn-group-sm .btn {
+    padding: 0.125rem 0.375rem;
+    font-size: 0.6875rem;
+}
+
+/* Additional outline button variants for tables */
+.btn-outline-warning {
+    color: var(--warning);
+    border-color: var(--warning);
+    background-color: transparent;
+}
+
+.btn-outline-warning:hover {
+    background-color: var(--warning);
+    border-color: var(--warning);
+    color: #000;
+}
+
+.btn-outline-success {
+    color: var(--success);
+    border-color: var(--success);
+    background-color: transparent;
+}
+
+.btn-outline-success:hover {
+    background-color: var(--success);
+    border-color: var(--success);
+    color: #fff;
+}
+
+.btn-outline-danger {
+    color: var(--danger);
+    border-color: var(--danger);
+    background-color: transparent;
+}
+
+.btn-outline-danger:hover {
+    background-color: var(--danger);
+    border-color: var(--danger);
+    color: #fff;
+}
+
 /* Badges */
 .badge {
     font-weight: 500;
     padding: 0.5em 0.75em;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+}
+
+/* Custom badge colors for dark theme */
+.badge.bg-success {
+    background-color: var(--success) !important;
+    color: #fff;
+}
+
+.badge.bg-warning {
+    background-color: var(--warning) !important;
+    color: #000;
+}
+
+.badge.bg-danger {
+    background-color: var(--danger) !important;
+    color: #fff;
+}
+
+.badge.bg-info {
+    background-color: var(--info) !important;
+    color: #fff;
+}
+
+.badge.bg-primary {
+    background-color: var(--primary) !important;
+    color: #fff;
+}
+
+.badge.bg-secondary {
+    background-color: var(--border-subtle) !important;
+    color: var(--fg);
 }
 
 /* Tables */
 .table {
     color: var(--fg);
     margin-bottom: 0;
+    background-color: transparent;
 }
 
 .table thead th {
     background-color: var(--bg-surface);
     border-bottom: 2px solid var(--border-subtle);
+    border-top: none;
     color: var(--fg);
     font-weight: 600;
     padding: 1rem 0.75rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 .table tbody td {
+    background-color: var(--bg-card);
     border-bottom: 1px solid var(--border-subtle);
+    border-top: none;
     padding: 1rem 0.75rem;
     vertical-align: middle;
+    color: var(--fg);
+}
+
+.table tbody tr {
+    background-color: var(--bg-card);
 }
 
 .table tbody tr:hover {
-    background-color: rgba(138, 180, 248, 0.1);
+    background-color: rgba(138, 180, 248, 0.08);
+}
+
+.table tbody tr:hover td {
+    background-color: rgba(138, 180, 248, 0.08);
+}
+
+/* Table code elements */
+.table code {
+    background-color: var(--bg-page);
+    color: var(--ring);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875em;
+    border: 1px solid var(--border-subtle);
 }
 
 /* Status Indicators */
@@ -230,6 +361,34 @@ header {
 
 .status-paused {
     background-color: var(--warning);
+}
+
+/* Username styling in tables */
+.table td code {
+    color: var(--ring) !important;
+    font-weight: 500;
+}
+
+/* Timestamp styling */
+.table td small,
+.table td .text-muted {
+    color: var(--fg-dim) !important;
+    font-size: 0.8rem;
+}
+
+/* Status badges in active/inactive states */
+.badge[class*="bg-"]:not(.bg-secondary) {
+    font-weight: 600;
+    text-shadow: none;
+}
+
+/* Improved spacing for action buttons */
+.table .btn-group {
+    gap: 2px;
+}
+
+.table .btn-group .btn + .btn {
+    margin-left: 0;
 }
 
 /* Modal Styling */
