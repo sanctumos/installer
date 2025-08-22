@@ -13,7 +13,7 @@
     <!-- Header -->
     <header class="d-flex align-items-center justify-content-between p-2 px-3 border-bottom">
         <div class="d-flex align-items-center gap-2">
-            <a href="/settings" class="btn btn-link text-light text-decoration-none p-0 fw-medium">
+            <a href="/settings" class="btn btn-link text-decoration-none p-0 fw-medium">
                 ← Back to Settings
             </a>
         </div>
@@ -34,7 +34,7 @@
             <!-- Agent Creation Form -->
             <div class="row">
                 <div class="col-lg-8">
-                    <div class="card bg-dark border-secondary">
+                    <div class="card">
                         <div class="card-header">
                             <h5 class="card-title mb-0">🤖 Agent Configuration</h5>
                         </div>
@@ -48,21 +48,21 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Agent Name <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control bg-dark text-light border-secondary" id="agentName" name="agentName" placeholder="e.g., Nova, Echo, Pulse" required>
+                                            <input type="text" class="form-control" id="agentName" name="agentName" placeholder="e.g., Nova, Echo, Pulse" required>
                                             <div class="form-text">Unique identifier for the agent</div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Display Name</label>
-                                            <input type="text" class="form-control bg-dark text-light border-secondary" id="displayName" name="displayName" placeholder="e.g., Nova Prime, Echo Assistant">
+                                            <input type="text" class="form-control" id="displayName" name="displayName" placeholder="e.g., Nova Prime, Echo Assistant">
                                             <div class="form-text">Human-readable name (optional)</div>
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="mb-3">
                                             <label class="form-label">Description</label>
-                                            <textarea class="form-control bg-dark text-light border-secondary" id="agentDescription" name="agentDescription" rows="2" placeholder="Brief description of the agent's purpose and capabilities"></textarea>
+                                            <textarea class="form-control" id="agentDescription" name="agentDescription" rows="2" placeholder="Brief description of the agent's purpose and capabilities"></textarea>
                                             <div class="form-text">Describe what this agent does</div>
                                         </div>
                                     </div>
@@ -76,7 +76,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Primary Model <span class="text-danger">*</span></label>
-                                            <select class="form-select bg-dark text-light border-secondary" id="primaryModel" name="primaryModel" required>
+                                            <select class="form-select" id="primaryModel" name="primaryModel" required>
                                                 <option value="">Select a model...</option>
                                                 <option value="gpt-4">GPT-4 (Claude 3.5 Sonnet)</option>
                                                 <option value="gpt-4-turbo">GPT-4 Turbo (Claude 3.5 Haiku)</option>
@@ -92,7 +92,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Fallback Model</label>
-                                            <select class="form-select bg-dark text-light border-secondary" id="fallbackModel" name="fallbackModel">
+                                            <select class="form-select" id="fallbackModel" name="fallbackModel">
                                                 <option value="">No fallback</option>
                                                 <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
                                                 <option value="claude-3-haiku">Claude 3 Haiku</option>
@@ -116,7 +116,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Max Tokens</label>
-                                            <select class="form-select bg-dark text-light border-secondary" id="maxTokens" name="maxTokens">
+                                            <select class="form-select" id="maxTokens" name="maxTokens">
                                                 <option value="1024">1K tokens</option>
                                                 <option value="2048" selected>2K tokens</option>
                                                 <option value="4096">4K tokens</option>
@@ -135,12 +135,12 @@
                                         <h6 class="text-primary mb-3">System Instructions</h6>
                                         <div class="mb-3">
                                             <label class="form-label">Core Instructions <span class="text-danger">*</span></label>
-                                            <textarea class="form-control bg-dark text-light border-secondary" id="systemInstructions" name="systemInstructions" rows="6" placeholder="Define the agent's core behavior, personality, and capabilities..." required></textarea>
+                                            <textarea class="form-control" id="systemInstructions" name="systemInstructions" rows="6" placeholder="Define the agent's core behavior, personality, and capabilities..." required></textarea>
                                             <div class="form-text">Primary instructions that define the agent's behavior</div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label">Additional Context</label>
-                                            <textarea class="form-control bg-dark text-light border-secondary" id="additionalContext" name="additionalContext" rows="3" placeholder="Additional context, examples, or specific instructions..."></textarea>
+                                            <textarea class="form-control" id="additionalContext" name="additionalContext" rows="3" placeholder="Additional context, examples, or specific instructions..."></textarea>
                                             <div class="form-text">Optional additional context or examples</div>
                                         </div>
                                     </div>
@@ -192,7 +192,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Access Level</label>
-                                            <select class="form-select bg-dark text-light border-secondary" id="accessLevel" name="accessLevel">
+                                            <select class="form-select" id="accessLevel" name="accessLevel">
                                                 <option value="restricted" selected>Restricted</option>
                                                 <option value="standard">Standard</option>
                                                 <option value="elevated">Elevated</option>
@@ -217,7 +217,7 @@
                                     <div class="col-12">
                                         <div class="mb-3">
                                             <label class="form-label">Allowed Domains/IPs</label>
-                                            <textarea class="form-control bg-dark text-light border-secondary" id="allowedDomains" name="allowedDomains" rows="2" placeholder="e.g., localhost, 192.168.1.0/24, *.example.com"></textarea>
+                                            <textarea class="form-control" id="allowedDomains" name="allowedDomains" rows="2" placeholder="e.g., localhost, 192.168.1.0/24, *.example.com"></textarea>
                                             <div class="form-text">Restrict access to specific networks (optional)</div>
                                         </div>
                                     </div>
@@ -231,7 +231,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Deployment Strategy</label>
-                                            <select class="form-select bg-dark text-light border-secondary" id="deploymentStrategy" name="deploymentStrategy">
+                                            <select class="form-select" id="deploymentStrategy" name="deploymentStrategy">
                                                 <option value="immediate" selected>Deploy Immediately</option>
                                                 <option value="scheduled">Schedule Deployment</option>
                                                 <option value="manual">Manual Deployment</option>
@@ -242,7 +242,7 @@
                                     <div class="col-md-6">
                                         <div class="mb-3">
                                             <label class="form-label">Resource Allocation</label>
-                                            <select class="form-select bg-dark text-light border-secondary" id="resourceAllocation" name="resourceAllocation">
+                                            <select class="form-select" id="resourceAllocation" name="resourceAllocation">
                                                 <option value="minimal">Minimal (1 CPU, 512MB RAM)</option>
                                                 <option value="standard" selected>Standard (2 CPU, 1GB RAM)</option>
                                                 <option value="enhanced">Enhanced (4 CPU, 2GB RAM)</option>
@@ -292,7 +292,7 @@
                 <!-- Sidebar -->
                 <div class="col-lg-4">
                     <!-- Agent Preview -->
-                    <div class="card bg-dark border-secondary mb-4">
+                    <div class="card mb-4">
                         <div class="card-header">
                             <h6 class="card-title mb-0">👁️ Agent Preview</h6>
                         </div>
@@ -307,7 +307,7 @@
                     </div>
 
                     <!-- Configuration Summary -->
-                    <div class="card bg-dark border-secondary mb-4">
+                    <div class="card mb-4">
                         <div class="card-header">
                             <h6 class="card-title mb-0">📋 Configuration Summary</h6>
                         </div>
@@ -321,7 +321,7 @@
                     </div>
 
                     <!-- Quick Templates -->
-                    <div class="card bg-dark border-secondary">
+                    <div class="card">
                         <div class="card-header">
                             <h6 class="card-title mb-0">⚡ Quick Templates</h6>
                         </div>
@@ -343,8 +343,8 @@
     <!-- Progress Modal -->
     <div class="modal fade" id="progressModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog">
-            <div class="modal-content bg-dark border-secondary">
-                <div class="modal-header border-secondary">
+            <div class="modal-content">
+                <div class="modal-header">
                     <h5 class="modal-title" id="progressModalTitle">Creating Agent...</h5>
                 </div>
                 <div class="modal-body">
@@ -353,7 +353,7 @@
                             <span class="visually-hidden">Loading...</span>
                         </div>
                         <p id="progressMessage">Initializing agent creation...</p>
-                        <div class="progress bg-dark">
+                        <div class="progress">
                             <div class="progress-bar" id="progressBar" role="progressbar" style="width: 0%"></div>
                         </div>
                         <small class="text-muted mt-2" id="progressDetails">Please wait...</small>
@@ -366,17 +366,17 @@
     <!-- Preview Modal -->
     <div class="modal fade" id="previewModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content bg-dark border-secondary">
-                <div class="modal-header border-secondary">
+            <div class="modal-content">
+                <div class="modal-header">
                     <h5 class="modal-title">Agent Preview</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     <div id="previewContent">
                         <!-- Preview content will be populated here -->
                     </div>
                 </div>
-                <div class="modal-footer border-secondary">
+                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" onclick="createAgentFromPreview()">Create Agent</button>
                 </div>

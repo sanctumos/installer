@@ -12,7 +12,7 @@
     <!-- Header -->
     <header class="d-flex align-items-center justify-content-between p-2 px-3 border-bottom">
         <div class="d-flex align-items-center gap-2">
-            <a href="/settings" class="btn btn-link text-light text-decoration-none p-0 fw-medium">
+            <a href="/settings" class="btn btn-link text-decoration-none p-0 fw-medium">
                 ← Back to Settings
             </a>
         </div>
@@ -48,7 +48,7 @@
 
             <!-- Jobs Table -->
             <div class="table-responsive">
-                <table class="table table-dark table-hover" id="jobsTable">
+                <table class="table table-hover" id="jobsTable">
                     <thead>
                         <tr>
                             <th scope="col" style="width: 40px;">
@@ -216,7 +216,7 @@
             </div>
 
             <!-- Tips -->
-            <div class="mt-5 pt-4 border-top border-secondary">
+            <div class="mt-5 pt-4 border-top">
                 <p class="text-muted small mb-0">
                     <strong>Tips:</strong> Use standard cron syntax • Test commands before scheduling • Monitor job execution logs • Use descriptive job names
                 </p>
@@ -227,22 +227,22 @@
     <!-- Add/Edit Job Modal -->
     <div class="modal fade" id="addJobModal" tabindex="-1" aria-labelledby="addJobModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
-            <div class="modal-content bg-dark text-light">
-                <div class="modal-header border-secondary">
+            <div class="modal-content">
+                <div class="modal-header">
                     <h5 class="modal-title" id="addJobModalLabel">Add New Scheduled Job</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="jobForm">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="jobName" class="form-label">Job Name</label>
-                                <input type="text" class="form-control bg-dark text-light border-secondary" id="jobName" required>
+                                <input type="text" class="form-control" id="jobName" required>
                                 <div class="form-text">Descriptive name for the job</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="jobDescription" class="form-label">Description</label>
-                                <input type="text" class="form-control bg-dark text-light border-secondary" id="jobDescription">
+                                <input type="text" class="form-control" id="jobDescription">
                                 <div class="form-text">Optional description</div>
                             </div>
                         </div>
@@ -250,7 +250,7 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="scheduleType" class="form-label">Schedule Type</label>
-                                <select class="form-select bg-dark text-light border-secondary" id="scheduleType">
+                                <select class="form-select" id="scheduleType">
                                     <option value="custom">Custom Cron</option>
                                     <option value="daily">Daily</option>
                                     <option value="weekly">Weekly</option>
@@ -260,26 +260,26 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="cronExpression" class="form-label">Cron Expression</label>
-                                <input type="text" class="form-control bg-dark text-light border-secondary" id="cronExpression" placeholder="* * * * *" required>
+                                <input type="text" class="form-control" id="cronExpression" placeholder="* * * * *" required>
                                 <div class="form-text">Standard cron format: minute hour day month weekday</div>
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label for="command" class="form-label">Command</label>
-                            <input type="text" class="form-control bg-dark text-light border-secondary" id="command" placeholder="/path/to/script.sh" required>
+                            <input type="text" class="form-control" id="command" placeholder="/path/to/script.sh" required>
                             <div class="form-text">Full path to the command or script</div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="workingDirectory" class="form-label">Working Directory</label>
-                                <input type="text" class="form-control bg-dark text-light border-secondary" id="workingDirectory" placeholder="/path/to/directory">
+                                <input type="text" class="form-control" id="workingDirectory" placeholder="/path/to/directory">
                                 <div class="form-text">Directory to run command from (optional)</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="user" class="form-label">Run As User</label>
-                                <input type="text" class="form-control bg-dark text-light border-secondary" id="user" placeholder="root">
+                                <input type="text" class="form-control" id="user" placeholder="root">
                                 <div class="form-text">User to run command as (optional)</div>
                             </div>
                         </div>
@@ -287,12 +287,12 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="timeout" class="form-label">Timeout (seconds)</label>
-                                <input type="number" class="form-control bg-dark text-light border-secondary" id="timeout" value="300" min="1">
+                                <input type="number" class="form-control" id="timeout" value="300" min="1">
                                 <div class="form-text">Job timeout in seconds</div>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="retries" class="form-label">Retry Attempts</label>
-                                <input type="number" class="form-control bg-dark text-light border-secondary" id="retries" value="0" min="0">
+                                <input type="number" class="form-control" id="retries" value="0" min="0">
                                 <div class="form-text">Number of retry attempts on failure</div>
                             </div>
                         </div>
@@ -307,7 +307,7 @@
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer border-secondary">
+                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary" id="saveJob">Save Job</button>
                 </div>
@@ -318,16 +318,16 @@
     <!-- Delete Confirmation Modal -->
     <div class="modal fade" id="deleteJobModal" tabindex="-1" aria-labelledby="deleteJobModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content bg-dark text-light">
-                <div class="modal-header border-secondary">
+            <div class="modal-content">
+                <div class="modal-header">
                     <h5 class="modal-title" id="deleteJobModalLabel">Confirm Delete</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <p>Are you sure you want to delete the job "<strong id="deleteJobName"></strong>"?</p>
                     <p class="text-warning">This action cannot be undone.</p>
                 </div>
-                <div class="modal-footer border-secondary">
+                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-danger" id="confirmDelete">Delete Job</button>
                 </div>

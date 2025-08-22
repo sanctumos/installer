@@ -7,13 +7,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='chat_settings.css') }}" rel="stylesheet">
 </head>
 <body>
     <!-- Header -->
     <header class="d-flex align-items-center justify-content-between p-2 px-3 border-bottom">
         <div class="d-flex align-items-center gap-2">
-            <a href="/settings" class="btn btn-link text-light text-decoration-none p-0 fw-medium">
+                            <a href="/settings" class="btn btn-link text-decoration-none p-0 fw-medium">
                 ← Back to Settings
             </a>
         </div>
@@ -35,7 +34,7 @@
             <div class="mb-4">
                 <div class="d-flex align-items-center gap-2">
                     <label for="agentSelector" class="text-muted small mb-0">Prime Agent:</label>
-                    <select class="form-select form-select-sm bg-dark text-light border-secondary" id="agentSelector" style="width: auto; min-width: 200px;">
+                                            <select class="form-select form-select-sm" id="agentSelector" style="width: auto; min-width: 200px;">
                         <option value="athena">Athena</option>
                         <option value="monday">Monday</option>
                         <option value="timbre">Timbre</option>
@@ -48,35 +47,35 @@
                 <div class="col-lg-8">
                     <form id="chatSettingsForm">
                         <!-- Non-configurable Fields -->
-                        <div class="card bg-dark border-secondary mb-4">
-                            <div class="card-header bg-dark border-secondary">
-                                <h5 class="mb-0 text-light">System Information</h5>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">System Information</h5>
                             </div>
                             <div class="card-body">
                                 <div class="mb-3">
                                     <label class="form-label text-muted small">Agent UID</label>
-                                    <input type="text" class="form-control bg-dark text-light border-secondary" id="agentUID" readonly value="agent-24ab7439-7f33-4665-8aa4-9ba709694e1a">
+                                    <input type="text" class="form-control" id="agentUID" readonly value="agent-24ab7439-7f33-4665-8aa4-9ba709694e1a">
                                     <div class="form-text text-muted">Unique identifier for this agent (read-only)</div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Configurable Fields -->
-                        <div class="card bg-dark border-secondary mb-4">
-                            <div class="card-header bg-dark border-secondary">
-                                <h5 class="mb-0 text-light">Chat Configuration</h5>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="mb-0">Chat Configuration</h5>
                             </div>
                             <div class="card-body">
                                 <!-- Agent Name -->
                                 <div class="mb-3">
-                                    <label for="agentName" class="form-label text-light">Agent Name</label>
-                                    <input type="text" class="form-control bg-dark text-light border-secondary" id="agentName" placeholder="Enter agent name">
+                                    <label for="agentName" class="form-label">Agent Name</label>
+                                    <input type="text" class="form-control" id="agentName" placeholder="Enter agent name">
                                 </div>
 
                                 <!-- Model Selection -->
                                 <div class="mb-3">
-                                    <label for="modelSelect" class="form-label text-light">Model</label>
-                                    <select class="form-select bg-dark text-light border-secondary" id="modelSelect">
+                                    <label for="modelSelect" class="form-label">Model</label>
+                                    <select class="form-select" id="modelSelect">
                                         <option value="gpt-4">GPT-4</option>
                                         <option value="gpt-4-turbo">GPT-4 Turbo</option>
                                         <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
@@ -91,9 +90,9 @@
 
                                 <!-- System Instructions -->
                                 <div class="mb-3">
-                                    <label for="systemInstructions" class="form-label text-light">System Instructions</label>
+                                    <label for="systemInstructions" class="form-label">System Instructions</label>
                                     <div class="position-relative">
-                                        <textarea class="form-control bg-dark text-light border-secondary" id="systemInstructions" rows="8" placeholder="Enter system instructions for this agent..."></textarea>
+                                        <textarea class="form-control" id="systemInstructions" rows="8" placeholder="Enter system instructions for this agent..."></textarea>
                                         <div class="position-absolute top-0 end-0 p-2">
                                             <button type="button" class="btn btn-sm btn-outline-secondary" id="expandInstructions" title="Expand/Collapse">
                                                 <span id="expandIcon">⤢</span>
@@ -107,22 +106,22 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="mb-3">
-                                            <label for="maxTokens" class="form-label text-light">Max Output Tokens</label>
-                                            <input type="number" class="form-control bg-dark text-light border-secondary" id="maxTokens" min="1" max="32000" value="4000">
+                                            <label for="maxTokens" class="form-label">Max Output Tokens</label>
+                                            <input type="number" class="form-control" id="maxTokens" min="1" max="32000" value="4000">
                                             <div class="form-text text-muted">Maximum tokens in response</div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="mb-3">
-                                            <label for="contextWindow" class="form-label text-light">Context Window</label>
-                                            <input type="number" class="form-control bg-dark text-light border-secondary" id="contextWindow" min="1000" max="200000" value="16000">
+                                            <label for="contextWindow" class="form-label">Context Window</label>
+                                            <input type="number" class="form-control" id="contextWindow" min="1000" max="200000" value="16000">
                                             <div class="form-text text-muted">Maximum context length</div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="mb-3">
-                                            <label for="temperature" class="form-label text-light">Temperature</label>
-                                            <input type="number" class="form-control bg-dark text-light border-secondary" id="temperature" min="0" max="2" step="0.1" value="0.7">
+                                            <label for="temperature" class="form-label">Temperature</label>
+                                            <input type="number" class="form-control" id="temperature" min="0" max="2" step="0.1" value="0.7">
                                             <div class="form-text text-muted">Creativity level (0-2)</div>
                                         </div>
                                     </div>
@@ -132,7 +131,7 @@
                                 <div class="mb-3">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" id="reasoningToggle">
-                                        <label class="form-check-label text-light" for="reasoningToggle">
+                                        <label class="form-check-label" for="reasoningToggle">
                                             Enable Reasoning
                                         </label>
                                     </div>
@@ -152,22 +151,22 @@
 
                 <!-- Preview Panel -->
                 <div class="col-lg-4">
-                    <div class="card bg-dark border-secondary">
-                        <div class="card-header bg-dark border-secondary">
-                            <h6 class="mb-0 text-light">Configuration Preview</h6>
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0">Configuration Preview</h6>
                         </div>
                         <div class="card-body">
                             <div class="mb-3">
                                 <small class="text-muted">Current Agent:</small>
-                                <div class="text-light fw-medium" id="previewAgent">Athena</div>
+                                <div class="fw-medium" id="previewAgent">Athena</div>
                             </div>
                             <div class="mb-3">
                                 <small class="text-muted">Model:</small>
-                                <div class="text-light" id="previewModel">GPT-4</div>
+                                <div id="previewModel">GPT-4</div>
                             </div>
                             <div class="mb-3">
                                 <small class="text-muted">Parameters:</small>
-                                <div class="text-light small">
+                                <div class="small">
                                     <div>Tokens: <span id="previewTokens">4000</span></div>
                                     <div>Context: <span id="previewContext">16000</span></div>
                                     <div>Temperature: <span id="previewTemp">0.7</span></div>
@@ -175,7 +174,7 @@
                             </div>
                             <div class="mb-3">
                                 <small class="text-muted">Features:</small>
-                                <div class="text-light small">
+                                <div class="small">
                                     <div>Reasoning: <span id="previewReasoning">Disabled</span></div>
                                 </div>
                             </div>
