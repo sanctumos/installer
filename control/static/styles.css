@@ -513,6 +513,275 @@ rp {
   line-height: 1;
 }
 
+/* Word break opportunity */
+wbr {
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Data and meter */
+data {
+  color: inherit;
+  line-height: inherit;
+}
+
+meter {
+  color: var(--fg);
+  background-color: var(--bg-darker);
+  border-radius: var(--radius-sm);
+}
+
+/* Output */
+output {
+  color: var(--fg);
+  background-color: var(--bg-darker);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+/* Canvas */
+canvas {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-darker);
+}
+
+/* Math */
+math {
+  color: var(--fg);
+  background-color: var(--bg-darker);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+}
+
+/* Media elements */
+video, audio {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-darker);
+  max-width: 100%;
+}
+
+/* Iframe */
+iframe {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-darker);
+  max-width: 100%;
+}
+
+/* Embedded objects */
+embed, object {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-darker);
+  max-width: 100%;
+}
+
+/* Object parameters */
+param {
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Media sources and tracks */
+source, track {
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Image maps */
+map, area {
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Images */
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+}
+
+/* Figures */
+figure {
+  color: var(--fg);
+  line-height: 1.6;
+  margin: var(--spacing-md) 0;
+}
+
+figcaption {
+  color: var(--fg-dim);
+  font-size: 0.875rem;
+  text-align: center;
+  margin-top: var(--spacing-sm);
+}
+
+/* Picture */
+picture {
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Dialog */
+dialog {
+  color: var(--fg);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Menu */
+menu, menuitem {
+  color: var(--fg);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+/* Command */
+command {
+  color: var(--fg);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+/* Applet */
+applet {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-darker);
+  max-width: 100%;
+}
+
+/* Legacy font elements */
+basefont, font {
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Legacy layout elements */
+center {
+  text-align: center;
+  color: inherit;
+  line-height: inherit;
+}
+
+strike {
+  color: var(--accent-red);
+  text-decoration: line-through;
+}
+
+/* Legacy size elements */
+big {
+  font-size: 1.2em;
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Legacy typewriter elements */
+tt {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Legacy preformatted elements */
+xmp, plaintext {
+  font-family: 'Monaco', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  color: var(--fg);
+  background-color: var(--bg-darker);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  white-space: pre;
+}
+
+/* Legacy listing */
+listing {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  color: var(--fg);
+  background-color: var(--bg-darker);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  white-space: pre;
+}
+
+/* Legacy marquee */
+marquee {
+  color: var(--fg);
+  background-color: var(--bg-darker);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+}
+
+/* Legacy no-break */
+nobr {
+  white-space: nowrap;
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Legacy spacer */
+spacer {
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Legacy isindex */
+isindex {
+  color: var(--fg);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+/* Legacy directory */
+dir {
+  color: var(--fg);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-md);
+}
+
+/* Heading group */
+hgroup {
+  color: var(--fg);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-md);
+}
+
+/* Semantic HTML elements */
+article, section, nav, aside {
+  color: var(--fg);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-md);
+}
+
+/* Template */
+template {
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Slot */
+slot {
+  color: inherit;
+  line-height: inherit;
+}
+
+/* Script elements */
+script, noscript {
+  color: inherit;
+  line-height: inherit;
+}
+
 /* Form Check */
 .form-check-input {
   background-color: var(--bg-surface);
