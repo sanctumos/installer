@@ -48,6 +48,11 @@ def smcp_configurator():
     """SMCP Configurator interface"""
     return render_template('smcp_configurator.html')
 
+@app.route('/broca-settings')
+def broca_settings():
+    """Broca Settings interface"""
+    return render_template('broca_settings.html')
+
 @app.route('/api/chat', methods=['POST'])
 def chat():
     """Handle chat messages"""
