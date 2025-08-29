@@ -82,15 +82,11 @@ CREATE INDEX IF NOT EXISTS idx_agents_status ON agents(status);
 -- Sample Data Population
 -- =============================================================================
 
--- Insert default admin user (password will be set by application)
-INSERT OR IGNORE INTO users (id, username, email, password_hash, role, permissions, is_active) VALUES
-(1, 'admin', 'admin@sanctum.local', 'CHANGE_ME_ON_FIRST_LOGIN', 'admin', '["*"]', true);
+-- Insert default admin user (password: admin123)
+INSERT OR IGNORE INTO users (id, username, email, password_hash, role, permissions, is_active, failed_login_attempts) VALUES
+(1, 'admin', 'admin@sanctum.local', '$2b$12$H2UoYl0FVEaq8moKx31a8OUu.RExWusGUAVk17bqgUBUI2krD771q', 'admin', '["*"]', true, 0);
 
--- Insert default agents
-INSERT OR IGNORE INTO agents (id, letta_uid, name, description, created_by, visible_to_users, visible_to_roles) VALUES
-('athena', 'athena_letta_001', 'Athena', 'Sanctum Configuration Assistant', 1, NULL, NULL), -- Visible to all
-('monday', 'monday_letta_002', 'Monday', 'Task Management Specialist', 1, NULL, '["admin"]'), -- Admin only
-('timbre', 'timbre_letta_003', 'Timbre', 'Audio Processing Expert', 1, NULL, '["admin"]'); -- Admin only
+-- Note: Test agents are loaded via test.sql for development
 
 -- =============================================================================
 -- Schema Version Tracking

@@ -72,8 +72,11 @@ def authenticate_user(username: str, password: str) -> Tuple[bool, Optional[dict
         
         # Verify password
         if not verify_password(password, user.password_hash):
-            # Increment failed login attempts
-            user.failed_login_attempts += 1
+            # Increment failed login attempts (handle None case)
+            if user.failed_login_attempts is None:
+                user.failed_login_attempts = 1
+            else:
+                user.failed_login_attempts += 1
             
             # Lock account after 5 failed attempts
             if user.failed_login_attempts >= 5:
