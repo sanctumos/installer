@@ -1,5 +1,6 @@
 # Embedded git repositories
 helpers/pybitlaunch/
+temp-repos/
 
 # Python
 __pycache__/
