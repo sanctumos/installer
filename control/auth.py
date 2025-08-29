@@ -9,6 +9,7 @@ import string
 from datetime import datetime, timedelta
 from typing import Optional, Tuple
 from flask import request, session
+from functools import wraps
 from models import User, UserSession, get_db
 
 def hash_password(password: str) -> str:
@@ -46,12 +47,12 @@ def create_user_session(user_id: int, ip_address: str = None, user_agent: str = 
     
     return session_obj
 
-def authenticate_user(username: str, password: str) -> Tuple[bool, Optional[User], str]:
+def authenticate_user(username: str, password: str) -> Tuple[bool, Optional[dict], str]:
     """
     Authenticate a user with username and password
     
     Returns:
-        Tuple of (success, user_object, error_message)
+        Tuple of (success, user_dict, error_message)
     """
     db = next(get_db())
     
@@ -88,7 +89,19 @@ def authenticate_user(username: str, password: str) -> Tuple[bool, Optional[User
         user.last_login = datetime.utcnow()
         db.commit()
         
-        return True, user, ""
+        # Return user data as dictionary to avoid detached instance issues
+        user_dict = {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'role': user.role,
+            'is_active': user.is_active,
+            'last_login': user.last_login,
+            'created_at': user.created_at,
+            'updated_at': user.updated_at
+        }
+        
+        return True, user_dict, ""
         
     except Exception as e:
         db.rollback()
@@ -136,6 +149,7 @@ def cleanup_expired_sessions():
 
 def require_auth(f):
     """Decorator to require authentication for routes"""
+    @wraps(f)
     def decorated_function(*args, **kwargs):
         # Check if user is logged in via Flask session
         if 'user_id' not in session:
@@ -154,6 +168,7 @@ def require_auth(f):
 def require_role(required_role: str):
     """Decorator to require specific role for routes"""
     def decorator(f):
+        @wraps(f)
         def decorated_function(*args, **kwargs):
             # Check if user is logged in
             if 'user_id' not in session:

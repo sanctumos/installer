@@ -4,6 +4,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
     const transcript = document.getElementById('transcript');
 
+    // Check authentication status
+    function checkAuth() {
+        // Check if user info is available in the page
+        const userInfo = document.querySelector('[data-username]');
+        if (!userInfo) {
+            console.log('No user info found, redirecting to login...');
+            window.location.href = '/login';
+            return false;
+        }
+        return true;
+    }
+
+    // Get current user info
+    function getCurrentUser() {
+        const userInfo = document.querySelector('[data-username]');
+        if (userInfo) {
+            return {
+                username: userInfo.dataset.username,
+                role: userInfo.dataset.role
+            };
+        }
+        return null;
+    }
+
     // Auto-expand textarea
     if (textarea) {
         textarea.addEventListener('input', function() {
@@ -24,6 +48,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            // Check authentication before sending message
+            if (!checkAuth()) {
+                return;
+            }
+            
             console.log('Form submitted');
             const message = textarea.value.trim();
             console.log('Message:', message);
@@ -43,13 +73,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 })
                 .then(response => {
                     console.log('API response status:', response.status);
+                    if (response.status === 401) {
+                        // Session expired, redirect to login
+                        window.location.href = '/login';
+                        return;
+                    }
                     return response.json();
                 })
                 .then(data => {
-                    console.log('API response data:', data);
-                    if (data.error) {
+                    if (data && data.error) {
                         addAssistantMessage("Error: " + data.error);
-                    } else {
+                    } else if (data) {
                         addAssistantMessage(data.message);
                     }
                 })
@@ -64,14 +98,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add user message to transcript
     function addUserMessage(text) {
         console.log('Adding user message:', text);
+        const user = getCurrentUser();
+        const username = user ? user.username : 'User';
+        const userInitial = username.charAt(0).toUpperCase();
+        
         const messageDiv = document.createElement('div');
         messageDiv.className = 'd-flex justify-content-end mb-3';
         const timestamp = getCurrentTimestamp();
         messageDiv.innerHTML = `
             <div class="d-flex align-items-start gap-3 flex-row-reverse">
                 <div class="message-avatar">
-                    <div class="avatar-circle avatar-user">R</div>
-                    <div class="avatar-name">rizzn</div>
+                    <div class="avatar-circle avatar-user">${userInitial}</div>
+                    <div class="avatar-name">${username}</div>
                 </div>
                 <div class="p-3 rounded-3 bubble-user">
                     <p class="mb-0">${escapeHtml(text)}</p>
