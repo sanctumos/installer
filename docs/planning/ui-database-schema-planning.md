@@ -21,85 +21,56 @@ This document outlines the **implementation plan** for the database schema neede
 
 ## Implementation Strategy
 
-### **Phase 1: Minimal Schema (Get UI Working)**
-**Goal**: Replace hardcoded data with database-driven content
-**Timeline**: 1-2 days
-**Tables**: `tools`, `agents`, `users`
+### **MVP: Core Features for Shipping**
+**Goal**: Launch with login/user management, chat UI integration, and upgrade path
+**Timeline**: 1-2 weeks
+**Focus**: Essential functionality for production deployment
 
-### **Phase 2: User Management**
-**Goal**: Enable user authentication and agent configuration
-**Timeline**: 2-3 days
-**Tables**: `user_sessions`, `agent_configs`
+### **Phase 1: User Management & Authentication (Week 1)**
+**Goal**: Complete login system and user management
+**Tables**: `users`, `user_sessions`
+**Features**:
+- User registration and login
+- Password hashing and security
+- Session management
+- Role-based access control
+- User discovery from Broca databases
 
-### **Phase 3: Configuration Management**
-**Goal**: Full configuration management capabilities
-**Timeline**: 2-3 days
-**Tables**: `system_config`, `env_vars`, `tool_instances`
+### **Phase 2: Chat UI Integration (Week 1-2)**
+**Goal**: Connect existing chat UI to working backend
+**Tables**: Enhanced `web_chat_sessions`, `web_chat_messages`
+**Features**:
+- Link chat sessions to authenticated users
+- Associate chats with specific agents
+- User-specific chat history
+- Integration with existing Flask chat bridge
 
-### **Phase 4: Advanced Features**
-**Goal**: Complete system with all features
-**Timeline**: 2-3 days
-**Tables**: `plugins`, `configurations`, enhanced chat tables
+### **Phase 3: Upgrade Path (Week 2)**
+**Goal**: Enable future feature additions without breaking existing system
+**Tables**: `tools`, `agents` (minimal schema)
+**Features**:
+- Basic tool and agent management
+- Database-driven UI (replace hardcoded data)
+- Foundation for future enhancements
+- Auto-update capability
 
-## Phase 1: Minimal Schema Implementation
+### **Post-MVP: Future Enhancements**
+**Goal**: Add advanced features via auto-updates
+**Tables**: `plugins`, `configurations`, `tool_instances`, `system_config`, `env_vars`
+**Features**:
+- Plugin management
+- Advanced configuration
+- Tool execution tracking
+- System monitoring
 
-### Tables to Create
+## MVP Implementation Details
 
-#### 1. Tools Table
-**Reference**: See `../reference/registry_schema.md#tools` for complete schema
-**Purpose**: Stores all the tools displayed in the settings grid (settings.html)
+### **Phase 1: User Management & Authentication**
 
+#### Tables to Create
+
+##### Users Table (Core)
 ```sql
--- Phase 1: Simplified tools table for immediate UI support
-CREATE TABLE tools (
-    id VARCHAR(50) PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
-    emoji VARCHAR(10),
-    category VARCHAR(20) NOT NULL, -- 'master', 'athena', 'monday', 'timbre', 'smcp'
-    status VARCHAR(20) DEFAULT 'Healthy', -- 'Healthy', 'Degraded', 'Off', 'Ready'
-    route_path VARCHAR(100), -- e.g., '/system-settings', '/chat-settings'
-    is_enabled BOOLEAN DEFAULT true,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-**UI Usage**: 
-- Settings grid displays tool cards with emojis, names, descriptions
-- Status indicators show tool health
-- Route paths enable navigation to tool-specific pages
-- Category tabs organize tools by scope
-
-#### 2. Agents Table
-**Reference**: See `../reference/registry_schema.md#agents` for complete schema
-**Purpose**: Stores agent information for the create_agent.html form and agent switching
-
-```sql
--- Phase 1: Simplified agents table for immediate UI support
-CREATE TABLE agents (
-    id VARCHAR(50) PRIMARY KEY, -- e.g., 'athena', 'monday', 'timbre'
-    name VARCHAR(100) NOT NULL,
-    display_name VARCHAR(100),
-    description TEXT,
-    status VARCHAR(20) DEFAULT 'Healthy',
-    is_active BOOLEAN DEFAULT true,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-**UI Usage**:
-- Agent creation form captures basic fields
-- Chat interface agent dropdown shows available agents
-- Agent status monitoring and health checks
-
-#### 3. Users Table
-**Reference**: See `../reference/registry_schema.md#users` for complete schema
-**Purpose**: Manages user accounts for the system_settings.html interface
-
-```sql
--- Phase 1: Simplified users table for immediate UI support
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -108,52 +79,14 @@ CREATE TABLE users (
     role VARCHAR(20) DEFAULT 'user', -- 'admin', 'user', 'viewer'
     status VARCHAR(20) DEFAULT 'active', -- 'active', 'inactive', 'locked'
     last_login TIMESTAMP,
+    failed_login_attempts INTEGER DEFAULT 0,
+    locked_until TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
-**UI Usage**:
-- User discovery from Broca agent databases
-- User role management and status tracking
-- Authentication for web interface access
-
-### Sample Data Population
-
-#### Tools Table
-```sql
-INSERT INTO tools (id, name, description, emoji, category, status, route_path) VALUES
-('system-settings', 'System Settings', 'Base ports, paths, environment variables', '⚙️', 'master', 'Healthy', '/system-settings'),
-('install-tool', 'Install Module', 'Quick setup & upgrades', '🧰', 'master', 'Healthy', '/install-tool'),
-('cron-scheduler', 'Cron Scheduler', 'Automated module execution', '⏰', 'master', 'Healthy', '/cron-scheduler'),
-('create-agent', 'Create Agent', 'Add new Prime agent to system', '➕', 'master', 'Ready', '/create-agent'),
-('backup-restore', 'Backup/Restore', 'System backup & recovery tools', '📁', 'master', 'Ready', '/backup-restore'),
-('chat-settings', 'Chat Settings', 'Model, voice, safety, persona', '💬', 'athena', 'Healthy', '/chat-settings'),
-('broca', 'Broca', 'Streams & tool I/O', '🛰️', 'athena', 'Healthy', '/broca-settings');
-```
-
-#### Agents Table
-```sql
-INSERT INTO agents (id, name, display_name, description, status) VALUES
-('athena', 'Athena', 'Athena Prime', 'Sanctum Configuration Assistant', 'Healthy'),
-('monday', 'Monday', 'Monday Prime', 'Task Management Specialist', 'Healthy'),
-('timbre', 'Timbre', 'Timbre Prime', 'Audio Processing Expert', 'Healthy');
-```
-
-#### Users Table
-```sql
--- Create default admin user (password: admin123)
-INSERT INTO users (username, email, password_hash, role, status) VALUES
-('admin', 'admin@sanctum.local', '$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj/RK.s5u.Gi', 'admin', 'active');
-```
-
-## Phase 2: User Management Implementation
-
-### Additional Tables
-
-#### User Sessions Table
-**Reference**: See `../reference/registry_schema.md#user-sessions` for complete schema
-
+##### User Sessions Table
 ```sql
 CREATE TABLE user_sessions (
     id VARCHAR(100) PRIMARY KEY,
@@ -167,49 +100,176 @@ CREATE TABLE user_sessions (
 );
 ```
 
-#### Agent Configs Table
-**Reference**: See `../reference/registry_schema.md#agent-configurations` for complete schema
+#### Implementation Steps
+1. **User Authentication System**
+   - Login/logout endpoints
+   - Password hashing (bcrypt)
+   - JWT token generation
+   - Session management
 
+2. **User Management Interface**
+   - User discovery from Broca databases
+   - User role management
+   - Account status tracking
+
+3. **Security Features**
+   - Rate limiting for login attempts
+   - Account lockout after failed attempts
+   - Secure session handling
+
+### **Phase 2: Chat UI Integration**
+
+#### Enhanced Chat Tables
 ```sql
-CREATE TABLE agent_configs (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    agent_id VARCHAR(50) NOT NULL,
-    config_key VARCHAR(100) NOT NULL,
-    config_value TEXT,
-    config_type VARCHAR(20) DEFAULT 'string',
-    is_encrypted BOOLEAN DEFAULT false,
+-- Enhance existing web_chat_sessions table
+ALTER TABLE web_chat_sessions ADD COLUMN user_id INTEGER;
+ALTER TABLE web_chat_sessions ADD COLUMN agent_id VARCHAR(50);
+
+-- Add foreign key constraints
+-- (These will be added after Phase 3 when agents table exists)
+```
+
+#### Implementation Steps
+1. **Link Existing Chat System**
+   - Connect chat sessions to authenticated users
+   - Associate chats with specific agents
+   - Maintain existing chat functionality
+
+2. **User Attribution**
+   - Track who sent each message
+   - User-specific chat history
+   - Agent-specific conversations
+
+3. **Integration Points**
+   - Connect to existing Flask chat bridge
+   - Maintain current API compatibility
+   - Add user context to existing system
+
+### **Phase 3: Upgrade Path & Foundation**
+
+#### Minimal Schema Tables
+```sql
+-- Tools table for future enhancements
+CREATE TABLE tools (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    emoji VARCHAR(10),
+    category VARCHAR(20) NOT NULL,
+    status VARCHAR(20) DEFAULT 'Healthy',
+    route_path VARCHAR(100),
+    is_enabled BOOLEAN DEFAULT true,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (agent_id) REFERENCES agents(id),
-    UNIQUE(agent_id, config_key)
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Agents table for future enhancements
+CREATE TABLE agents (
+    id VARCHAR(50) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    display_name VARCHAR(100),
+    description TEXT,
+    status VARCHAR(20) DEFAULT 'Healthy',
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
-## Phase 3: Configuration Management Implementation
+#### Implementation Steps
+1. **Database-Driven UI**
+   - Replace hardcoded tool/agent data
+   - Enable dynamic UI updates
+   - Foundation for future features
 
-### Additional Tables
+2. **Upgrade Infrastructure**
+   - Database migration system
+   - Schema version tracking
+   - Auto-update capability
 
-#### System Config Table
-**Reference**: See `../reference/registry_schema.md#system-configuration` for complete schema
+3. **Future-Proofing**
+   - Extensible table structure
+   - Plugin system foundation
+   - Configuration management base
 
-#### Environment Variables Table
-**Reference**: See `../reference/registry_schema.md#environment-variables` for complete schema
+## MVP Success Criteria
 
-#### Tool Instances Table
-**Reference**: See `../reference/registry_schema.md#tool-instances` for complete schema
+### **User Management**
+- ✅ Users can register and login
+- ✅ Sessions persist across browser restarts
+- ✅ Role-based access control works
+- ✅ User discovery from Broca functions
+- ✅ Security features (lockout, rate limiting) active
 
-## Phase 4: Advanced Features Implementation
+### **Chat Integration**
+- ✅ Chat UI connects to existing backend
+- ✅ User attribution works correctly
+- ✅ Agent switching maintains user context
+- ✅ Chat history per user functions
+- ✅ No breaking changes to existing chat
 
-### Additional Tables
+### **Upgrade Path**
+- ✅ UI displays database-driven content
+- ✅ Database migrations work smoothly
+- ✅ Foundation for future features exists
+- ✅ Auto-update system functional
+- ✅ No hardcoded data remains
 
-#### Plugins Table
-**Reference**: See `../reference/registry_schema.md#plugins` for complete schema
+## Post-MVP Auto-Update Features
 
-#### Configurations Table
-**Reference**: See `../reference/registry_schema.md#configurations` for complete schema
+Once the MVP is shipped and stable, these features can be added via auto-updates:
 
-#### Enhanced Chat Tables
-**Reference**: See `../reference/registry_schema.md#chat-integration-tables` for complete schema
+### **Configuration Management**
+- System settings interface
+- Environment variable management
+- API key management
+
+### **Advanced Tool Management**
+- Plugin system
+- Tool execution tracking
+- Advanced configuration options
+
+### **System Monitoring**
+- Health checks
+- Performance metrics
+- Log management
+
+## Implementation Timeline
+
+### **Week 1: Core Foundation**
+- **Days 1-3**: User management system
+- **Days 4-5**: Chat integration foundation
+
+### **Week 2: Integration & Testing**
+- **Days 1-3**: Complete chat integration
+- **Days 4-5**: Upgrade path implementation and testing
+
+### **Week 3: Production Readiness**
+- **Days 1-2**: Final testing and bug fixes
+- **Days 3-5**: Production deployment and validation
+
+## Risk Mitigation
+
+### **User Management Risks**
+- **Risk**: Complex authentication system
+- **Mitigation**: Start with simple JWT-based auth, enhance later
+
+### **Chat Integration Risks**
+- **Risk**: Breaking existing chat functionality
+- **Mitigation**: Maintain API compatibility, add user context incrementally
+
+### **Upgrade Path Risks**
+- **Risk**: Complex database migrations
+- **Mitigation**: Simple schema changes, test migrations thoroughly
+
+## Next Steps
+
+1. **Review MVP scope** - Validate these three core features
+2. **Start Phase 1** - Implement user management system
+3. **Test thoroughly** - Ensure each phase works before moving forward
+4. **Prepare for shipping** - Focus on stability over features
+
+This MVP approach gives you a solid foundation for shipping while maintaining a clear path for future enhancements via auto-updates.
 
 ## API Endpoint Updates Needed
 
