@@ -14,6 +14,37 @@ This document outlines the **implementation plan** for the database schema neede
 - Only use ALTER TABLE for minimal chat integration fields
 - Ensure all future features can be added without schema changes
 
+**Database Location**: `control/db/` - Local database for UI management, separate from Flask chat bridge
+- **Database File**: `control/db/sanctum_ui.db` - SQLite database for UI management
+- **Init Script**: `control/db/init_database.sql` - SQL script for consistent database creation
+
+## Database Initialization
+
+### **Init Script Location**
+```bash
+control/db/init_database.sql  # Complete database schema creation
+```
+
+### **Init Script Contents**
+The `init_database.sql` file will contain:
+- All MVP table creation statements
+- Proper indexes for performance
+- Sample data population
+- Foreign key constraints
+- Schema version tracking
+
+### **Usage**
+```bash
+# Initialize fresh database
+sqlite3 control/db/sanctum_ui.db < control/db/init_database.sql
+
+# Or from Python
+import sqlite3
+with open('control/db/init_database.sql', 'r') as f:
+    init_script = f.read()
+    conn.executescript(init_script)
+```
+
 ## Current State Analysis
 
 ### What We Have
