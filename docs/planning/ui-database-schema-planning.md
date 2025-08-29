@@ -5,6 +5,15 @@ This document outlines the **implementation plan** for the database schema neede
 
 **Note**: This document references the **master schema** defined in `../reference/registry_schema.md`. For complete table definitions and design principles, refer to that document.
 
+## Forward Compatibility Strategy
+
+**Goal**: Build MVP tables with full production schema from the start to avoid ALTER TABLE statements later.
+
+**Approach**: 
+- Use complete table structures from master schema for MVP tables
+- Only use ALTER TABLE for minimal chat integration fields
+- Ensure all future features can be added without schema changes
+
 ## Current State Analysis
 
 ### What We Have
@@ -47,18 +56,19 @@ This document outlines the **implementation plan** for the database schema neede
 
 ### **Phase 3: Upgrade Path (Week 2)**
 **Goal**: Enable future feature additions without breaking existing system
-**Tables**: `tools`, `agents` (minimal schema)
+**Tables**: `agents` (minimal schema)
 **Features**:
-- Basic tool and agent management
-- Database-driven UI (replace hardcoded data)
+- Basic agent management
+- Database-driven UI (replace hardcoded agent data)
 - Foundation for future enhancements
 - Auto-update capability
 
 ### **Post-MVP: Future Enhancements**
 **Goal**: Add advanced features via auto-updates
-**Tables**: `plugins`, `configurations`, `tool_instances`, `system_config`, `env_vars`
+**Tables**: `tools` (deferred for focused design), `plugins`, `configurations`, `tool_instances`, `system_config`, `env_vars`
 **Features**:
-- Plugin management
+- Tool management (design TBD)
+- Plugin system
 - Advanced configuration
 - Tool execution tracking
 - System monitoring
@@ -69,20 +79,21 @@ This document outlines the **implementation plan** for the database schema neede
 
 #### Tables to Create
 
-##### Users Table (Core)
+##### Users Table (Core) - Full Production Schema
 ```sql
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    role VARCHAR(20) DEFAULT 'user', -- 'admin', 'user', 'viewer'
-    status VARCHAR(20) DEFAULT 'active', -- 'active', 'inactive', 'locked'
+    role VARCHAR(20) NOT NULL, -- 'admin', 'user', 'viewer'
+    permissions JSON, -- User-specific permissions
     last_login TIMESTAMP,
-    failed_login_attempts INTEGER DEFAULT 0,
-    locked_until TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_active BOOLEAN DEFAULT true,
+    failed_login_attempts INTEGER DEFAULT 0,
+    locked_until TIMESTAMP
 );
 ```
 
@@ -149,31 +160,22 @@ ALTER TABLE web_chat_sessions ADD COLUMN agent_id VARCHAR(50);
 
 #### Minimal Schema Tables
 ```sql
--- Tools table for future enhancements
-CREATE TABLE tools (
-    id VARCHAR(50) PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
-    emoji VARCHAR(10),
-    category VARCHAR(20) NOT NULL,
-    status VARCHAR(20) DEFAULT 'Healthy',
-    route_path VARCHAR(100),
-    is_enabled BOOLEAN DEFAULT true,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Agents table for future enhancements
+-- Agents table for future enhancements with visibility control
 CREATE TABLE agents (
     id VARCHAR(50) PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    display_name VARCHAR(100),
+    letta_uid VARCHAR(50) UNIQUE NOT NULL, -- CRITICAL for Broca integration
+    name VARCHAR(100), -- e.g., "Athena", "Monday", "Timbre"
     description TEXT,
-    status VARCHAR(20) DEFAULT 'Healthy',
-    is_active BOOLEAN DEFAULT true,
+    status VARCHAR(20) DEFAULT 'Healthy', -- 'Healthy', 'Degraded', 'Off', 'Ready'
+    created_by INTEGER, -- Foreign key to users.id
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    config JSON, -- Agent-specific configuration
+    is_active BOOLEAN DEFAULT true,
+    visible_to_users JSON, -- [1, 5, 12] specific user IDs, or NULL for all users
+    visible_to_roles JSON -- ['admin', 'user'] specific roles, or NULL for all roles
 );
+```
 ```
 
 #### Implementation Steps
@@ -192,13 +194,77 @@ CREATE TABLE agents (
    - Plugin system foundation
    - Configuration management base
 
+4. **Access Control**
+   - Agent visibility based on user ID and role
+   - Simple binary access control (can/cannot see agent)
+   - Agents handle nuanced access levels via SEP
+
+### Sample Data Population
+
+#### Agents Table with Visibility Control
+```sql
+-- Admin users see all agents, regular users see only Athena by default
+INSERT INTO agents (id, letta_uid, name, description, created_by, visible_to_users, visible_to_roles) VALUES
+('athena', 'athena_letta_001', 'Athena', 'Sanctum Configuration Assistant', 1, NULL, NULL), -- Visible to all
+('monday', 'monday_letta_002', 'Monday', 'Task Management Specialist', 1, NULL, JSON_ARRAY('admin')), -- Admin only
+('timbre', 'timbre_letta_003', 'Timbre', 'Audio Processing Expert', 1, NULL, JSON_ARRAY('admin')); -- Admin only
+
+-- Example: Give specific user access to Monday
+UPDATE agents SET visible_to_users = JSON_ARRAY(2, 5) WHERE id = 'monday';
+```
+
+### Access Control Queries
+
+#### Get Agents Visible to a Specific User
+```sql
+-- Query: Get all agents visible to user_id = 2 with role = 'user'
+SELECT * FROM agents 
+WHERE is_active = 1 
+  AND (
+    visible_to_users IS NULL OR JSON_CONTAINS(visible_to_users, CAST(2 AS JSON))
+    OR visible_to_roles IS NULL OR JSON_CONTAINS(visible_to_roles, CAST('user' AS JSON))
+  );
+```
+
+#### Check if User Can Access Specific Agent
+```sql
+-- Query: Can user_id = 2 access agent 'monday'?
+SELECT COUNT(*) > 0 as has_access 
+FROM agents 
+WHERE id = 'monday' 
+  AND is_active = 1
+  AND (
+    visible_to_users IS NULL OR JSON_CONTAINS(visible_to_users, CAST(2 AS JSON))
+    OR visible_to_roles IS NULL OR JSON_CONTAINS(visible_to_roles, CAST('user' AS JSON))
+  );
+```
+
+#### Update Agent Visibility
+```sql
+-- Give user_id = 3 access to Monday
+UPDATE agents 
+SET visible_to_users = JSON_ARRAY_APPEND(
+  COALESCE(visible_to_users, JSON_ARRAY()), 
+  '$', 3
+) 
+WHERE id = 'monday';
+
+-- Remove user_id = 5 access to Monday
+UPDATE agents 
+SET visible_to_users = JSON_REMOVE(
+  visible_to_users, 
+  JSON_UNQUOTE(JSON_SEARCH(visible_to_users, 'one', '5'))
+) 
+WHERE id = 'monday';
+```
+
 ## MVP Success Criteria
 
 ### **User Management**
 - ✅ Users can register and login
 - ✅ Sessions persist across browser restarts
 - ✅ Role-based access control works
-- ✅ User discovery from Broca functions
+- ✅ **Simple UID integration works** (uid field set consistently)
 - ✅ Security features (lockout, rate limiting) active
 
 ### **Chat Integration**
@@ -345,7 +411,31 @@ This MVP approach gives you a solid foundation for shipping while maintaining a 
 1. **Review this implementation plan** - Validate phases and timelines
 2. **Implement Phase 1** - Create minimal schema to get UI working
 3. **Test data population** - Verify UI displays database content correctly
-4. **Implement Phase 2** - Add user management functionality
+4. **Simple UID Integration**
+   - Ensure `web_chat_sessions.uid` gets set from UI user context
+   - Map Sanctum user ID to Broca Letta user ID
+   - Maintain existing chat flow
+
+### **Simple UID Integration Implementation**
+
+#### Current Flow (Already Working)
+```sql
+-- web_chat_sessions.uid = Letta user ID from Broca
+-- This field already determines which Letta ID is selected
+-- We just need to ensure it's set consistently from the UI
+```
+
+#### Implementation
+1. **UI User Context**: When user logs in, get their Broca Letta user ID
+2. **Chat Session Creation**: Set `web_chat_sessions.uid` to this Letta ID
+3. **Existing Flow**: Broca automatically handles the rest
+
+#### Benefits
+- ✅ **No database changes needed** (uid field already exists)
+- ✅ **Existing flow works** (just ensure consistent uid setting)
+- ✅ **Simple implementation** (map Sanctum user → Broca Letta ID)
+- ✅ **No complex linking** (direct relationship)
+
 5. **Continue through phases** - Build functionality incrementally
 
 ## Questions for Review
