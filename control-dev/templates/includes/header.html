@@ -1,0 +1,30 @@
+<!-- Unified Header Template for Sanctum -->
+<header class="d-flex align-items-center justify-content-between p-2 px-3 border-bottom">
+    <div class="d-flex align-items-center gap-2">
+        <span class="fw-medium">{{ page_title | default('Sanctum') }}</span>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+        <span class="text-muted small">Status: <span class="text-success">● Healthy</span> v1.0.0</span>
+        
+        <!-- User Info -->
+        {% if session.username %}
+        <div class="d-flex align-items-center gap-2">
+            <span class="text-muted small">
+                <i class="fas fa-user"></i> {{ session.username }} ({{ session.role }})
+            </span>
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm px-2 py-1" title="Logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="d-none d-sm-inline">Logout</span>
+            </a>
+        </div>
+        {% endif %}
+        
+        <!-- Back button - only show if not on main chat page -->
+        {% if request.endpoint != 'index' %}
+        <a href="{{ back_url | default('/') }}" class="btn btn-outline-light btn-sm px-3 py-1">
+            <span class="me-1">←</span>
+            <span class="d-none d-sm-inline">{{ back_text | default('Back to Chat') }}</span>
+        </a>
+        {% endif %}
+    </div>
+</header>

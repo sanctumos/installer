@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Agent - Sanctum Configurator</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+
+</head>
+<body>
+    {% set page_title = "Create Agent" %}
+    {% set back_url = "/settings" %}
+    {% set back_text = "Back to Settings" %}
+    {% set page_heading = "Create New Prime Agent" %}
+    {% set page_description = "Configure and deploy a new Prime agent to the Sanctum system" %}
+    
+    {% include 'includes/page_header.html' %}
+
+            <!-- Agent Creation Form -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">🤖 Agent Configuration</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="createAgentForm">
+                                <!-- Basic Information -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h6 class="text-primary mb-3">Basic Information</h6>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Agent Name <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" id="agentName" name="agentName" placeholder="e.g., Nova, Echo, Pulse" required>
+                                            <div class="form-text">Unique identifier for the agent</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Display Name</label>
+                                            <input type="text" class="form-control" id="displayName" name="displayName" placeholder="e.g., Nova Prime, Echo Assistant">
+                                            <div class="form-text">Human-readable name (optional)</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Description</label>
+                                            <textarea class="form-control" id="agentDescription" name="agentDescription" rows="2" placeholder="Brief description of the agent's purpose and capabilities"></textarea>
+                                            <div class="form-text">Describe what this agent does</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- AI Model Configuration -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h6 class="text-primary mb-3">AI Model Configuration</h6>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Primary Model <span class="text-danger">*</span></label>
+                                            <select class="form-select" id="primaryModel" name="primaryModel" required>
+                                                <option value="">Select a model...</option>
+                                                <option value="gpt-4">GPT-4 (Claude 3.5 Sonnet)</option>
+                                                <option value="gpt-4-turbo">GPT-4 Turbo (Claude 3.5 Haiku)</option>
+                                                <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Claude 3 Haiku)</option>
+                                                <option value="claude-3-opus">Claude 3 Opus</option>
+                                                <option value="claude-3-sonnet">Claude 3 Sonnet</option>
+                                                <option value="claude-3-haiku">Claude 3 Haiku</option>
+                                                <option value="custom">Custom Model</option>
+                                            </select>
+                                            <div class="form-text">Primary AI model for the agent</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Fallback Model</label>
+                                            <select class="form-select" id="fallbackModel" name="fallbackModel">
+                                                <option value="">No fallback</option>
+                                                <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                                                <option value="claude-3-haiku">Claude 3 Haiku</option>
+                                                <option value="gpt-4">GPT-4</option>
+                                            </select>
+                                            <div class="form-text">Backup model if primary fails</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Temperature</label>
+                                            <input type="range" class="form-range" id="temperature" name="temperature" min="0" max="2" step="0.1" value="0.7">
+                                            <div class="d-flex justify-content-between">
+                                                <small class="text-muted">Focused (0.0)</small>
+                                                <small class="text-muted">Balanced (0.7)</small>
+                                                <small class="text-muted">Creative (2.0)</small>
+                                            </div>
+                                            <div class="form-text">Controls response creativity</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Max Tokens</label>
+                                            <select class="form-select" id="maxTokens" name="maxTokens">
+                                                <option value="1024">1K tokens</option>
+                                                <option value="2048" selected>2K tokens</option>
+                                                <option value="4096">4K tokens</option>
+                                                <option value="8192">8K tokens</option>
+                                                <option value="16384">16K tokens</option>
+                                                <option value="32768">32K tokens</option>
+                                            </select>
+                                            <div class="form-text">Maximum response length</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- System Instructions -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h6 class="text-primary mb-3">System Instructions</h6>
+                                        <div class="mb-3">
+                                            <label class="form-label">Core Instructions <span class="text-danger">*</span></label>
+                                            <textarea class="form-control" id="systemInstructions" name="systemInstructions" rows="6" placeholder="Define the agent's core behavior, personality, and capabilities..." required></textarea>
+                                            <div class="form-text">Primary instructions that define the agent's behavior</div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Additional Context</label>
+                                            <textarea class="form-control" id="additionalContext" name="additionalContext" rows="3" placeholder="Additional context, examples, or specific instructions..."></textarea>
+                                            <div class="form-text">Optional additional context or examples</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Capabilities & Modules -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h6 class="text-primary mb-3">Capabilities & Modules</h6>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Core Modules</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="enableBroca" name="enableBroca" checked>
+                                                <label class="form-check-label">Broca (Message Processing)</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="enableCore" name="enableCore" checked disabled>
+                                                <label class="form-check-label text-muted">Core (System Integration)</label>
+                                                <small class="text-muted d-block">Always enabled</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Optional Modules</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="enableFileManager" name="enableFileManager">
+                                                <label class="form-check-label">File Manager</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="enableNetworkTools" name="enableNetworkTools">
+                                                <label class="form-check-label">Network Tools</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="enableDevOps" name="enableDevOps">
+                                                <label class="form-check-label">DevOps Tools</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Security & Access -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h6 class="text-primary mb-3">Security & Access</h6>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Access Level</label>
+                                            <select class="form-select" id="accessLevel" name="accessLevel">
+                                                <option value="restricted" selected>Restricted</option>
+                                                <option value="standard">Standard</option>
+                                                <option value="elevated">Elevated</option>
+                                                <option value="admin">Administrative</option>
+                                            </select>
+                                            <div class="form-text">Agent's system access permissions</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">API Access</label>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="enableApiAccess" name="enableApiAccess">
+                                                <label class="form-check-label">Enable API access</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="enableWebhook" name="enableWebhook">
+                                                <label class="form-check-label">Enable webhook endpoints</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="mb-3">
+                                            <label class="form-label">Allowed Domains/IPs</label>
+                                            <textarea class="form-control" id="allowedDomains" name="allowedDomains" rows="2" placeholder="e.g., localhost, 192.168.1.0/24, *.example.com"></textarea>
+                                            <div class="form-text">Restrict access to specific networks (optional)</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Deployment Options -->
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <h6 class="text-primary mb-3">Deployment Options</h6>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Deployment Strategy</label>
+                                            <select class="form-select" id="deploymentStrategy" name="deploymentStrategy">
+                                                <option value="immediate" selected>Deploy Immediately</option>
+                                                <option value="scheduled">Schedule Deployment</option>
+                                                <option value="manual">Manual Deployment</option>
+                                            </select>
+                                            <div class="form-text">When to deploy the agent</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Resource Allocation</label>
+                                            <select class="form-select" id="resourceAllocation" name="resourceAllocation">
+                                                <option value="minimal">Minimal (1 CPU, 512MB RAM)</option>
+                                                <option value="standard" selected>Standard (2 CPU, 1GB RAM)</option>
+                                                <option value="enhanced">Enhanced (4 CPU, 2GB RAM)</option>
+                                                <option value="high">High Performance (8 CPU, 4GB RAM)</option>
+                                            </select>
+                                            <div class="form-text">System resources allocated to agent</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="enableMonitoring" name="enableMonitoring" checked>
+                                                <label class="form-check-label">Enable comprehensive monitoring</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="enableLogging" name="enableLogging" checked>
+                                                <label class="form-check-label">Enable detailed logging</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="enableBackup" name="enableBackup" checked>
+                                                <label class="form-check-label">Include in system backups</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Form Actions -->
+                                <div class="row">
+                                    <div class="col-12">
+                                        <hr class="my-4">
+                                        <div class="d-flex gap-3">
+                                            <button type="submit" class="btn btn-primary" id="createAgentBtn">
+                                                <span class="spinner-border spinner-border-sm d-none me-2" role="status"></span>
+                                                Create Agent
+                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary" onclick="resetForm()">Reset Form</button>
+                                            <button type="button" class="btn btn-outline-info" onclick="saveDraft()">Save Draft</button>
+                                            <button type="button" class="btn btn-outline-warning" onclick="previewAgent()">Preview</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="col-lg-4">
+                    <!-- Agent Preview -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h6 class="card-title mb-0">👁️ Agent Preview</h6>
+                        </div>
+                        <div class="card-body">
+                            <div id="agentPreview">
+                                <div class="text-center text-muted py-4">
+                                    <div class="h4 mb-2">🤖</div>
+                                    <p class="mb-0">Fill out the form to see a preview</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuration Summary -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h6 class="card-title mb-0">📋 Configuration Summary</h6>
+                        </div>
+                        <div class="card-body">
+                            <div id="configSummary">
+                                <div class="text-center text-muted py-3">
+                                    <p class="mb-0">Configuration details will appear here</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Templates -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="card-title mb-0">⚡ Quick Templates</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary btn-sm" onclick="loadTemplate('assistant')">🤖 General Assistant</button>
+                                <button class="btn btn-outline-info btn-sm" onclick="loadTemplate('developer')">💻 Developer Helper</button>
+                                <button class="btn btn-outline-success btn-sm" onclick="loadTemplate('analyst')">📊 Data Analyst</button>
+                                <button class="btn btn-outline-warning btn-sm" onclick="loadTemplate('creative')">🎨 Creative Writer</button>
+                                <button class="btn btn-outline-secondary btn-sm" onclick="loadTemplate('custom')">⚙️ Custom Template</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Progress Modal -->
+    <div class="modal fade" id="progressModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="progressModalTitle">Creating Agent...</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary mb-3" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p id="progressMessage">Initializing agent creation...</p>
+                        <div class="progress">
+                            <div class="progress-bar" id="progressBar" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <small class="text-muted mt-2" id="progressDetails">Please wait...</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal fade" id="previewModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agent Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="previewContent">
+                        <!-- Preview content will be populated here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="createAgentFromPreview()">Create Agent</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='create_agent.js') }}"></script>
+</body>
+</html>
