@@ -1,7 +1,30 @@
-# Sanctum Registry Database Schema
+# Sanctum Registry Database Schema - Master Reference
 
 ## Overview
-This document outlines the proposed database schema for the Sanctum Configurator registry. The schema is designed to support the multi-agent architecture, tool management, and configuration system shown in the UI.
+This document defines the **complete and authoritative database schema** for the Sanctum Configurator registry. This is the master schema that all implementation plans should reference.
+
+**Note**: This schema includes all possible tables and features. For implementation planning, see `../planning/ui-database-schema-planning.md` which defines phased implementation and UI-specific requirements.
+
+## Implementation Phases
+
+### Phase 1: Core UI Support (Minimal Schema)
+- `tools` - Tool definitions for settings grid
+- `agents` - Agent management for chat interface  
+- `users` - Basic user authentication
+
+### Phase 2: User Management
+- `user_sessions` - Web interface sessions
+- `agent_configs` - Agent-specific configurations
+
+### Phase 3: Configuration Management
+- `system_config` - System-wide configuration
+- `env_vars` - Environment variables
+- `tool_instances` - Tool execution tracking
+
+### Phase 4: Advanced Features
+- `plugins` - Tool plugin management
+- `configurations` - Hierarchical configuration system
+- Enhanced chat integration tables
 
 ## Core Tables
 
@@ -103,7 +126,6 @@ plugins
 
 **Note**: Plugins are always tied to a specific tool/module and cannot be shared across different tools.
 
-
 ### 6. Users
 User accounts and permissions for system access control.
 
@@ -123,7 +145,91 @@ users
 - locked_until (TIMESTAMP, NULL) - Account lockout timestamp
 ```
 
+### 7. User Sessions
+Web interface user sessions for authentication.
 
+```sql
+user_sessions
+- id (VARCHAR, 100) PRIMARY KEY
+- user_id (INTEGER, FOREIGN KEY -> users.id, NOT NULL)
+- session_token (VARCHAR, 255, NOT NULL)
+- ip_address (VARCHAR, 45)
+- user_agent (TEXT)
+- expires_at (TIMESTAMP, NOT NULL)
+- created_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+```
+
+### 8. System Configuration
+System-wide configuration settings.
+
+```sql
+system_config
+- id (INTEGER, PRIMARY KEY, AUTOINCREMENT)
+- config_key (VARCHAR, 100, UNIQUE, NOT NULL)
+- config_value (TEXT)
+- config_type (VARCHAR, 20, DEFAULT 'string')
+- description (TEXT)
+- is_encrypted (BOOLEAN, DEFAULT false)
+- category (VARCHAR, 50, DEFAULT 'general')
+- created_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+- updated_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+```
+
+### 9. Environment Variables
+Environment variable management.
+
+```sql
+env_vars
+- id (INTEGER, PRIMARY KEY, AUTOINCREMENT)
+- var_name (VARCHAR, 100, UNIQUE, NOT NULL)
+- var_value (TEXT)
+- is_encrypted (BOOLEAN, DEFAULT false)
+- description (TEXT)
+- created_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+- updated_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+```
+
+### 10. Agent Configurations
+Agent-specific configuration settings.
+
+```sql
+agent_configs
+- id (INTEGER, PRIMARY KEY, AUTOINCREMENT)
+- agent_id (VARCHAR, 50, NOT NULL)
+- config_key (VARCHAR, 100, NOT NULL)
+- config_value (TEXT)
+- config_type (VARCHAR, 20, DEFAULT 'string')
+- is_encrypted (BOOLEAN, DEFAULT false)
+- created_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+- updated_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+- FOREIGN KEY (agent_id) REFERENCES agents(id)
+- UNIQUE(agent_id, config_key)
+```
+
+### 11. Chat Integration Tables
+Enhanced chat system tables for user attribution.
+
+```sql
+web_chat_sessions
+- id (VARCHAR, 64, PRIMARY KEY)
+- uid (VARCHAR, 16, UNIQUE)
+- user_id (INTEGER, FOREIGN KEY -> users.id)
+- agent_id (VARCHAR, 50, FOREIGN KEY -> agents.id)
+- created_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+- last_active (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+- ip_address (VARCHAR, 45)
+- metadata (JSON)
+
+web_chat_messages
+- id (INTEGER, PRIMARY KEY, AUTOINCREMENT)
+- session_id (VARCHAR, 64, NOT NULL)
+- message (TEXT, NOT NULL)
+- timestamp (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+- processed (BOOLEAN, DEFAULT false)
+- broca_message_id (INTEGER)
+- user_id (INTEGER, FOREIGN KEY -> users.id)
+- FOREIGN KEY (session_id) REFERENCES web_chat_sessions(id)
+```
 
 ## Relationships
 
@@ -186,6 +292,13 @@ CREATE INDEX idx_users_username ON users(username);
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_plugins_tool ON plugins(tool_id);
 CREATE INDEX idx_plugins_module_scope ON plugins(module_scope);
+CREATE INDEX idx_user_sessions_user ON user_sessions(user_id);
+CREATE INDEX idx_user_sessions_token ON user_sessions(session_token);
+CREATE INDEX idx_agent_configs_agent ON agent_configs(agent_id);
+CREATE INDEX idx_system_config_key ON system_config(config_key);
+CREATE INDEX idx_env_vars_name ON env_vars(var_name);
+CREATE INDEX idx_web_chat_sessions_user ON web_chat_sessions(user_id);
+CREATE INDEX idx_web_chat_sessions_agent ON web_chat_sessions(agent_id);
 ```
 
 ## Future Considerations
@@ -254,4 +367,13 @@ Sanctum automatically scans these locations for manifest files:
 3. **Encryption**: What level of security is needed for sensitive configs?
 4. **Performance**: Expected data volume and query patterns?
 5. **Integration**: How does this connect with the existing Letta system?
+
+## Implementation Notes
+
+- **Phase 1 tables** are marked as essential for basic UI functionality
+- **Phase 2-4 tables** add advanced features and full system capabilities
+- **Field variations** between phases are documented in the implementation plan
+- **Migration paths** from simple to complex schemas are provided
+
+For detailed implementation planning and UI-specific requirements, see `../planning/ui-database-schema-planning.md`.
 
