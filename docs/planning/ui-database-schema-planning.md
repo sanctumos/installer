@@ -18,6 +18,8 @@ This document outlines the **implementation plan** for the database schema neede
 - **Database File**: `control/db/sanctum_ui.db` - SQLite database for UI management
 - **Init Script**: `control/db/init_database.sql` - SQL script for consistent database creation
 
+**Note**: SQLAlchemy handles all the complex database concerns (connections, pooling, error handling, rollbacks). The UI and chat share the same Flask session since they're the same application.
+
 ## Database Initialization
 
 ### **Init Script Location**
