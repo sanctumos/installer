@@ -141,6 +141,34 @@ function focusActiveTabSearch() {
     }
 }
 
+// System update function
+function updateSystem() {
+    const button = event.target;
+    const originalText = button.textContent;
+    
+    // Show loading state
+    button.disabled = true;
+    button.textContent = 'Updating...';
+    button.classList.add('btn-secondary');
+    button.classList.remove('btn-primary');
+    
+    // Simulate update process
+    setTimeout(() => {
+        // Show success state
+        button.textContent = 'Updated!';
+        button.classList.remove('btn-secondary');
+        button.classList.add('btn-success');
+        
+        // Reset after 3 seconds
+        setTimeout(() => {
+            button.disabled = false;
+            button.textContent = originalText;
+            button.classList.remove('btn-success');
+            button.classList.add('btn-primary');
+        }, 3000);
+    }, 2000);
+}
+
 // Initialize SMCP functionality only when on actual SMCP pages
 document.addEventListener('shown.bs.tab', function(e) {
     // Only initialize SMCP panels if we're on an actual SMCP page

@@ -109,20 +109,6 @@ def system_settings():
     """System settings and user management interface"""
     return render_template('system_settings.html')
 
-@app.route('/install-tool')
-@require_auth
-@require_role('admin')
-def install_tool():
-    """Install tool interface"""
-    return render_template('install_tool.html')
-
-@app.route('/cron-scheduler')
-@require_auth
-@require_role('admin')
-def cron_scheduler():
-    """CRON scheduler interface"""
-    return render_template('cron_scheduler.html')
-
 @app.route('/chat-settings')
 @require_auth
 def chat_settings():
@@ -135,13 +121,6 @@ def chat_settings():
 def broca_settings():
     """Broca Settings interface"""
     return render_template('broca_settings.html')
-
-@app.route('/backup-restore')
-@require_auth
-@require_role('admin')
-def backup_restore():
-    """Backup & Restore interface"""
-    return render_template('backup_restore.html')
 
 @app.route('/create-agent')
 @require_auth

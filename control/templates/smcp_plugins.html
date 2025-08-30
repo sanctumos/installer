@@ -22,115 +22,117 @@
     
     {% include 'includes/page_header.html' %}
 
-    <div class="container-fluid px-4 py-3">
-        <!-- Overview Stats -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <div class="h3 text-success" id="totalPlugins">0</div>
-                        <small class="text-muted">Total Plugins</small>
+    <main>
+        <div class="container-fluid">
+            <!-- Overview Stats -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-body text-center">
+                            <div class="h3 text-success" id="totalPlugins">0</div>
+                            <small class="text-muted">Total Plugins</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-body text-center">
+                            <div class="h3 text-info" id="activePlugins">0</div>
+                            <small class="text-muted">Active</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-body text-center">
+                            <div class="h3 text-warning" id="inactivePlugins">0</div>
+                            <small class="text-muted">Inactive</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-body text-center">
+                            <div class="h3 text-danger" id="errorPlugins">0</div>
+                            <small class="text-muted">Errors</small>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <div class="h3 text-info" id="activePlugins">0</div>
-                        <small class="text-muted">Active</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <div class="h3 text-warning" id="inactivePlugins">0</div>
-                        <small class="text-muted">Inactive</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <div class="h3 text-danger" id="errorPlugins">0</div>
-                        <small class="text-muted">Errors</small>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Search and Filters -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="input-group">
-                    <span class="input-group-text">🔍</span>
-                    <input type="text" class="form-control" placeholder="Search plugins..." id="pluginSearch">
+            <!-- Search and Filters -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary text-light">🔍</span>
+                        <input type="text" class="form-control bg-dark border-secondary text-light" placeholder="Search plugins..." id="pluginSearch">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select bg-dark border-secondary text-light" id="statusFilter">
+                        <option value="">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="error">Error</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select bg-dark border-secondary text-light" id="categoryFilter">
+                        <option value="">All Categories</option>
+                        <option value="core">Core</option>
+                        <option value="communication">Communication</option>
+                        <option value="data">Data</option>
+                        <option value="utility">Utility</option>
+                    </select>
                 </div>
             </div>
-            <div class="col-md-3">
-                <select class="form-select" id="statusFilter">
-                    <option value="">All Statuses</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="error">Error</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select class="form-select" id="categoryFilter">
-                    <option value="">All Categories</option>
-                    <option value="core">Core</option>
-                    <option value="communication">Communication</option>
-                    <option value="data">Data</option>
-                    <option value="utility">Utility</option>
-                </select>
-            </div>
-        </div>
 
-        <!-- Plugins Table -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Installed Plugins</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-dark table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Plugin Name</th>
-                                        <th>Version</th>
-                                        <th>Status</th>
-                                        <th>Category</th>
-                                        <th>Description</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="pluginsTableBody">
-                                    <!-- Plugin rows will be populated by JavaScript -->
-                                </tbody>
-                            </table>
+            <!-- Plugins Table -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-header border-secondary">
+                            <h5 class="card-title mb-0 text-light">Installed Plugins</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-dark table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-light">Plugin Name</th>
+                                            <th class="text-light">Version</th>
+                                            <th class="text-light">Status</th>
+                                            <th class="text-light">Category</th>
+                                            <th class="text-light">Last Updated</th>
+                                            <th class="text-light">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pluginsTableBody">
+                                        <!-- Plugin rows will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </main>
 
-        <!-- Plugin Details Modal -->
-        <div class="modal fade" id="pluginDetailsModal" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="pluginModalTitle">Plugin Details</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body" id="pluginModalBody">
-                        <!-- Plugin details will be populated here -->
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="savePluginChanges">Save Changes</button>
-                    </div>
+    <!-- Plugin Details Modal -->
+    <div class="modal fade" id="pluginDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="pluginModalTitle">Plugin Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="pluginModalBody">
+                    <!-- Plugin details will be populated here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="savePluginChanges">Save Changes</button>
                 </div>
             </div>
         </div>

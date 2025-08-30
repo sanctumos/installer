@@ -17,180 +17,234 @@
     
     {% include 'includes/page_header.html' %}
 
-        <main>
+    <main>
+        <div class="container-fluid">
             <!-- User Management Section -->
-            <section class="user-management">
-                <h2>👥 User Management</h2>
-                <div class="section-content">
-                    <div class="user-discovery">
-                        <h3>Discover Users from Broca</h3>
-                        <p>Find users who have interacted with your agents and promote them to full Sanctum users.</p>
-                        <button id="discoverUsers" class="btn btn-primary">🔍 Discover Users</button>
-                        
-                        <div id="discoveredUsers" class="user-list" style="display: none;">
-                            <h4>Discovered Users</h4>
-                            <div class="user-grid" id="userGrid">
-                                <!-- Users will be populated here -->
+            <section class="mb-5">
+                <div class="card bg-dark border-secondary">
+                    <div class="card-header border-secondary">
+                        <h2 class="h4 mb-0 text-light">👥 User Management</h2>
+                    </div>
+                    <div class="card-body">
+                        <!-- Discover Users Section -->
+                        <div class="card bg-darker border-secondary mb-4">
+                            <div class="card-header border-secondary">
+                                <h3 class="h5 mb-0 text-light">Discover Users from Broca</h3>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted mb-3">Find users who have interacted with your agents and promote them to full Sanctum users.</p>
+                                <button id="discoverUsers" class="btn btn-primary">🔍 Discover Users</button>
+                                
+                                <div id="discoveredUsers" class="mt-3" style="display: none;">
+                                    <h4 class="h6 mb-2 text-light">Discovered Users</h4>
+                                    <div class="user-grid" id="userGrid">
+                                        <!-- Users will be populated here -->
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="user-management-tools">
-                        <h3>Manage Existing Users</h3>
-                        <div class="user-filters">
-                            <input type="text" id="userSearch" placeholder="Search users..." class="search-input">
-                            <select id="roleFilter" class="filter-select">
-                                <option value="">All Roles</option>
-                                <option value="admin">Admin</option>
-                                <option value="user">User</option>
-                                <option value="viewer">Viewer</option>
-                            </select>
-                        </div>
-                        
-                        <div class="user-table">
-                            <table class="table table-dark table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Username</th>
-                                        <th>Email</th>
-                                        <th>Role</th>
-                                        <th>Status</th>
-                                        <th>Last Login</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="userTableBody">
-                                    <!-- Users will be populated here -->
-                                </tbody>
-                            </table>
+                        <!-- Manage Existing Users Section -->
+                        <div class="card bg-darker border-secondary">
+                            <div class="card-header border-secondary">
+                                <h3 class="h5 mb-0 text-light">Manage Existing Users</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <input type="text" id="userSearch" placeholder="Search users..." class="form-control bg-dark border-secondary text-light">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <select id="roleFilter" class="form-select bg-dark border-secondary text-light">
+                                            <option value="">All Roles</option>
+                                            <option value="admin">Admin</option>
+                                            <option value="user">User</option>
+                                            <option value="viewer">Viewer</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="table-responsive">
+                                    <table class="table table-dark table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-light">Username</th>
+                                                <th class="text-light">Email</th>
+                                                <th class="text-light">Role</th>
+                                                <th class="text-light">Status</th>
+                                                <th class="text-light">Last Login</th>
+                                                <th class="text-light">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="userTableBody">
+                                            <!-- Users will be populated here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- System Configuration Section -->
-            <section class="system-config">
-                <h2>🔧 System Configuration</h2>
-                <div class="section-content">
-                    <div class="config-category">
-                        <h3>Environment Variables</h3>
-                        <div class="env-vars">
-                            <div class="env-var">
-                                <label>OpenAI API Key:</label>
-                                <input type="password" id="openaiKey" placeholder="sk-..." class="config-input">
-                                <button class="btn btn-small" onclick="togglePassword('openaiKey')">👁️</button>
+            <section class="mb-5">
+                <div class="card bg-dark border-secondary">
+                    <div class="card-header border-secondary">
+                        <h2 class="h4 mb-0 text-light">🔧 System Configuration</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6 mb-4">
+                                <div class="card bg-darker border-secondary">
+                                    <div class="card-header border-secondary">
+                                        <h3 class="h5 mb-0 text-light">Environment Variables</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label text-light">OpenAI API Key:</label>
+                                            <div class="input-group">
+                                                <input type="password" id="openaiKey" placeholder="sk-..." class="form-control bg-dark border-secondary text-light">
+                                                <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('openaiKey')">👁️</button>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label text-light">Anthropic API Key:</label>
+                                            <div class="input-group">
+                                                <input type="password" id="anthropicKey" placeholder="sk-ant..." class="form-control bg-dark border-secondary text-light">
+                                                <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('anthropicKey')">👁️</button>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label text-light">Ollama Base URL:</label>
+                                            <input type="text" id="ollamaUrl" placeholder="http://localhost:11434" class="form-control bg-dark border-secondary text-light">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="env-var">
-                                <label>Anthropic API Key:</label>
-                                <input type="password" id="anthropicKey" placeholder="sk-ant..." class="config-input">
-                                <button class="btn btn-small" onclick="togglePassword('anthropicKey')">👁️</button>
-                            </div>
-                            <div class="env-var">
-                                <label>Ollama Base URL:</label>
-                                <input type="text" id="ollamaUrl" placeholder="http://localhost:11434" class="config-input">
+
+                            <div class="col-lg-6 mb-4">
+                                <div class="card bg-darker border-secondary">
+                                    <div class="card-header border-secondary">
+                                        <h3 class="h5 mb-0 text-light">Path Configurations</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label text-light">Sanctum Base Path:</label>
+                                            <input type="text" id="sanctumPath" value="~/sanctum" class="form-control bg-dark border-secondary text-light">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label text-light">Letta Data Path:</label>
+                                            <input type="text" id="lettaPath" value="~/.letta" class="form-control bg-dark border-secondary text-light">
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="config-category">
-                        <h3>Path Configurations</h3>
-                        <div class="path-configs">
-                            <div class="path-config">
-                                <label>Sanctum Base Path:</label>
-                                <input type="text" id="sanctumPath" value="~/sanctum" class="config-input">
-                            </div>
-                            <div class="path-config">
-                                <label>Letta Data Path:</label>
-                                <input type="text" id="lettaPath" value="~/.letta" class="config-input">
-                            </div>
+                        <div class="d-flex gap-2 mt-3">
+                            <button id="saveConfig" class="btn btn-primary">💾 Save Configuration</button>
+                            <button id="exportConfig" class="btn btn-outline-secondary">📤 Export Config</button>
+                            <button id="importConfig" class="btn btn-outline-secondary">📥 Import Config</button>
                         </div>
-                    </div>
-
-                    <div class="config-actions">
-                        <button id="saveConfig" class="btn btn-primary">💾 Save Configuration</button>
-                        <button id="exportConfig" class="btn btn-secondary">📤 Export Config</button>
-                        <button id="importConfig" class="btn btn-secondary">📥 Import Config</button>
                     </div>
                 </div>
             </section>
-        </main>
+        </div>
+    </main>
 
     </div>
 </div>
 
     <!-- User Promotion Modal -->
-    <div id="promotionModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h3>Promote User to Sanctum</h3>
-            <form id="promotionForm">
-                <div class="form-group">
-                    <label>Username:</label>
-                    <input type="text" id="promoteUsername" required>
+    <div class="modal fade" id="promotionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark border-secondary">
+                <div class="modal-header border-secondary">
+                    <h3 class="modal-title text-light">Promote User to Sanctum</h3>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="form-group">
-                    <label>Email:</label>
-                    <input type="email" id="promoteEmail" required>
+                <div class="modal-body">
+                    <form id="promotionForm">
+                        <div class="mb-3">
+                            <label class="form-label text-light">Username:</label>
+                            <input type="text" id="promoteUsername" class="form-control bg-dark border-secondary text-light" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-light">Email:</label>
+                            <input type="email" id="promoteEmail" class="form-control bg-dark border-secondary text-light" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-light">Role:</label>
+                            <select id="promoteRole" class="form-select bg-dark border-secondary text-light" required>
+                                <option value="viewer">Viewer</option>
+                                <option value="user">User</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <label>Role:</label>
-                    <select id="promoteRole" required>
-                        <option value="viewer">Viewer</option>
-                        <option value="user">User</option>
-                        <option value="admin">Admin</option>
-                    </select>
+                <div class="modal-footer border-secondary">
+                    <button type="submit" form="promotionForm" class="btn btn-primary">Promote User</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Promote User</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 
     <!-- Edit User Modal -->
-    <div id="editUserModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close" onclick="closeEditModal()">&times;</span>
-            <h3>Edit User</h3>
-            <form id="editUserForm">
-                <input type="hidden" id="editUserId">
-                <div class="form-group">
-                    <label>Username:</label>
-                    <input type="text" id="editUsername" required>
+    <div class="modal fade" id="editUserModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark border-secondary">
+                <div class="modal-header border-secondary">
+                    <h3 class="modal-title text-light">Edit User</h3>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="form-group">
-                    <label>Email:</label>
-                    <input type="email" id="editEmail" required>
+                <div class="modal-body">
+                    <form id="editUserForm">
+                        <input type="hidden" id="editUserId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-light">Username:</label>
+                                <input type="text" id="editUsername" class="form-control bg-dark border-secondary text-light" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-light">Email:</label>
+                                <input type="email" id="editEmail" class="form-control bg-dark border-secondary text-light" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-light">Role:</label>
+                                <select id="editRole" class="form-select bg-dark border-secondary text-light" required>
+                                    <option value="viewer">Viewer</option>
+                                    <option value="user">User</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-light">Status:</label>
+                                <select id="editStatus" class="form-select bg-dark border-secondary text-light" required>
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-light">New Password (leave blank to keep current):</label>
+                            <div class="input-group">
+                                <input type="password" id="editPassword" placeholder="Enter new password" class="form-control bg-dark border-secondary text-light">
+                                <button type="button" class="btn btn-outline-secondary" onclick="toggleEditPassword()">👁️</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <label>Role:</label>
-                    <select id="editRole" required>
-                        <option value="viewer">Viewer</option>
-                        <option value="user">User</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Status:</label>
-                    <select id="editStatus" required>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>New Password (leave blank to keep current):</label>
-                    <div class="password-input-group">
-                        <input type="password" id="editPassword" placeholder="Enter new password">
-                        <button type="button" class="btn btn-small" onclick="toggleEditPassword()">👁️</button>
-                    </div>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">💾 Save Changes</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                <div class="modal-footer border-secondary">
+                    <button type="submit" form="editUserForm" class="btn btn-primary">💾 Save Changes</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-danger" onclick="deleteUser()">🗑️ Delete User</button>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
 

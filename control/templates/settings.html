@@ -10,8 +10,13 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Header -->
-    {% include 'includes/header.html' with context %}
+    {% set page_title = "Settings" %}
+    {% set back_url = "/" %}
+    {% set back_text = "Back to Chat" %}
+    {% set page_heading = "⚙️ Tools & Admin" %}
+    {% set page_description = "Manage your Sanctum configuration and tools" %}
+    
+    {% include 'includes/page_header.html' %}
 
     <!-- Main Content -->
     <main class="container-fluid px-0 d-flex flex-column">
@@ -75,47 +80,17 @@
                             </div>
                         </div>
 
-                        <!-- Install Module -->
-                        <div class="col-lg-4 col-md-6" data-tool-name="install module" data-tool-desc="quick setup upgrades">
+                        <!-- Update System -->
+                        <div class="col-lg-4 col-md-6" data-tool-name="update system" data-tool-desc="system updates maintenance">
                             <div class="tool-card">
                                 <div class="tool-header">
-                                    <span class="emoji">🧰</span>
-                                    <div class="tool-status ok" data-status="Healthy"></div>
+                                    <span class="tool-emoji">🔄</span>
+                                    <div class="tool-status ok" data-status="Ready"></div>
                                 </div>
-                                <h3 class="tool-title">Install Module</h3>
-                                <p class="tool-description">Quick setup & upgrades</p>
+                                <h3 class="tool-title">Update System</h3>
+                                <p class="tool-description">System updates & maintenance</p>
                                 <div class="tool-actions">
-                                    <a href="/install-tool" class="btn btn-primary btn-sm">Open</a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Cron Scheduler -->
-                        <div class="col-lg-4 col-md-6" data-tool-name="cron scheduler" data-tool-desc="automated tasks maintenance">
-                            <div class="tool-card">
-                                <div class="tool-header">
-                                    <span class="tool-emoji">⏰</span>
-                                    <div class="tool-status ok" data-status="Healthy"></div>
-                                </div>
-                                <h3 class="tool-title">Cron Scheduler</h3>
-                                <p class="tool-description">Automated tasks & maintenance</p>
-                                <div class="tool-actions">
-                                    <a href="/cron-scheduler" class="btn btn-primary btn-sm">Open</a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Backup & Restore -->
-                        <div class="col-lg-4 col-md-6" data-tool-name="backup restore" data-tool-desc="data protection recovery">
-                            <div class="tool-card">
-                                <div class="tool-header">
-                                    <span class="tool-emoji">💾</span>
-                                    <div class="tool-status ok" data-status="Healthy"></div>
-                                </div>
-                                <h3 class="tool-title">Backup & Restore</h3>
-                                <p class="tool-description">Data protection & recovery</p>
-                                <div class="tool-actions">
-                                    <a href="/backup-restore" class="btn btn-primary btn-sm">Open</a>
+                                    <button class="btn btn-primary btn-sm" onclick="updateSystem()">Update</button>
                                 </div>
                             </div>
                         </div>
@@ -164,6 +139,10 @@
                         <div class="search-results" id="{{ agent.name }}SearchResults"></div>
                     </div>
 
+                    <div class="alert alert-info" role="alert">
+                        <strong>Note:</strong> Only Chat Settings configuration is currently functional. Broca, Logs & Status, and other agent tools will be available in future updates.
+                    </div>
+                    
                     <div class="row g-4" id="{{ agent.name }}ToolsGrid">
                         <!-- Chat Settings -->
                         <div class="col-lg-4 col-md-6" data-tool-name="chat settings" data-tool-desc="model voice safety persona">
@@ -195,20 +174,7 @@
                             </div>
                         </div>
 
-                        <!-- Dream Agent -->
-                        <div class="col-lg-4 col-md-6" data-tool-name="dream agent" data-tool-desc="archives recall policies">
-                            <div class="tool-card">
-                                <div class="tool-header">
-                                    <span class="tool-emoji">🌙</span>
-                                    <div class="tool-status ok" data-status="Healthy"></div>
-                                </div>
-                                <h3 class="tool-title">Dream Agent</h3>
-                                <p class="tool-description">Archives & recall policies</p>
-                                <div class="tool-actions">
-                                    <button class="btn btn-primary btn-sm">Open</button>
-                                </div>
-                            </div>
-                        </div>
+
 
                         <!-- Logs & Status -->
                         <div class="col-lg-4 col-md-6" data-tool-name="logs status" data-tool-desc="health monitoring log access">
@@ -233,6 +199,9 @@
                     <div class="mb-4">
                         <h3>SMCP Configuration & Management</h3>
                         <p class="text-muted">Manage SMCP components, plugins, tools, and monitor system health</p>
+                        <div class="alert alert-info" role="alert">
+                            <strong>Note:</strong> SMCP functionality is currently in development and will be fully functional in future updates. The links below provide access to the interface templates.
+                        </div>
                     </div>
 
                     <div class="row g-4" id="smcpToolsGrid">

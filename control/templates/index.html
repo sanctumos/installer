@@ -12,40 +12,14 @@
 <body class="chat-page" 
       data-username="{{ session.username | default('') }}" 
       data-role="{{ session.role | default('') }}">
-    <!-- Header -->
-    <header class="d-flex align-items-center justify-content-between p-2 px-3 border-bottom">
-        <div class="d-flex align-items-center gap-2">
-            <div class="dropdown">
-                <button class="btn btn-link text-decoration-none p-0 fw-medium dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="agentDropdown">
-                    Loading...
-                </button>
-                <ul class="dropdown-menu" id="agentList">
-                    <!-- Agents will be loaded dynamically -->
-                </ul>
-            </div>
-        </div>
-        <div class="d-flex align-items-center gap-3">
-            <span class="text-muted small">Status: <span class="text-success">● Healthy</span> v1.0.0</span>
-            
-            <!-- User Info -->
-            {% if session.username %}
-            <div class="d-flex align-items-center gap-2">
-                <span class="text-muted small">
-                    <i class="fas fa-user"></i> {{ session.username }} ({{ session.role }})
-                </span>
-                <a href="{{ url_for('logout') }}" class="btn btn-outline-danger btn-sm px-2 py-1" title="Logout">
-                    <i class="fas fa-sign-out-alt"></i>
-                    <span class="d-none d-sm-inline">Logout</span>
-                </a>
-            </div>
-            {% endif %}
-            
-            <a href="/settings" class="btn btn-outline-light btn-sm px-3 py-1">
-                <span class="me-1">⚙</span>
-                <span class="d-none d-sm-inline">Settings</span>
-            </a>
-        </div>
-    </header>
+    
+    {% set page_title = "Sanctum Control Interface" %}
+    {% set back_url = "/" %}
+    {% set back_text = "Home" %}
+    {% set page_heading = "💬 Chat Interface" %}
+    {% set page_description = "Interact with your Sanctum agents and manage your system" %}
+    
+    {% include 'includes/page_header.html' %}
 
     <!-- Main Chat Area -->
     <main class="container-fluid px-0 d-flex flex-column">

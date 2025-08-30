@@ -22,115 +22,117 @@
     
     {% include 'includes/page_header.html' %}
 
-    <div class="container-fluid px-4 py-3">
-        <!-- Overview Stats -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <div class="h3 text-success" id="totalTools">0</div>
-                        <small class="text-muted">Total Tools</small>
+    <main>
+        <div class="container-fluid">
+            <!-- Overview Stats -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-body text-center">
+                            <div class="h3 text-success" id="totalTools">0</div>
+                            <small class="text-muted">Total Tools</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-body text-center">
+                            <div class="h3 text-info" id="activeTools">0</div>
+                            <small class="text-muted">Active</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-body text-center">
+                            <div class="h3 text-warning" id="inactiveTools">0</div>
+                            <small class="text-muted">Inactive</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-body text-center">
+                            <div class="h3 text-danger" id="errorTools">0</div>
+                            <small class="text-muted">Errors</small>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <div class="h3 text-info" id="activeTools">0</div>
-                        <small class="text-muted">Active</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <div class="h3 text-warning" id="inactiveTools">0</div>
-                        <small class="text-muted">Inactive</small>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card">
-                    <div class="card-body text-center">
-                        <div class="h3 text-danger" id="errorTools">0</div>
-                        <small class="text-muted">Errors</small>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Search and Filters -->
-        <div class="row mb-4">
-            <div class="col-md-6">
-                <div class="input-group">
-                    <span class="input-group-text">🔍</span>
-                    <input type="text" class="form-control" placeholder="Search tools..." id="toolSearch">
+            <!-- Search and Filters -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary text-light">🔍</span>
+                        <input type="text" class="form-control bg-dark border-secondary text-light" placeholder="Search tools..." id="toolSearch">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select bg-dark border-secondary text-light" id="statusFilter">
+                        <option value="">All Statuses</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="error">Error</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select bg-dark border-secondary text-light" id="categoryFilter">
+                        <option value="">All Categories</option>
+                        <option value="core">Core</option>
+                        <option value="communication">Communication</option>
+                        <option value="data">Data</option>
+                        <option value="utility">Utility</option>
+                    </select>
                 </div>
             </div>
-            <div class="col-md-3">
-                <select class="form-select" id="statusFilter">
-                    <option value="">All Statuses</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="error">Error</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <select class="form-select" id="categoryFilter">
-                    <option value="">All Categories</option>
-                    <option value="core">Core</option>
-                    <option value="communication">Communication</option>
-                    <option value="data">Data</option>
-                    <option value="utility">Utility</option>
-                </select>
-            </div>
-        </div>
 
-        <!-- Tools Table -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0">Available Tools</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-dark table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Tool Name</th>
-                                        <th>Version</th>
-                                        <th>Status</th>
-                                        <th>Category</th>
-                                        <th>Description</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="toolsTableBody">
-                                    <!-- Tool rows will be populated by JavaScript -->
-                                </tbody>
-                            </table>
+            <!-- Tools Table -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card bg-dark border-secondary">
+                        <div class="card-header border-secondary">
+                            <h5 class="card-title mb-0 text-light">Available Tools</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-dark table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-light">Tool Name</th>
+                                            <th class="text-light">Version</th>
+                                            <th class="text-light">Status</th>
+                                            <th class="text-light">Category</th>
+                                            <th class="text-light">Last Updated</th>
+                                            <th class="text-light">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="toolsTableBody">
+                                        <!-- Tool rows will be populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </main>
 
-        <!-- Tool Details Modal -->
-        <div class="modal fade" id="toolDetailsModal" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="toolModalTitle">Tool Details</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body" id="toolModalBody">
-                        <!-- Tool details will be populated here -->
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" id="saveToolChanges">Save Changes</button>
-                    </div>
+    <!-- Tool Details Modal -->
+    <div class="modal fade" id="toolDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="toolModalTitle">Tool Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="toolModalBody">
+                    <!-- Tool details will be populated here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveToolChanges">Save Changes</button>
                 </div>
             </div>
         </div>
