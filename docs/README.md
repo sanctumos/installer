@@ -2,6 +2,17 @@
 
 This folder contains all documentation for the Sanctum system, organized into logical categories for easy navigation.
 
+## 📜 Licensing
+
+**Code**: Licensed under [GNU Affero General Public License v3.0](LICENSE) (AGPLv3)  
+**Documentation & Data**: Licensed under [Creative Commons Attribution-ShareAlike 4.0](LICENSE-DOCS) (CC-BY-SA 4.0)
+
+**Important**: This project uses a dual-license structure:
+- **Executable code** (Python, JavaScript, etc.) is under AGPLv3
+- **Documentation, schemas, and data** are under CC-BY-SA 4.0
+
+See the respective LICENSE files for full terms and conditions.
+
 ## Organization
 
 ### 📚 [Reference Documentation](./reference/)

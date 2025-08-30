@@ -1,5 +1,10 @@
 # Sanctum Control Interface - Authentication System
 
+## 📜 Licensing
+
+**Code**: Licensed under [GNU Affero General Public License v3.0](../LICENSE) (AGPLv3)  
+**Documentation**: Licensed under [Creative Commons Attribution-ShareAlike 4.0](../LICENSE-DOCS) (CC-BY-SA 4.0)
+
 ## Overview
 This is the Phase 1 implementation of the Sanctum UI Database Schema Plan, focusing on user management and authentication.
 
