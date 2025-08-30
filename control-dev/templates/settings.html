@@ -30,10 +30,14 @@
                             Global
                         </button>
                     </li>
-                    <!-- Agent tabs will be loaded dynamically -->
-                    <div id="agentTabsContainer">
-                        <!-- Agent tabs will be inserted here -->
-                    </div>
+                    <!-- Agent tabs created by Jinja2 -->
+                    {% for agent in agents %}
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="{{ agent.id }}-tab" data-bs-toggle="tab" data-bs-target="#{{ agent.id }}" type="button" role="tab" aria-controls="{{ agent.id }}" aria-selected="false">
+                            {{ agent.name }}
+                        </button>
+                    </li>
+                    {% endfor %}
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="smcp-tab" data-bs-toggle="tab" data-bs-target="#smcp" type="button" role="tab" aria-controls="smcp" aria-selected="false">
                             SMCP
@@ -148,10 +152,81 @@
                     </div>
                 </div>
 
-                <!-- Agent tabs will be loaded dynamically -->
-                <div id="agentTabsContent">
-                    <!-- Agent tab content will be inserted here -->
+                <!-- Agent tabs created by Jinja2 -->
+                {% for agent in agents %}
+                <div class="tab-pane fade" id="{{ agent.id }}" role="tabpanel" aria-labelledby="{{ agent.id }}-tab">
+                    <div class="mb-4">
+                        <div class="input-group" style="max-width: 400px;">
+                            <span class="input-group-text text-muted">🔍</span>
+                            <input type="text" class="form-control" placeholder="Search {{ agent.name }} tools…" id="search{{ agent.name|title }}Tools">
+                            <button class="btn search-clear d-none" id="clear{{ agent.name|title }}Search" type="button">✕</button>
+                        </div>
+                        <div class="search-results" id="{{ agent.name }}SearchResults"></div>
+                    </div>
+
+                    <div class="row g-4" id="{{ agent.name }}ToolsGrid">
+                        <!-- Chat Settings -->
+                        <div class="col-lg-4 col-md-6" data-tool-name="chat settings" data-tool-desc="model voice safety persona">
+                            <div class="tool-card">
+                                <div class="tool-header">
+                                    <span class="tool-emoji">💬</span>
+                                    <div class="tool-status ok" data-status="Healthy"></div>
+                                </div>
+                                <h3 class="tool-title">Chat Settings</h3>
+                                <p class="tool-description">Model, voice, safety, persona</p>
+                                <div class="tool-actions">
+                                    <a href="/chat-settings" class="btn btn-primary btn-sm">Open</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Broca -->
+                        <div class="col-lg-4 col-md-6" data-tool-name="broca" data-tool-desc="streams tool io">
+                            <div class="tool-card">
+                                <div class="tool-header">
+                                    <span class="tool-emoji">🛰️</span>
+                                    <div class="tool-status ok" data-status="Healthy"></div>
+                                </div>
+                                <h3 class="tool-title">Broca</h3>
+                                <p class="tool-description">Streams & tool I/O</p>
+                                <div class="tool-actions">
+                                    <a href="/broca-settings" class="btn btn-primary btn-sm">Open</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dream Agent -->
+                        <div class="col-lg-4 col-md-6" data-tool-name="dream agent" data-tool-desc="archives recall policies">
+                            <div class="tool-card">
+                                <div class="tool-header">
+                                    <span class="tool-emoji">🌙</span>
+                                    <div class="tool-status ok" data-status="Healthy"></div>
+                                </div>
+                                <h3 class="tool-title">Dream Agent</h3>
+                                <p class="tool-description">Archives & recall policies</p>
+                                <div class="tool-actions">
+                                    <button class="btn btn-primary btn-sm">Open</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Logs & Status -->
+                        <div class="col-lg-4 col-md-6" data-tool-name="logs status" data-tool-desc="health monitoring log access">
+                            <div class="tool-card">
+                                <div class="tool-header">
+                                    <span class="tool-emoji">📊</span>
+                                    <div class="tool-status ok" data-status="Healthy"></div>
+                                </div>
+                                <h3 class="tool-title">Logs & Status</h3>
+                                <p class="tool-description">Health monitoring & log access</p>
+                                <div class="tool-actions">
+                                    <a href="/logs-status" class="btn btn-primary btn-sm">Open</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+                {% endfor %}
 
                 <!-- SMCP Tab -->
                 <div class="tab-pane fade" id="smcp" role="tabpanel" aria-labelledby="smcp-tab">

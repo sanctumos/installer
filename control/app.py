@@ -76,10 +76,31 @@ def logout():
 @require_auth
 def settings():
     """Settings and tools management interface"""
-    return render_template('settings.html', 
-                         page_title='Settings',
-                         back_url='/',
-                         back_text='Back to Chat')
+    # Debug logging
+    print(f"DEBUG: Session user_id: {session.get('user_id')}")
+    print(f"DEBUG: Session role: {session.get('role')}")
+    
+    # Get user's visible agents from database
+    db = next(get_db())
+    try:
+        agents = get_agents_visible_to_user(session['user_id'], session['role'], db)
+        print(f"DEBUG: Found {len(agents)} agents: {[agent.name for agent in agents]}")
+        
+        return render_template('settings.html', 
+                             page_title='Settings',
+                             back_url='/',
+                             back_text='Back to Chat',
+                             agents=agents)
+    except Exception as e:
+        print(f"DEBUG: Error getting agents: {e}")
+        # If there's an error getting agents, just pass empty list
+        return render_template('settings.html', 
+                             page_title='Settings',
+                             back_url='/',
+                             back_text='Back to Chat',
+                             agents=[])
+    finally:
+        db.close()
 
 @app.route('/system-settings')
 @require_auth
