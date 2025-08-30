@@ -2,8 +2,10 @@
 from flask import Flask, render_template, request, jsonify, send_from_directory, session, redirect, url_for, flash
 import os
 import json
+import bcrypt
 from datetime import datetime
 from models import User, UserSession, Agent, get_db, get_agents_visible_to_user
+from sqlalchemy import or_
 from auth import authenticate_user, create_user_session, get_user_by_session_token, require_auth, require_role, cleanup_expired_sessions
 
 app = Flask(__name__)
@@ -106,8 +108,199 @@ def settings():
 @require_auth
 @require_role('admin')
 def system_settings():
-    """System settings and user management interface"""
+    """System settings and configuration interface"""
     return render_template('system_settings.html')
+
+@app.route('/user-management')
+@require_auth
+@require_role('admin')
+def user_management():
+    """User management and discovery interface"""
+    return render_template('user_management.html')
+
+# User Management API Endpoints
+@app.route('/api/users', methods=['GET'])
+@require_auth
+@require_role('admin')
+def get_users():
+    """Get all users with optional filtering"""
+    db = next(get_db())
+    try:
+        search_term = request.args.get('search', '').lower()
+        role_filter = request.args.get('role', '')
+        
+        # Build query
+        query = db.query(User).filter(User.is_active == True)
+        
+        if search_term:
+            query = query.filter(
+                or_(
+                    User.username.ilike(f'%{search_term}%'),
+                    User.email.ilike(f'%{search_term}%')
+                )
+            )
+        
+        if role_filter:
+            query = query.filter(User.role == role_filter)
+        
+        users = query.all()
+        
+        # Convert to JSON-serializable format
+        user_list = []
+        for user in users:
+            user_list.append({
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'role': user.role,
+                'is_active': user.is_active,
+                'last_login': user.last_login.isoformat() if user.last_login else None,
+                'created_at': user.created_at.isoformat() if user.created_at else None
+            })
+        
+        return jsonify(user_list)
+    finally:
+        db.close()
+
+@app.route('/api/users', methods=['POST'])
+@require_auth
+@require_role('admin')
+def create_user():
+    """Create a new user"""
+    db = next(get_db())
+    try:
+        data = request.get_json()
+        
+        # Validate required fields
+        if not all(key in data for key in ['username', 'email', 'role']):
+            return jsonify({'error': 'Missing required fields'}), 400
+        
+        # Check if user already exists
+        existing_user = db.query(User).filter(
+            or_(User.username == data['username'], User.email == data['email'])
+        ).first()
+        
+        if existing_user:
+            return jsonify({'error': 'Username or email already exists'}), 409
+        
+        # Create new user
+        new_user = User(
+            username=data['username'],
+            email=data['email'],
+            password_hash=bcrypt.hashpw('changeme123'.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
+            role=data['role'],
+            permissions=data.get('permissions', '[]'),
+            is_active=True
+        )
+        
+        db.add(new_user)
+        db.commit()
+        
+        return jsonify({
+            'id': new_user.id,
+            'username': new_user.username,
+            'email': new_user.email,
+            'role': new_user.role,
+            'message': 'User created successfully'
+        }), 201
+    except Exception as e:
+        db.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
+
+@app.route('/api/users/<int:user_id>', methods=['PUT'])
+@require_auth
+@require_role('admin')
+def update_user(user_id):
+    """Update an existing user"""
+    db = next(get_db())
+    try:
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        
+        data = request.get_json()
+        
+        # Update fields if provided
+        if 'username' in data:
+            user.username = data['username']
+        if 'email' in data:
+            user.email = data['email']
+        if 'role' in data:
+            user.role = data['role']
+        if 'is_active' in data:
+            user.is_active = data['is_active']
+        if 'permissions' in data:
+            user.permissions = data['permissions']
+        
+        # Update password if provided
+        if 'password' in data and data['password']:
+            user.password_hash = bcrypt.hashpw(data['password'].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        
+        user.updated_at = datetime.now()
+        db.commit()
+        
+        return jsonify({
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'role': user.role,
+            'is_active': user.is_active,
+            'message': 'User updated successfully'
+        })
+    except Exception as e:
+        db.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
+
+@app.route('/api/users/<int:user_id>', methods=['DELETE'])
+@require_auth
+@require_role('admin')
+def delete_user(user_id):
+    """Delete a user (soft delete by setting inactive)"""
+    db = next(get_db())
+    try:
+        user = db.query(User).filter(User.id == user_id).first()
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+        
+        # Soft delete - set inactive instead of actually deleting
+        user.is_active = False
+        user.updated_at = datetime.now()
+        db.commit()
+        
+        return jsonify({'message': 'User deactivated successfully'})
+    except Exception as e:
+        db.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
+
+@app.route('/api/users/discover', methods=['POST'])
+@require_auth
+@require_role('admin')
+def discover_users():
+    """Discover users from Broca database"""
+    # TODO: Implement actual Broca integration
+    # For now, return mock data
+    mock_discovered_users = [
+        {
+            'username': 'broca_user_1',
+            'email': 'user1@broca.local',
+            'last_interaction': '2024-01-15T10:30:00Z',
+            'interaction_count': 5
+        },
+        {
+            'username': 'broca_user_2', 
+            'email': 'user2@broca.local',
+            'last_interaction': '2024-01-14T15:45:00Z',
+            'interaction_count': 12
+        }
+    ]
+    
+    return jsonify(mock_discovered_users)
 
 @app.route('/chat-settings')
 @require_auth
@@ -258,56 +451,9 @@ def get_status():
     }
     return jsonify(status)
 
-@app.route('/api/users')
-@require_auth
-@require_role('admin')
-def get_users():
-    """Get all users (admin only)"""
-    db = next(get_db())
-    try:
-        users = db.query(User).all()
-        user_list = []
-        for user in users:
-            user_list.append({
-                'id': user.id,
-                'username': user.username,
-                'email': user.email,
-                'role': user.role,
-                'is_active': user.is_active,
-                'last_login': user.last_login.isoformat() if user.last_login else None,
-                'created_at': user.created_at.isoformat() if user.created_at else None
-            })
-        return jsonify(user_list)
-    finally:
-        db.close()
 
-@app.route('/api/users/<int:user_id>', methods=['PUT'])
-@require_auth
-@require_role('admin')
-def update_user(user_id):
-    """Update user (admin only)"""
-    db = next(get_db())
-    try:
-        user = db.query(User).filter(User.id == user_id).first()
-        if not user:
-            return jsonify({'error': 'User not found'}), 404
-        
-        data = request.get_json()
-        
-        if 'role' in data:
-            user.role = data['role']
-        if 'is_active' in data:
-            user.is_active = data['is_active']
-        if 'email' in data:
-            user.email = data['email']
-        
-        db.commit()
-        return jsonify({'message': 'User updated successfully'})
-    except Exception as e:
-        db.rollback()
-        return jsonify({'error': str(e)}), 500
-    finally:
-        db.close()
+
+
 
 @app.route('/api/agents/<agent_id>', methods=['PUT'])
 @require_auth

@@ -2301,5 +2301,26 @@ footer form {
 }
 
 /* ==========================================================================
+   DISABLED FORM ELEMENTS
+   ========================================================================== */
+
+/* Disabled checkbox styling */
+.form-check-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-check-input:disabled + .form-check-label {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Admin lock notice styling */
+.admin-lock-notice {
+  border-left: 4px solid #ffc107;
+  background-color: rgba(255, 193, 7, 0.1);
+}
+
+/* ==========================================================================
    END OF OMNIBUS CSS
    ========================================================================== */

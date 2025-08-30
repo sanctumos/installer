@@ -10,82 +10,16 @@
 </head>
 <body>
     {% set page_title = "System Settings" %}
-    {% set back_url = "/" %}
-    {% set back_text = "Back to Chat" %}
+    {% set back_url = "/settings" %}
+    {% set back_text = "Back to Settings" %}
     {% set page_heading = "⚙️ System Settings" %}
-    {% set page_description = "Manage system-wide configuration and user accounts" %}
+    {% set page_description = "Manage system-wide configuration and Letta server connection" %}
     
     {% include 'includes/page_header.html' %}
 
     <main>
         <div class="container-fluid">
-            <!-- User Management Section -->
-            <section class="mb-5">
-                <div class="card bg-dark border-secondary">
-                    <div class="card-header border-secondary">
-                        <h2 class="h4 mb-0 text-light">👥 User Management</h2>
-                    </div>
-                    <div class="card-body">
-                        <!-- Discover Users Section -->
-                        <div class="card bg-darker border-secondary mb-4">
-                            <div class="card-header border-secondary">
-                                <h3 class="h5 mb-0 text-light">Discover Users from Broca</h3>
-                            </div>
-                            <div class="card-body">
-                                <p class="text-muted mb-3">Find users who have interacted with your agents and promote them to full Sanctum users.</p>
-                                <button id="discoverUsers" class="btn btn-primary">🔍 Discover Users</button>
-                                
-                                <div id="discoveredUsers" class="mt-3" style="display: none;">
-                                    <h4 class="h6 mb-2 text-light">Discovered Users</h4>
-                                    <div class="user-grid" id="userGrid">
-                                        <!-- Users will be populated here -->
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <!-- Manage Existing Users Section -->
-                        <div class="card bg-darker border-secondary">
-                            <div class="card-header border-secondary">
-                                <h3 class="h5 mb-0 text-light">Manage Existing Users</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <input type="text" id="userSearch" placeholder="Search users..." class="form-control bg-dark border-secondary text-light">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <select id="roleFilter" class="form-select bg-dark border-secondary text-light">
-                                            <option value="">All Roles</option>
-                                            <option value="admin">Admin</option>
-                                            <option value="user">User</option>
-                                            <option value="viewer">Viewer</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                                <div class="table-responsive">
-                                    <table class="table table-dark table-hover">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-light">Username</th>
-                                                <th class="text-light">Email</th>
-                                                <th class="text-light">Role</th>
-                                                <th class="text-light">Status</th>
-                                                <th class="text-light">Last Login</th>
-                                                <th class="text-light">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="userTableBody">
-                                            <!-- Users will be populated here -->
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             <!-- System Configuration Section -->
             <section class="mb-5">
@@ -150,103 +84,83 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Letta Server Configuration Section -->
+            <section class="mb-5">
+                <div class="card bg-dark border-secondary">
+                    <div class="card-header border-secondary">
+                        <h2 class="h4 mb-0 text-light">🖥️ Letta Server Connection</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6 mb-4">
+                                <div class="card bg-darker border-secondary">
+                                    <div class="card-header border-secondary">
+                                        <h3 class="h5 mb-0 text-light">Connection Details</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label text-light">Server Address:</label>
+                                            <input type="text" id="lettaServerAddress" placeholder="localhost" class="form-control bg-dark border-secondary text-light">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label text-light">Server Port:</label>
+                                            <input type="number" id="lettaServerPort" placeholder="8080" class="form-control bg-dark border-secondary text-light">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label text-light">Server Password:</label>
+                                            <div class="input-group">
+                                                <input type="password" id="lettaServerPassword" placeholder="Enter password" class="form-control bg-dark border-secondary text-light">
+                                                <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('lettaServerPassword')">👁️</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 mb-4">
+                                <div class="card bg-darker border-secondary">
+                                    <div class="card-header border-secondary">
+                                        <h3 class="h5 mb-0 text-light">Connection Status</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label class="form-label text-light">Status:</label>
+                                            <div class="d-flex align-items-center">
+                                                <span class="badge bg-secondary me-2">Unknown</span>
+                                                <button id="testConnection" class="btn btn-outline-primary btn-sm">🔍 Test Connection</button>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label text-light">Last Connected:</label>
+                                            <span class="text-muted">Never</span>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label text-light">Connection Timeout:</label>
+                                            <input type="number" id="lettaTimeout" value="30" class="form-control bg-dark border-secondary text-light">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-3">
+                            <button id="saveLettaConfig" class="btn btn-primary">💾 Save Letta Config</button>
+                            <button id="testLettaConnection" class="btn btn-outline-info">🔗 Test Connection</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
 
     </div>
 </div>
 
-    <!-- User Promotion Modal -->
-    <div class="modal fade" id="promotionModal" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content bg-dark border-secondary">
-                <div class="modal-header border-secondary">
-                    <h3 class="modal-title text-light">Promote User to Sanctum</h3>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="promotionForm">
-                        <div class="mb-3">
-                            <label class="form-label text-light">Username:</label>
-                            <input type="text" id="promoteUsername" class="form-control bg-dark border-secondary text-light" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-light">Email:</label>
-                            <input type="email" id="promoteEmail" class="form-control bg-dark border-secondary text-light" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-light">Role:</label>
-                            <select id="promoteRole" class="form-select bg-dark border-secondary text-light" required>
-                                <option value="viewer">Viewer</option>
-                                <option value="user">User</option>
-                                <option value="admin">Admin</option>
-                            </select>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer border-secondary">
-                    <button type="submit" form="promotionForm" class="btn btn-primary">Promote User</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Edit User Modal -->
-    <div class="modal fade" id="editUserModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content bg-dark border-secondary">
-                <div class="modal-header border-secondary">
-                    <h3 class="modal-title text-light">Edit User</h3>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="editUserForm">
-                        <input type="hidden" id="editUserId">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label text-light">Username:</label>
-                                <input type="text" id="editUsername" class="form-control bg-dark border-secondary text-light" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label text-light">Email:</label>
-                                <input type="email" id="editEmail" class="form-control bg-dark border-secondary text-light" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label text-light">Role:</label>
-                                <select id="editRole" class="form-select bg-dark border-secondary text-light" required>
-                                    <option value="viewer">Viewer</option>
-                                    <option value="user">User</option>
-                                    <option value="admin">Admin</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label text-light">Status:</label>
-                                <select id="editStatus" class="form-select bg-dark border-secondary text-light" required>
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label text-light">New Password (leave blank to keep current):</label>
-                            <div class="input-group">
-                                <input type="password" id="editPassword" placeholder="Enter new password" class="form-control bg-dark border-secondary text-light">
-                                <button type="button" class="btn btn-outline-secondary" onclick="toggleEditPassword()">👁️</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer border-secondary">
-                    <button type="submit" form="editUserForm" class="btn btn-primary">💾 Save Changes</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" onclick="deleteUser()">🗑️ Delete User</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='system_settings.js') }}"></script>
