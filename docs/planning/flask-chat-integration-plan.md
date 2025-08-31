@@ -3,6 +3,8 @@
 ## Overview
 Deploy the existing working Flask chat system from `temp-sources/python/` as a separate chat bridge service, and connect the existing chat UI in the `control/` directory to work with it. This follows the established bridge pattern where the Flask app provides API endpoints for Broca communication while the UI directly accesses the database.
 
+**CRITICAL UPDATE**: The chat system will run out of the main control database, not as a separate database. This means we need to integrate the chat tables into the existing `control/db/init_database.sql` schema.
+
 ## Current State Analysis
 
 ### Working Flask Chat System (`temp-sources/python/`)
@@ -28,29 +30,97 @@ Deploy the existing working Flask chat system from `temp-sources/python/` as a s
 - **Features**: Agent switching, message display, copy/share functionality
 - **Limitations**: No real backend integration, placeholder responses
 
+### Current Database Schema (`control/db/init_database.sql`)
+- **Status**: Contains UI management tables (users, agents, system_config)
+- **Missing**: Chat-specific tables required by the working Flask system
+- **Gap**: No `web_chat_sessions`, `web_chat_messages`, `web_chat_responses` tables
+
 ## Integration Strategy
 
-### Phase 1: Deploy Working Flask Chat Bridge
+### Phase 1: Database Schema Integration (CRITICAL FIRST STEP)
+1. **Update Main Database Schema**
+   - **MODIFY** `control/db/init_database.sql` to include chat tables
+   - **ADD** the working Flask chat system's database schema to the main control database
+   - **INTEGRATE** chat tables with existing UI management tables
+   - **ENSURE** foreign key relationships work between chat and UI systems
+
+2. **Database Schema Changes Required**
+   ```sql
+   -- Add to control/db/init_database.sql
+   
+   -- Chat session management
+   CREATE TABLE IF NOT EXISTS web_chat_sessions (
+       id INTEGER PRIMARY KEY AUTOINCREMENT,
+       session_id VARCHAR(64) UNIQUE NOT NULL,
+       user_id INTEGER,
+       agent_id INTEGER,
+       status VARCHAR(50) DEFAULT 'active',
+       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+       FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL,
+       FOREIGN KEY (agent_id) REFERENCES agents(id) ON DELETE SET NULL
+   );
+   
+   -- User messages
+   CREATE TABLE IF NOT EXISTS web_chat_messages (
+       id INTEGER PRIMARY KEY AUTOINCREMENT,
+       session_id VARCHAR(64) NOT NULL,
+       message TEXT NOT NULL,
+       timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+       uid VARCHAR(100),
+       is_new_user BOOLEAN DEFAULT false,
+       FOREIGN KEY (session_id) REFERENCES web_chat_sessions(session_id) ON DELETE CASCADE
+   );
+   
+   -- System responses
+   CREATE TABLE IF NOT EXISTS web_chat_responses (
+       id INTEGER PRIMARY KEY AUTOINCREMENT,
+       session_id VARCHAR(64) NOT NULL,
+       response_data TEXT NOT NULL,
+       timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+       status VARCHAR(50) DEFAULT 'pending',
+       FOREIGN KEY (session_id) REFERENCES web_chat_sessions(session_id) ON DELETE CASCADE
+   );
+   
+   -- Rate limiting data
+   CREATE TABLE IF NOT EXISTS rate_limits (
+       id INTEGER PRIMARY KEY AUTOINCREMENT,
+       endpoint VARCHAR(100) NOT NULL,
+       ip_address VARCHAR(45) NOT NULL,
+       request_count INTEGER DEFAULT 1,
+       first_request TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+       last_request TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+       UNIQUE(endpoint, ip_address)
+   );
+   ```
+
+3. **Database Migration Strategy**
+   - **NO DATA LOSS**: Existing UI data remains intact
+   - **ADDITIVE**: Chat tables are added to existing schema
+   - **INTEGRATED**: Chat sessions link to existing users and agents
+   - **CONSISTENT**: Single database file for entire system
+
+### Phase 2: Deploy Working Flask Chat Bridge
 1. **Deploy Existing Flask App**
    - **COPY** working Flask app from `temp-sources/python/app/` to production location
    - **NO PORTING** - use the tested, working code as-is
-   - Only adjust file paths and configuration for production environment
-   - Test all existing API endpoints work as designed
+   - **UPDATE** database path configuration to point to main control database
+   - **CONFIGURE** Flask to use integrated database instead of separate `web_chat_bridge.db`
 
-2. **Database Setup**
-   - Use existing `web_chat_bridge.db` schema (already working)
-   - Ensure database path configuration works in production
-   - Test database connectivity and operations
+2. **Database Configuration Update**
+   - **MODIFY** Flask app's `config.py` to use main control database path
+   - **ENSURE** Flask app can access the integrated chat tables
+   - **TEST** database connectivity and operations with new schema
 
 3. **Service Configuration**
    - Configure Flask chat bridge to run on designated port (8001)
    - Set up environment variables and configuration
    - Ensure proper file permissions and security
 
-### Phase 2: Connect Chat UI to Working System
+### Phase 3: Connect Chat UI to Working System
 1. **Update Chat JavaScript**
    - Modify `control/static/chat.js` to use working Flask API endpoints
-   - Implement proper session management using existing database schema
+   - Implement proper session management using integrated database schema
    - Add proper error handling and user feedback
 
 2. **API Endpoint Mapping**
@@ -315,11 +385,16 @@ GET  /api/v1/?action=config - Configuration (admin)
 
 ## File Changes Required
 
+### Database Schema Changes (CRITICAL FIRST)
+- **MODIFY** `control/db/init_database.sql` - Add chat tables to existing schema
+- **INTEGRATE** chat tables with existing UI management tables
+- **ENSURE** foreign key relationships work properly
+
 ### New Files to Create
 - `control/chat_bridge/` - Directory for Flask chat bridge
 - `control/chat_bridge/app.py` - Copy of working Flask app
 - `control/chat_bridge/requirements.txt` - Dependencies
-- `control/chat_bridge/config.py` - Production configuration
+- `control/chat_bridge/config.py` - Production configuration (modified for integrated database)
 
 ### Files to Modify
 - `control/static/chat.js` - Update API calls to use working endpoints
@@ -331,24 +406,34 @@ GET  /api/v1/?action=config - Configuration (admin)
 - `temp-sources/python/app/api/` → `control/chat_bridge/api/` (**COPY AS-IS**)
 - `temp-sources/python/app/chat/` → `control/chat_bridge/chat/` (**COPY AS-IS**)
 - `temp-sources/python/app/__init__.py` → `control/chat_bridge/__init__.py` (**COPY AS-IS**)
-- `temp-sources/python/config.py` → `control/chat_bridge/config.py` (**COPY AS-IS**)
+- `temp-sources/python/config.py` → `control/chat_bridge/config.py` (**COPY AS-IS, THEN MODIFY DATABASE PATH**)
 - `temp-sources/python/requirements.txt` → `control/chat_bridge/requirements.txt` (**COPY AS-IS**)
 
 ## Deployment Strategy
 
-### 1. Deploy Flask Chat Bridge
+### 1. Update Database Schema (FIRST)
+```sql
+-- Run this against the main control database to add chat tables
+-- This integrates chat functionality into the existing UI database
+-- No data loss, only additive changes
+```
+
+### 2. Deploy Flask Chat Bridge
 ```bash
 # COPY working Flask app to production (NO PORTING)
 cp -r temp-sources/python/app control/chat_bridge/
 cp temp-sources/python/config.py control/chat_bridge/
 cp temp-sources/python/requirements.txt control/chat_bridge/
 
+# MODIFY config.py to use main control database path
+# Change DATABASE_PATH from 'db/web_chat_bridge.db' to 'db/sanctum_ui.db'
+
 # Install dependencies (use existing working requirements)
 cd control/chat_bridge
 pip install -r requirements.txt
 
 # Run on port 8001 (separate from main control app)
-# Use existing working Flask app as-is
+# Use existing working Flask app as-is, but with integrated database
 python app.py --port 8001
 ```
 
@@ -467,11 +552,16 @@ python app.py --port 8001
 
 ## Key Principle
 
-**COPY, DON'T PORT.** The Flask chat system in `temp-sources/python/` is **TESTED AND WORKING** code that already perfectly integrates with Sanctum Broca. This plan:
+**COPY, DON'T PORT, BUT INTEGRATE DATABASE.** The Flask chat system in `temp-sources/python/` is **TESTED AND WORKING** code that already perfectly integrates with Sanctum Broca. This plan:
 
 1. **COPIES the working code as-is** - no rewriting, no porting, no "integration"
-2. **Only adjusts file paths** for production environment
-3. **Uses existing working API endpoints** exactly as they are
-4. **Maintains all existing functionality** that's already tested and working
+2. **INTEGRATES the database schema** - adds chat tables to existing control database
+3. **Only adjusts file paths and database configuration** for production environment
+4. **Uses existing working API endpoints** exactly as they are
+5. **Maintains all existing functionality** that's already tested and working
 
-**The backend is DONE. The API is DONE. The database integration is DONE.** We just need to copy it to production and connect the existing UI to it.
+**The backend is DONE. The API is DONE. The database integration is DONE.** We just need to:
+- **Integrate the chat tables into the main control database**
+- **Copy the working Flask app to production**
+- **Update the database path configuration**
+- **Connect the existing UI to the working API**
