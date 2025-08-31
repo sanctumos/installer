@@ -565,3 +565,27 @@ python app.py --port 8001
 - **Copy the working Flask app to production**
 - **Update the database path configuration**
 - **Connect the existing UI to the working API**
+
+## Future Enhancement: Multi-Agent Routing (NOT IN CURRENT SCOPE)
+
+**IMPORTANT**: Once the basic implementation is running, we will need to add multi-agent routing capabilities:
+
+### **Current Limitation**
+The working Flask chat system handles single agent conversations. For production use, we need:
+- **Universal message queue** for routing messages to multiple prime agents
+- **Database schema updates** to support agent routing and load balancing
+- **API enhancements** to handle message routing and agent selection
+
+### **Why This Matters**
+- **Scalability**: Handle multiple concurrent agents efficiently
+- **Load Balancing**: Distribute conversations across available agents
+- **Failover**: Route to backup agents if primary agent is unavailable
+- **Specialization**: Route specific types of queries to specialized agents
+
+### **Implementation Strategy**
+1. **Phase 1**: Deploy basic working system (current scope)
+2. **Phase 2**: Test and validate basic functionality
+3. **Phase 3**: Add multi-agent routing capabilities
+4. **Phase 4**: Implement universal queue and load balancing
+
+**For now, we focus on getting the basic system working with the existing spec. Multi-agent routing will be a separate enhancement phase.**
