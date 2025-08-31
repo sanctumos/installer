@@ -114,6 +114,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load user's agents on page load
     loadUserAgents();
+    
+    // Start polling for new messages from the working Flask system
+    startMessagePolling();
 
     // Auto-expand textarea
     if (textarea) {
@@ -149,17 +152,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 textarea.value = '';
                 textarea.style.height = 'auto';
                 
-                console.log('Sending message to API...');
-                // Send message to Flask API
-                fetch('/api/chat', {
+                console.log('Sending message to working Flask system...');
+                
+                // Generate a unique session ID for this chat session
+                const sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                
+                // Send message to working Flask system's API
+                fetch('/api/v1/?action=messages', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ message: message })
+                    body: JSON.stringify({ 
+                        message: message,
+                        session_id: sessionId,
+                        uid: 'user_' + Date.now()
+                    })
                 })
                 .then(response => {
-                    console.log('API response status:', response.status);
+                    console.log('Working Flask system response status:', response.status);
                     if (response.status === 401) {
                         // Session expired, redirect to login
                         window.location.href = '/login';
@@ -170,8 +181,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     if (data && data.error) {
                         addAssistantMessage("Error: " + data.error);
-                    } else if (data) {
-                        addAssistantMessage(data.message);
+                    } else if (data && data.success) {
+                        // Message was sent successfully, now poll for responses
+                        pollForResponses(sessionId);
+                    } else {
+                        addAssistantMessage("Message sent, waiting for response...");
+                        // Fallback: poll for responses anyway
+                        pollForResponses(sessionId);
                     }
                 })
                 .catch(error => {
@@ -587,7 +603,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Add a fresh welcome message from the new agent
         setTimeout(() => {
-            addAssistantMessage(`Hello! I'm ${agentName}. How can I help you today?`);
+            addAssistantMessage(`Hello! I'm ${agentName}. I'm now connected to the working Flask system and ready to help you!`);
         }, 100);
         
         // Scroll to bottom to show the new message
@@ -599,5 +615,73 @@ document.addEventListener('DOMContentLoaded', function() {
             textarea.style.height = 'auto';
             textarea.focus();
         }
+    }
+    
+    // Function to poll for responses from the working Flask system
+    function pollForResponses(sessionId) {
+        console.log('Polling for responses for session:', sessionId);
+        
+        // Poll every 2 seconds for up to 30 seconds
+        let pollCount = 0;
+        const maxPolls = 15;
+        
+        const pollInterval = setInterval(() => {
+            pollCount++;
+            
+            fetch(`/api/v1/?action=responses&session_id=${sessionId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.success && data.data && data.data.responses) {
+                        const responses = data.data.responses;
+                        if (responses.length > 0) {
+                            // Clear the polling interval since we got responses
+                            clearInterval(pollInterval);
+                            
+                            // Display the responses
+                            responses.forEach(response => {
+                                addAssistantMessage(response.response || 'Response received');
+                            });
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error polling for responses:', error);
+                });
+            
+            // Stop polling after max attempts or if we got responses
+            if (pollCount >= maxPolls) {
+                clearInterval(pollInterval);
+                console.log('Stopped polling for responses');
+            }
+        }, 2000);
+    }
+    
+    // Function to start continuous polling for new messages from the working Flask system
+    function startMessagePolling() {
+        console.log('Starting message polling from working Flask system...');
+        
+        // Poll every 5 seconds for new messages
+        setInterval(() => {
+            fetch('/api/v1/?action=inbox&limit=10&offset=0')
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.success && data.data && data.data.messages) {
+                        const messages = data.data.messages;
+                        if (messages.length > 0) {
+                            console.log('Received new messages from working Flask system:', messages.length);
+                                           
+                            // Display new messages
+                            messages.forEach(msg => {
+                                if (msg.message && !msg.processed) {
+                                    addAssistantMessage(msg.message);
+                                }
+                            });
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error polling inbox:', error);
+                });
+        }, 5000);
     }
 });
