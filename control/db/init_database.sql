@@ -20,117 +20,63 @@
 -- Enable foreign key constraints
 PRAGMA foreign_keys = ON;
 
--- Create users table
-CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    role VARCHAR(20) DEFAULT 'user',
-    permissions TEXT DEFAULT '[]', -- JSON array of permissions
-    is_active BOOLEAN DEFAULT true,
-    failed_login_attempts INTEGER DEFAULT 0,
-    last_login TIMESTAMP,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+-- Note: Main application tables (users, agents, system_config, schema_version) 
+-- are created by SQLAlchemy models in init_database.py
+-- This file only creates chat-specific tables
 
--- Create user sessions table
-CREATE TABLE IF NOT EXISTS user_sessions (
-    id VARCHAR(100) PRIMARY KEY,
-    user_id INTEGER NOT NULL,
-    session_token VARCHAR(255) UNIQUE NOT NULL,
-    expires_at TIMESTAMP NOT NULL,
-    ip_address VARCHAR(45),
+-- Chat session management (working Flask system expects this exact schema)
+CREATE TABLE IF NOT EXISTS web_chat_sessions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id TEXT UNIQUE NOT NULL,
+    uid TEXT NOT NULL,
+    ip_address TEXT,
     user_agent TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_activity DATETIME DEFAULT CURRENT_TIMESTAMP,
+    is_active INTEGER DEFAULT 1,
+    metadata TEXT DEFAULT '{}'
 );
 
--- Create agents table
-CREATE TABLE IF NOT EXISTS agents (
+-- User messages (working Flask system expects this exact schema)
+CREATE TABLE IF NOT EXISTS web_chat_messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name VARCHAR(100) NOT NULL,
-    letta_uid VARCHAR(100) UNIQUE NOT NULL,
-    description TEXT,
-    status VARCHAR(50) DEFAULT 'active', -- Agent status: active, inactive, error, etc.
-    created_by INTEGER, -- User ID who created the agent
-    config TEXT, -- JSON configuration
-    is_active BOOLEAN DEFAULT true,
-    visible_to_users TEXT, -- JSON array of user IDs or NULL for all users
-    visible_to_roles TEXT, -- JSON array of role names or NULL for all roles
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    session_id TEXT NOT NULL,
+    message TEXT NOT NULL,
+    message_type TEXT DEFAULT 'user',
+    processed INTEGER DEFAULT 0,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    metadata TEXT DEFAULT '{}',
+    FOREIGN KEY (session_id) REFERENCES web_chat_sessions (session_id)
 );
 
--- Create system configuration table
-CREATE TABLE IF NOT EXISTS system_config (
+-- System responses (working Flask system expects this exact schema)
+CREATE TABLE IF NOT EXISTS web_chat_responses (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    
-    -- API Keys (sensitive)
-    openai_api_key VARCHAR(255),
-    anthropic_api_key VARCHAR(255),
-    ollama_base_url VARCHAR(255) DEFAULT 'http://localhost:11434',
-    
-    -- Paths
-    sanctum_base_path VARCHAR(255) DEFAULT '~/sanctum',
-    letta_data_path VARCHAR(255) DEFAULT '~/.letta',
-    
-    -- Ports
-    flask_port INTEGER DEFAULT 5000,
-    smcp_port INTEGER DEFAULT 9000,
-    
-                   -- Letta Server Connection (core system config)
-               letta_server_address VARCHAR(255) DEFAULT 'https://localhost',
-               letta_server_port INTEGER DEFAULT 443,
-               letta_server_token VARCHAR(255),
-               letta_connection_timeout INTEGER DEFAULT 30,
-               letta_server_active BOOLEAN DEFAULT true,
-               last_connected TIMESTAMP,
-    
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    session_id TEXT NOT NULL,
+    response_id TEXT UNIQUE,
+    response TEXT NOT NULL,
+    message_id INTEGER,
+    status TEXT DEFAULT 'sent',
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    metadata TEXT DEFAULT '{}',
+    FOREIGN KEY (session_id) REFERENCES web_chat_sessions (session_id)
 );
 
--- Create schema version tracking table
-CREATE TABLE IF NOT EXISTS schema_version (
+-- Rate limiting data (working Flask system expects this exact schema)
+CREATE TABLE IF NOT EXISTS rate_limits (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    version VARCHAR(20) NOT NULL,
-    applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ip_address TEXT NOT NULL,
+    endpoint TEXT NOT NULL,
+    count INTEGER DEFAULT 1,
+    window_start DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(ip_address, endpoint, window_start)
 );
 
--- Create indexes
-CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
-CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
-CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
-CREATE INDEX IF NOT EXISTS idx_users_active ON users(is_active);
+-- Note: Indexes for main application tables are created by SQLAlchemy
+-- This file only creates chat-specific tables and their indexes
 
-CREATE INDEX IF NOT EXISTS idx_user_sessions_user_id ON user_sessions(user_id);
-CREATE INDEX IF NOT EXISTS idx_user_sessions_token ON user_sessions(session_token);
-CREATE INDEX IF NOT EXISTS idx_user_sessions_expires ON user_sessions(expires_at);
+-- Note: system_config indexes are not needed for basic functionality
 
-CREATE INDEX IF NOT EXISTS idx_agents_name ON agents(name);
-CREATE INDEX IF NOT EXISTS idx_agents_letta_uid ON agents(letta_uid);
-CREATE INDEX IF NOT EXISTS idx_agents_active ON agents(is_active);
-
-CREATE INDEX IF NOT EXISTS idx_system_config_letta_active ON system_config(letta_server_active);
-
--- Insert default admin user
-INSERT INTO users (username, email, password_hash, role, permissions, failed_login_attempts) VALUES
-('admin', 'admin@sanctum.local', '$2b$12$H2UoYl0FVEaq8moKx31a8OUu.RExWusGUAVk17bqgUBUI2krD771q', 'admin', '["*"]', 0);
-
--- Insert default system configuration
-INSERT INTO system_config (
-    openai_api_key, anthropic_api_key, ollama_base_url,
-    sanctum_base_path, letta_data_path,
-    flask_port, smcp_port,
-    letta_server_address, letta_server_port, letta_connection_timeout
-) VALUES (
-    '', '', 'http://localhost:11434',
-    '~/sanctum', '~/.letta',
-    5000, 9000,
-    'https://localhost', 443, 30
-);
-
--- Insert schema version
-INSERT INTO schema_version (version) VALUES ('1.0.0');
+-- Note: Default data (admin user, system config, schema version) 
+-- is inserted by init_database.py via SQLAlchemy models

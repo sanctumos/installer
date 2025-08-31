@@ -31,6 +31,11 @@ app = Flask(__name__)
 # Configuration
 app.config['SECRET_KEY'] = 'your-secret-key-here'  # Change in production
 app.config['STATIC_FOLDER'] = 'static'
+app.config['DATABASE_PATH'] = 'db/sanctum_ui.db'  # Path to integrated database
+
+# Default API keys for working Flask system
+app.config['DEFAULT_API_KEY'] = 'ObeyG1ant'
+app.config['DEFAULT_ADMIN_KEY'] = 'FreeUkra1ne'
 
 # Ensure static folder exists
 os.makedirs('static', exist_ok=True)
@@ -38,6 +43,13 @@ os.makedirs('static', exist_ok=True)
 # Initialize database
 from models import init_db
 init_db()
+
+# Register working Flask system blueprints
+from api import bp as api_bp
+from chat import bp as chat_bp
+
+app.register_blueprint(api_bp, url_prefix='/api/v1')
+app.register_blueprint(chat_bp, url_prefix='/chat')
 
 @app.route('/')
 def index():
@@ -409,65 +421,14 @@ def system_config():
         if request.method == 'GET':
             # Get current configuration
             config = SystemConfig.get_config(db)
-            return jsonify({
-                'id': config.id,
-                'openai_api_key': config.openai_api_key,
-                'anthropic_api_key': config.anthropic_api_key,
-                'ollama_base_url': config.ollama_base_url,
-                'sanctum_base_path': config.sanctum_base_path,
-                'letta_data_path': config.letta_data_path,
-                'flask_port': config.flask_port,
-                'smcp_port': config.smcp_port,
-                'letta_server_address': config.letta_server_address,
-                'letta_server_port': config.letta_server_port,
-                'letta_server_token': config.letta_server_token,
-                'letta_connection_timeout': config.letta_connection_timeout,
-                'letta_server_active': config.letta_server_active,
-                'last_connected': config.last_connected.isoformat() if config.last_connected else None,
-                'created_at': config.created_at.isoformat() if config.created_at else None,
-                'updated_at': config.updated_at.isoformat() if config.updated_at else None
-            })
+            return jsonify(config)
         else:
             # Update configuration
             data = request.get_json()
-            config = SystemConfig.get_config(db)
             
-            # Update fields if provided
-            if 'openai_api_key' in data:
-                config.openai_api_key = data['openai_api_key']
-            if 'anthropic_api_key' in data:
-                config.anthropic_api_key = data['anthropic_api_key']
-            if 'ollama_base_url' in data:
-                config.ollama_base_url = data['ollama_base_url']
-            if 'sanctum_base_path' in data:
-                config.sanctum_base_path = data['sanctum_base_path']
-            if 'letta_data_path' in data:
-                config.letta_data_path = data['letta_data_path']
-            if 'flask_port' in data:
-                config.flask_port = data['flask_port']
-            if 'smcp_port' in data:
-                config.smcp_port = data['smcp_port']
-            if 'letta_server_address' in data:
-                config.letta_server_address = data['letta_server_address']
-            if 'letta_server_port' in data:
-                config.letta_server_port = data['letta_server_port']
-            if 'letta_server_token' in data:
-                config.letta_server_token = data['letta_server_token']
-            if 'letta_connection_timeout' in data:
-                config.letta_connection_timeout = data['letta_connection_timeout']
-            if 'letta_server_active' in data:
-                config.letta_server_active = data['letta_server_active']
-            if 'last_connected' in data:
-                # Parse ISO format string to datetime
-                try:
-                    from datetime import datetime
-                    config.last_connected = datetime.fromisoformat(data['last_connected'].replace('Z', '+00:00'))
-                except ValueError:
-                    pass  # Ignore invalid date format
-            
-            # Update timestamp
-            config.update_config()
-            db.commit()
+            # Update each configuration key
+            for key, value in data.items():
+                SystemConfig.set_config_value(db, key, str(value))
             
             return jsonify({'message': 'System configuration updated successfully'})
             
@@ -528,10 +489,7 @@ def test_letta_connection():
                     # Update last connected time in database
                     db = next(get_db())
                     try:
-                        config = SystemConfig.get_config(db)
-                        config.last_connected = datetime.now()
-                        config.update_config()
-                        db.commit()
+                        SystemConfig.set_config_value(db, 'last_connected', datetime.now().isoformat(), 'Last successful connection timestamp')
                     except Exception as e:
                         print(f"Error updating last_connected: {e}")
                     finally:

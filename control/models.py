@@ -112,48 +112,53 @@ class SystemConfig(Base):
     __tablename__ = 'system_config'
     
     id = Column(Integer, primary_key=True)
-    
-    # API Keys (sensitive)
-    openai_api_key = Column(String(255))
-    anthropic_api_key = Column(String(255))
-    ollama_base_url = Column(String(255), default='http://localhost:11434')
-    
-    # Paths
-    sanctum_base_path = Column(String(255), default='~/sanctum')
-    letta_data_path = Column(String(255), default='~/.letta')
-    
-    # Ports
-    flask_port = Column(Integer, default=5000)
-    smcp_port = Column(Integer, default=9000)
-    
-    # Letta Server Connection (core system config)
-    letta_server_address = Column(String(255), default='https://localhost')
-    letta_server_port = Column(Integer, default=443)
-    letta_server_token = Column(String(255))  # Password/token for authentication
-    letta_connection_timeout = Column(Integer, default=30)
-    letta_server_active = Column(Boolean, default=True)
-    last_connected = Column(DateTime)  # Timestamp of last successful connection
-    
+    config_key = Column(String(100), unique=True, nullable=False)
+    config_value = Column(Text, nullable=False)
+    description = Column(Text)
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
     
     @classmethod
     def get_config(cls, db):
         """Get the system configuration (creates default if none exists)"""
-        config = db.query(cls).first()
-        if not config:
+        configs = db.query(cls).all()
+        if not configs:
             # Create default configuration
-            config = cls()
-            db.add(config)
+            default_configs = [
+                cls(config_key='api_key', config_value='ObeyG1ant', description='API key for external integrations'),
+                cls(config_key='admin_key', config_value='FreeUkra1ne', description='Admin authentication key'),
+                cls(config_key='flask_port', config_value='5000', description='Flask application port'),
+                cls(config_key='smcp_port', config_value='9000', description='SMCP service port')
+            ]
+            for config in default_configs:
+                db.add(config)
             db.commit()
+            configs = db.query(cls).all()
+        
+        # Convert to dict format for backward compatibility
+        config_dict = {config.config_key: config.config_value for config in configs}
+        return config_dict
+    
+    @classmethod
+    def set_config_value(cls, db, key, value, description=None):
+        """Set a configuration value"""
+        config = db.query(cls).filter(cls.config_key == key).first()
+        if config:
+            config.config_value = value
+            if description:
+                config.description = description
+            config.updated_at = func.now()
+        else:
+            config = cls(config_key=key, config_value=value, description=description)
+            db.add(config)
+        db.commit()
         return config
     
-    def update_config(self, **kwargs):
-        """Update configuration values"""
-        for key, value in kwargs.items():
-            if hasattr(self, key):
-                setattr(self, key, value)
-        self.updated_at = func.now()
+    @classmethod
+    def get_config_value(cls, db, key, default=None):
+        """Get a configuration value"""
+        config = db.query(cls).filter(cls.config_key == key).first()
+        return config.config_value if config else default
 
 class SchemaVersion(Base):
     """Schema version tracking for migrations"""

@@ -33,7 +33,40 @@ def init_database():
     # Create tables
     print("📋 Creating database tables...")
     init_db()
-    print("✅ Tables created successfully")
+    
+    # Execute SQL file to create chat tables and rate limiting tables
+    print("📋 Creating chat and rate limiting tables...")
+    import sqlite3
+    import os
+    
+    # Get the path to the SQL file
+    sql_file_path = os.path.join(os.path.dirname(__file__), 'db', 'init_database.sql')
+    
+    if os.path.exists(sql_file_path):
+        # Connect to the database
+        db_path = os.path.join(os.path.dirname(__file__), 'db', 'sanctum_ui.db')
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        
+        try:
+            # Read and execute the SQL file
+            with open(sql_file_path, 'r') as f:
+                sql_script = f.read()
+            
+            # Execute the script
+            cursor.executescript(sql_script)
+            conn.commit()
+            print("✅ Chat and rate limiting tables created successfully")
+        except Exception as e:
+            print(f"⚠️  Warning: Error executing SQL file: {e}")
+            print("   Tables will be created by the working Flask system when needed")
+        finally:
+            conn.close()
+    else:
+        print("⚠️  Warning: SQL file not found at db/init_database.sql")
+        print("   Tables will be created by the working Flask system when needed")
+    
+    print("✅ All tables created successfully")
     
     # Get database session
     db = next(get_db())
@@ -60,24 +93,29 @@ def init_database():
             print("ℹ️  Admin user already exists")
         
         # Check if system config already exists
-        system_config = db.query(SystemConfig).first()
-        if not system_config:
+        system_configs = db.query(SystemConfig).all()
+        if not system_configs:
             print("⚙️  Creating default system configuration...")
-            system_config = SystemConfig(
-                openai_api_key='',
-                anthropic_api_key='',
-                ollama_base_url='http://localhost:11434',
-                sanctum_base_path='~/sanctum',
-                letta_data_path='~/.letta',
-                flask_port=5000,
-                smcp_port=9000,
-                letta_server_address='https://localhost',
-                letta_server_port=443,
-                letta_server_token=None,
-                letta_connection_timeout=30,
-                letta_server_active=True
-            )
-            db.add(system_config)
+            default_configs = [
+                SystemConfig(config_key='api_key', config_value='ObeyG1ant', description='API key for external integrations'),
+                SystemConfig(config_key='admin_key', config_value='FreeUkra1ne', description='Admin authentication key'),
+                SystemConfig(config_key='flask_port', config_value='5000', description='Flask application port'),
+                SystemConfig(config_key='smcp_port', config_value='9000', description='SMCP service port'),
+                SystemConfig(config_key='openai_api_key', config_value='', description='OpenAI API key for AI integrations'),
+                SystemConfig(config_key='anthropic_api_key', config_value='', description='Anthropic API key for AI integrations'),
+                SystemConfig(config_key='ollama_base_url', config_value='http://localhost:11434', description='Ollama base URL'),
+                SystemConfig(config_key='sanctum_base_path', config_value='~/sanctum', description='Sanctum base installation path'),
+                SystemConfig(config_key='letta_data_path', config_value='~/.letta', description='Letta data directory path'),
+                SystemConfig(config_key='letta_server_address', config_value='https://localhost', description='Letta server address'),
+                SystemConfig(config_key='letta_server_port', config_value='443', description='Letta server port'),
+                SystemConfig(config_key='letta_server_token', config_value='', description='Letta server authentication token'),
+                SystemConfig(config_key='letta_connection_timeout', config_value='30', description='Letta connection timeout in seconds'),
+                SystemConfig(config_key='letta_server_active', config_value='true', description='Letta server connection status'),
+                SystemConfig(config_key='session_timeout', config_value='1800', description='Chat session timeout in seconds'),
+                SystemConfig(config_key='max_message_length', config_value='10000', description='Maximum message length')
+            ]
+            for config in default_configs:
+                db.add(config)
             print("✅ System configuration created")
         else:
             print("ℹ️  System configuration already exists")
@@ -99,7 +137,7 @@ def init_database():
         # Display summary
         print("\n📋 Database Summary:")
         print(f"   Users: {db.query(User).count()}")
-        print(f"   System Config: {db.query(SystemConfig).count()}")
+        print(f"   System Config Entries: {db.query(SystemConfig).count()}")
         print(f"   Schema Version: {db.query(SchemaVersion).count()}")
         
         if admin_user:
