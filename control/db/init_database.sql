@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Create user sessions table
 CREATE TABLE IF NOT EXISTS user_sessions (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id VARCHAR(100) PRIMARY KEY,
     user_id INTEGER NOT NULL,
     session_token VARCHAR(255) UNIQUE NOT NULL,
     expires_at TIMESTAMP NOT NULL,
@@ -54,8 +54,11 @@ CREATE TABLE IF NOT EXISTS agents (
     letta_uid VARCHAR(100) UNIQUE NOT NULL,
     description TEXT,
     status VARCHAR(50) DEFAULT 'active', -- Agent status: active, inactive, error, etc.
+    created_by INTEGER, -- User ID who created the agent
     config TEXT, -- JSON configuration
     is_active BOOLEAN DEFAULT true,
+    visible_to_users TEXT, -- JSON array of user IDs or NULL for all users
+    visible_to_roles TEXT, -- JSON array of role names or NULL for all roles
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

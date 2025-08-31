@@ -93,8 +93,11 @@ class Agent(Base):
     letta_uid = Column(String(100), unique=True, nullable=False)
     description = Column(Text)
     status = Column(String(50), default='active')  # Agent status: active, inactive, error, etc.
+    created_by = Column(Integer)  # User ID who created the agent
     config = Column(Text)  # JSON configuration
     is_active = Column(Boolean, default=True)
+    visible_to_users = Column(Text)  # JSON array of user IDs or NULL for all users
+    visible_to_roles = Column(Text)  # JSON array of role names or NULL for all roles
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
     
