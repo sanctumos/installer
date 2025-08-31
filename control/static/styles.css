@@ -1519,6 +1519,29 @@ head {
    CHAT SPECIFIC STYLES
    ========================================================================== */
 /* Chat bubbles */
+
+/* ==========================================================================
+   TYPING INDICATOR STYLES
+   ========================================================================== */
+.typing-indicator {
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.typing-indicator.show {
+  opacity: 1;
+}
+
+/* Header typing indicator */
+header .typing-indicator {
+  margin-top: 0;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+header .typing-indicator.show {
+  opacity: 1;
+}
 .bubble-assistant {
   background: var(--bubble-assistant);
   max-width: 720px;

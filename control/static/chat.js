@@ -76,6 +76,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Set default agent
             dropdown.textContent = agents[0].name;
             
+            // Update the current agent name display
+            updateAgentDisplay(agents[0]);
+            
             // Clear and populate agent list
             agentList.innerHTML = '';
             agents.forEach(agent => {
@@ -102,6 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
             dropdown.textContent = agent.name;
         }
         updateWelcomeMessage(agent);
+        updateAgentDisplay(agent);
     }
 
     // Update welcome message with selected agent
@@ -156,6 +160,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Generate a unique session ID for this chat session
                 const sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                
+                // Show typing indicator
+                const currentAgent = getCurrentAgent();
+                if (currentAgent) {
+                    showTypingIndicator(currentAgent.name);
+                }
                 
                 // Send message to working Flask system's API
                 fetch('/api/v1/?action=messages', {
@@ -245,6 +255,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add assistant message to transcript
     function addAssistantMessage(text) {
         console.log('Adding assistant message:', text);
+        const currentAgent = getCurrentAgent();
+        const agentName = currentAgent ? currentAgent.name : 'Agent';
+        
         const messageDiv = document.createElement('div');
         messageDiv.className = 'd-flex mb-3';
         const timestamp = getCurrentTimestamp();
@@ -252,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="d-flex align-items-start gap-3">
                 <div class="message-avatar">
                     <div class="avatar-circle avatar-assistant">A</div>
-                    <div class="avatar-name">Athena</div>
+                    <div class="avatar-name">${agentName}</div>
                 </div>
                 <div class="p-3 rounded-3 bubble-assistant">
                     <p class="mb-0">${escapeHtml(text)}</p>
@@ -637,6 +650,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             // Clear the polling interval since we got responses
                             clearInterval(pollInterval);
                             
+                            // Hide typing indicator since we got a response
+                            hideTypingIndicator();
+                            
                             // Display the responses
                             responses.forEach(response => {
                                 addAssistantMessage(response.response || 'Response received');
@@ -652,6 +668,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (pollCount >= maxPolls) {
                 clearInterval(pollInterval);
                 console.log('Stopped polling for responses');
+                // Hide typing indicator if no response received
+                hideTypingIndicator();
             }
         }, 2000);
     }
@@ -683,5 +701,56 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.error('Error polling inbox:', error);
                 });
         }, 5000);
+    }
+
+    // Function to show typing indicator
+    function showTypingIndicator(agentName) {
+        const typingIndicator = document.getElementById('typingIndicator');
+        if (typingIndicator) {
+            typingIndicator.style.display = 'inline';
+            typingIndicator.classList.add('show');
+            console.log('Showing typing indicator for agent:', agentName);
+        }
+    }
+
+    // Function to hide typing indicator
+    function hideTypingIndicator() {
+        const typingIndicator = document.getElementById('typingIndicator');
+        if (typingIndicator) {
+            typingIndicator.style.display = 'none';
+            typingIndicator.classList.remove('show');
+            console.log('Hiding typing indicator');
+        }
+    }
+
+    // Function to get the currently selected agent
+    function getCurrentAgent() {
+        const dropdown = document.getElementById('agentDropdown');
+        if (dropdown) {
+            const agentName = dropdown.textContent.trim();
+            const agents = document.querySelectorAll('.dropdown-item');
+            for (const agent of agents) {
+                if (agent.textContent.trim() === agentName) {
+                    return {
+                        name: agentName,
+                        id: agent.dataset.agent
+                    };
+                }
+            }
+        }
+        return null;
+    }
+
+    // Update the current agent name display and textarea placeholder
+    function updateAgentDisplay(agent) {
+        const currentAgentName = document.getElementById('current-agent-name');
+        if (currentAgentName) {
+            currentAgentName.textContent = agent.name;
+        }
+        
+        const textarea = document.querySelector('textarea');
+        if (textarea) {
+            textarea.placeholder = `Message ${agent.name}…`;
+        }
     }
 });

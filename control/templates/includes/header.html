@@ -29,6 +29,11 @@
                 <!-- Agents will be loaded dynamically -->
             </ul>
         </div>
+        
+        <!-- Typing indicator -->
+        <span id="typingIndicator" class="typing-indicator ms-2" style="display: none;">
+            <em class="text-muted small">*is typing...*</em>
+        </span>
         {% else %}
         <!-- Standard page title -->
         <span class="fw-medium">{{ page_title | default('Sanctum') }}</span>
