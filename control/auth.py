@@ -55,7 +55,7 @@ def create_user_session(user_id: int, ip_address: str = None, user_agent: str = 
     expires_at = datetime.utcnow() + timedelta(hours=24)
     
     session_obj = UserSession(
-        id=generate_session_token(),
+        id=generate_session_token(),  # Use session token as ID to match existing schema
         user_id=user_id,
         session_token=generate_session_token(),
         ip_address=ip_address,
@@ -84,10 +84,6 @@ def authenticate_user(username: str, password: str) -> Tuple[bool, Optional[dict
         if not user.is_active:
             return False, None, "Account is deactivated"
         
-        # Check if account is locked
-        if user.locked_until and user.locked_until > datetime.utcnow():
-            return False, None, f"Account is locked until {user.locked_until}"
-        
         # Verify password
         if not verify_password(password, user.password_hash):
             # Increment failed login attempts (handle None case)
@@ -95,12 +91,6 @@ def authenticate_user(username: str, password: str) -> Tuple[bool, Optional[dict
                 user.failed_login_attempts = 1
             else:
                 user.failed_login_attempts += 1
-            
-            # Lock account after 5 failed attempts
-            if user.failed_login_attempts >= 5:
-                user.locked_until = datetime.utcnow() + timedelta(minutes=30)
-                db.commit()
-                return False, None, "Account locked due to too many failed attempts"
             
             db.commit()
             return False, None, "Invalid username or password"

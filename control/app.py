@@ -22,7 +22,7 @@ import os
 import json
 import bcrypt
 from datetime import datetime
-from models import User, UserSession, Agent, get_db, get_agents_visible_to_user
+from models import User, UserSession, Agent, SystemConfig, get_db, get_agents_visible_to_user
 from sqlalchemy import or_
 from auth import authenticate_user, create_user_session, get_user_by_session_token, require_auth, require_role, cleanup_expired_sessions
 
@@ -127,7 +127,13 @@ def settings():
 @require_role('admin')
 def system_settings():
     """System settings and configuration interface"""
-    return render_template('system_settings.html')
+    db = next(get_db())
+    try:
+        # Get system configuration
+        config = SystemConfig.get_config(db)
+        return render_template('system_settings.html', config=config)
+    finally:
+        db.close()
 
 @app.route('/user-management')
 @require_auth
@@ -392,6 +398,188 @@ def chat():
     }
     
     return jsonify(response)
+
+@app.route('/api/system-config', methods=['GET', 'PUT'])
+@require_auth
+@require_role('admin')
+def system_config():
+    """Get or update system configuration"""
+    db = next(get_db())
+    try:
+        if request.method == 'GET':
+            # Get current configuration
+            config = SystemConfig.get_config(db)
+            return jsonify({
+                'id': config.id,
+                'openai_api_key': config.openai_api_key,
+                'anthropic_api_key': config.anthropic_api_key,
+                'ollama_base_url': config.ollama_base_url,
+                'sanctum_base_path': config.sanctum_base_path,
+                'letta_data_path': config.letta_data_path,
+                'flask_port': config.flask_port,
+                'smcp_port': config.smcp_port,
+                'letta_server_address': config.letta_server_address,
+                'letta_server_port': config.letta_server_port,
+                'letta_server_token': config.letta_server_token,
+                'letta_connection_timeout': config.letta_connection_timeout,
+                'letta_server_active': config.letta_server_active,
+                'last_connected': config.last_connected.isoformat() if config.last_connected else None,
+                'created_at': config.created_at.isoformat() if config.created_at else None,
+                'updated_at': config.updated_at.isoformat() if config.updated_at else None
+            })
+        else:
+            # Update configuration
+            data = request.get_json()
+            config = SystemConfig.get_config(db)
+            
+            # Update fields if provided
+            if 'openai_api_key' in data:
+                config.openai_api_key = data['openai_api_key']
+            if 'anthropic_api_key' in data:
+                config.anthropic_api_key = data['anthropic_api_key']
+            if 'ollama_base_url' in data:
+                config.ollama_base_url = data['ollama_base_url']
+            if 'sanctum_base_path' in data:
+                config.sanctum_base_path = data['sanctum_base_path']
+            if 'letta_data_path' in data:
+                config.letta_data_path = data['letta_data_path']
+            if 'flask_port' in data:
+                config.flask_port = data['flask_port']
+            if 'smcp_port' in data:
+                config.smcp_port = data['smcp_port']
+            if 'letta_server_address' in data:
+                config.letta_server_address = data['letta_server_address']
+            if 'letta_server_port' in data:
+                config.letta_server_port = data['letta_server_port']
+            if 'letta_server_token' in data:
+                config.letta_server_token = data['letta_server_token']
+            if 'letta_connection_timeout' in data:
+                config.letta_connection_timeout = data['letta_connection_timeout']
+            if 'letta_server_active' in data:
+                config.letta_server_active = data['letta_server_active']
+            if 'last_connected' in data:
+                # Parse ISO format string to datetime
+                try:
+                    from datetime import datetime
+                    config.last_connected = datetime.fromisoformat(data['last_connected'].replace('Z', '+00:00'))
+                except ValueError:
+                    pass  # Ignore invalid date format
+            
+            # Update timestamp
+            config.update_config()
+            db.commit()
+            
+            return jsonify({'message': 'System configuration updated successfully'})
+            
+    except Exception as e:
+        db.rollback()
+        return jsonify({'error': str(e)}), 500
+    finally:
+        db.close()
+
+@app.route('/api/test-letta-connection', methods=['POST'])
+@require_auth
+@require_role('admin')
+def test_letta_connection():
+    """Test connection to Letta server"""
+    print(f"DEBUG: test_letta_connection called with data: {request.get_json()}")  # Debug logging
+    try:
+        data = request.get_json()
+        server_address = data.get('server_address')
+        server_port = data.get('server_port')
+        server_token = data.get('server_token')
+        
+        if not server_address or not server_port:
+            return jsonify({'error': 'Server address and port are required'}), 400
+        
+        # Build the health endpoint URL
+        base_url = server_address
+        if not server_address.startswith('http://') and not server_address.startswith('https://'):
+            base_url = f'https://{server_address}'
+        
+        # Add port if not already in URL
+        if ':' not in base_url:
+            health_url = f'{base_url}:{server_port}/v1/health/'
+        else:
+            health_url = f'{base_url}/v1/health/'
+        
+        # Prepare headers
+        headers = {'Content-Type': 'application/json'}
+        if server_token:
+            headers['Authorization'] = f'Bearer {server_token}'
+        
+        # Test the connection using requests
+        import requests
+        from datetime import datetime
+        
+        start_time = datetime.now()
+        try:
+            response = requests.get(health_url, headers=headers, timeout=30)
+            end_time = datetime.now()
+            response_time = (end_time - start_time).total_seconds() * 1000  # Convert to milliseconds
+            
+            if response.ok:
+                # Parse response
+                try:
+                    health_data = response.json()
+                    status = health_data.get('status', 'unknown')
+                    version = health_data.get('version', 'unknown')
+                    
+                    # Update last connected time in database
+                    db = next(get_db())
+                    try:
+                        config = SystemConfig.get_config(db)
+                        config.last_connected = datetime.now()
+                        config.update_config()
+                        db.commit()
+                    except Exception as e:
+                        print(f"Error updating last_connected: {e}")
+                    finally:
+                        db.close()
+                    
+                    return jsonify({
+                        'success': True,
+                        'http_status': response.status_code,
+                        'response_time': round(response_time),
+                        'status': status,
+                        'version': version,
+                        'message': f'Connection successful! Letta server {version} is responding with status: {status}'
+                    })
+                except ValueError:
+                    # Response is not JSON
+                    return jsonify({
+                        'success': True,
+                        'http_status': response.status_code,
+                        'response_time': round(response_time),
+                        'message': f'Connection successful! Letta server responded with HTTP {response.status_code}'
+                    })
+            else:
+                return jsonify({
+                    'success': False,
+                    'http_status': response.status_code,
+                    'response_time': round(response_time),
+                    'message': f'Server responded with error: HTTP {response.status_code}'
+                })
+                
+        except requests.exceptions.Timeout:
+            return jsonify({
+                'success': False,
+                'message': 'Connection timed out after 30 seconds'
+            })
+        except requests.exceptions.ConnectionError:
+            return jsonify({
+                'success': False,
+                'message': 'Connection failed - server unreachable'
+            })
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'message': f'Connection error: {str(e)}'
+            })
+            
+    except Exception as e:
+        print(f"DEBUG: Exception in test_letta_connection: {e}")  # Debug logging
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/agents')
 @require_auth

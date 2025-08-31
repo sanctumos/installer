@@ -5,139 +5,139 @@ This document outlines the proposed database schema for storing Letta server con
 
 ## Tables
 
-### 1. Letta Server Connection Table
-```sql
-CREATE TABLE letta_server_config (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    server_address VARCHAR(255) NOT NULL DEFAULT 'localhost',
-    server_port INTEGER NOT NULL DEFAULT 8080,
-    server_password VARCHAR(255), -- Encrypted/hashed password
-    server_token VARCHAR(255), -- Alternative to password if using tokens
-    connection_timeout INTEGER DEFAULT 30, -- Seconds
-    is_active BOOLEAN DEFAULT true,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-**Purpose**: Stores the connection details for the Letta server that the Sanctum control panel needs to communicate with.
-
-**Fields**:
-- `server_address`: Usually localhost, but configurable for testing/remote setups
-- `server_port`: Port number for Letta server (default 8080)
-- `server_password`: Authentication password for Letta server
-- `server_token`: Alternative authentication method if using tokens
-- `connection_timeout`: Network timeout in seconds
-- `is_active`: Whether this connection config is currently active
-
-### 2. System Configuration Table
+### 1. System Configuration Table (Merged)
 ```sql
 CREATE TABLE system_config (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    config_key VARCHAR(100) UNIQUE NOT NULL,
-    config_value TEXT,
-    config_type VARCHAR(50) DEFAULT 'string', -- 'string', 'integer', 'boolean', 'json'
-    description TEXT,
-    is_sensitive BOOLEAN DEFAULT false, -- For API keys, passwords, etc.
-    category VARCHAR(50) DEFAULT 'general', -- 'api_keys', 'paths', 'ports', 'general'
+    
+    -- API Keys (sensitive)
+    openai_api_key VARCHAR(255),
+    anthropic_api_key VARCHAR(255),
+    ollama_base_url VARCHAR(255) DEFAULT 'http://localhost:11434',
+    
+    -- Paths
+    sanctum_base_path VARCHAR(255) DEFAULT '~/sanctum',
+    letta_data_path VARCHAR(255) DEFAULT '~/.letta',
+    
+    -- Ports
+    flask_port INTEGER DEFAULT 5000,
+    smcp_port INTEGER DEFAULT 9000,
+    
+    -- Letta Server Connection (core system config)
+    letta_server_address VARCHAR(255) DEFAULT 'https://localhost',
+    letta_server_port INTEGER DEFAULT 443,
+    letta_server_token VARCHAR(255),
+    letta_connection_timeout INTEGER DEFAULT 30,
+                   letta_server_active BOOLEAN DEFAULT true,
+               last_connected TIMESTAMP,
+    
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
 
-**Purpose**: Flexible key-value storage for all system configuration settings currently displayed on the system-settings page.
+**Purpose**: Single table storing all core system configuration settings with explicit, well-defined fields for reliable cross-module interactions.
 
 **Fields**:
-- `config_key`: Unique identifier for the configuration setting
-- `config_value`: The actual value (can be string, integer, boolean, or JSON)
-- `config_type`: Data type for validation and UI rendering
-- `description`: Human-readable description of what this setting controls
-- `is_sensitive`: Flag to identify settings that should be masked in UI (API keys, passwords)
-- `category`: Groups related settings for better organization
+- **API Keys**: OpenAI, Anthropic, and Ollama configuration (sensitive data)
+- **Paths**: Sanctum and Letta installation directories
+- **Ports**: Webapp interface and SMCP server ports
+- **Letta Server**: Connection details (address, port, token, timeout, active status)
+
+## Additional Tables
+
+### 2. User Sessions Table
+```sql
+CREATE TABLE user_sessions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    session_token VARCHAR(255) UNIQUE NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+```
+
+**Purpose**: Track user authentication sessions with security metadata.
 
 ## Sample Data Population
 
-### Default Letta Server Configuration
-```sql
--- Insert default Letta server config
-INSERT INTO letta_server_config (server_address, server_port, server_password) VALUES
-('localhost', 8080, NULL);
-```
-
 ### Default System Configuration
 ```sql
--- Insert system configuration defaults
-INSERT INTO system_config (config_key, config_value, config_type, description, is_sensitive, category) VALUES
--- API Keys
-('openai_api_key', '', 'string', 'OpenAI API Key for AI model access', true, 'api_keys'),
-('anthropic_api_key', '', 'string', 'Anthropic API Key for Claude access', true, 'api_keys'),
-('ollama_base_url', 'http://localhost:11434', 'string', 'Ollama local model server URL', false, 'api_keys'),
-
--- Paths
-('sanctum_base_path', '~/sanctum', 'string', 'Base installation directory for Sanctum', false, 'paths'),
-('letta_data_path', '~/.letta', 'string', 'Letta data directory path', false, 'paths'),
-
--- Ports
-('flask_port', '5000', 'integer', 'Flask web interface port', false, 'ports'),
-('smcp_port', '9000', 'integer', 'SMCP server port', false, 'ports'),
-
--- General Settings
-('environment', 'development', 'string', 'Current environment (dev/staging/prod)', false, 'general'),
-('debug_mode', 'true', 'boolean', 'Enable debug logging', false, 'general');
+-- Insert default system configuration
+INSERT INTO system_config (
+    openai_api_key, anthropic_api_key, ollama_base_url,
+    sanctum_base_path, letta_data_path,
+    flask_port, smcp_port,
+    letta_server_address, letta_server_port, letta_connection_timeout,
+    letta_server_active, last_connected
+) VALUES (
+    '', '', 'http://localhost:11434',
+    '~/sanctum', '~/.letta',
+    5000, 9000,
+    'https://localhost', 443, 30,
+    true, NULL
+);
 ```
 
 ## Performance Indexes
 
 ```sql
--- Letta server config indexes
-CREATE INDEX idx_letta_server_active ON letta_server_config(is_active);
-
--- System config indexes
-CREATE INDEX idx_system_config_key ON system_config(config_key);
-CREATE INDEX idx_system_config_category ON system_config(category);
-CREATE INDEX idx_system_config_sensitive ON system_config(is_sensitive);
+-- System config indexes for common queries
+CREATE INDEX idx_system_config_letta_active ON system_config(letta_server_active);
+CREATE INDEX idx_system_config_environment ON system_config(environment);
+CREATE INDEX idx_system_config_debug_mode ON system_config(debug_mode);
 ```
 
 ## Key Features
 
-- **Letta Server**: Stores connection details (address, port, password/token)
-- **System Config**: Flexible key-value storage for all system settings
-- **Sensitive Data**: Flags for API keys and passwords
-- **Categories**: Groups related settings (api_keys, paths, ports, general)
+- **Explicit Fields**: Direct field access for reliable cross-module interactions
+- **Type Safety**: Database enforces data types (VARCHAR, INTEGER, BOOLEAN)
 - **Default Values**: Sensible defaults for common configurations
+- **Sensitive Data**: API keys and passwords stored securely
+- **Letta Integration**: Core server connection details included
 - **Timestamps**: Track when settings were created/updated
 
 ## Security Considerations
 
-- Passwords/tokens stored as-is (we can add encryption later if needed)
-- `is_sensitive` flag helps identify what should be masked in UI
-- Separate table for Letta server keeps connection details isolated
-- `is_active` flag allows for multiple server configs with easy switching
+- API keys and passwords stored as-is (encryption can be added later)
+- Sensitive fields can be masked in UI based on field names
+- Single table simplifies backup/restore procedures
+- Clear separation between public and sensitive configuration
 
 ## Usage Examples
 
+### Get All Configuration
+```sql
+SELECT * FROM system_config WHERE id = 1;
+```
+
 ### Get Letta Server Configuration
 ```sql
-SELECT * FROM letta_server_config WHERE is_active = true;
+SELECT letta_server_address, letta_server_port, letta_server_active 
+FROM system_config WHERE id = 1;
 ```
 
-### Get All API Keys
+### Get API Keys
 ```sql
-SELECT config_key, config_value FROM system_config 
-WHERE category = 'api_keys' AND is_sensitive = true;
-```
-
-### Get Path Configurations
-```sql
-SELECT config_key, config_value FROM system_config 
-WHERE category = 'paths';
+SELECT openai_api_key, anthropic_api_key, ollama_base_url 
+FROM system_config WHERE id = 1;
 ```
 
 ### Update Letta Server Address
 ```sql
-UPDATE letta_server_config 
-SET server_address = '192.168.1.100', updated_at = CURRENT_TIMESTAMP 
-WHERE is_active = true;
+UPDATE system_config 
+SET letta_server_address = '192.168.1.100', updated_at = CURRENT_TIMESTAMP 
+WHERE id = 1;
+```
+
+### Update Environment
+```sql
+UPDATE system_config 
+SET environment = 'production', debug_mode = false, updated_at = CURRENT_TIMESTAMP 
+WHERE id = 1;
 ```
 
 ## Integration Points
@@ -145,5 +145,46 @@ WHERE is_active = true;
 This schema will integrate with:
 1. **System Settings Page**: Replace hardcoded form fields with database-driven values
 2. **Letta Client**: Use stored connection details for server communication
-3. **Configuration Management**: Centralized storage for all system settings
+3. **Configuration Management**: Centralized storage for all core system settings
 4. **Environment Switching**: Easy switching between dev/staging/prod configs
+5. **Cross-Module Access**: Direct field access without runtime discovery
+
+## Response Status Monitoring
+
+The system now includes a comprehensive response status area that provides:
+
+### Real-Time Connection Testing
+- **HTTP Status**: Shows actual HTTP response codes (200 OK, 404 Not Found, etc.)
+- **Response Time**: Measures and displays connection latency in milliseconds
+- **Response Details**: Provides detailed error messages and success confirmations
+- **Last Test**: Timestamp of when the connection test was performed
+
+### Connection History
+- **Last Connected**: Automatically updated timestamp when connection succeeds
+- **Persistent Storage**: Connection success times are saved to the database
+- **Visual Indicators**: Color-coded status badges (Testing, Connected, Error, Failed)
+
+### Error Diagnostics
+- **Network Errors**: Distinguishes between server unreachable, CORS blocked, and network issues
+- **HTTP Errors**: Shows specific HTTP status codes and error responses
+- **Authentication**: Handles token-based authentication with Bearer headers
+- **Timeout Handling**: Configurable connection timeout settings
+
+## Future Considerations
+
+For plugin/module configuration (user-created content), a separate flexible table can be added later:
+```sql
+-- Future: Plugin/Module Configuration (flexible, user-created)
+-- CREATE TABLE plugin_config (
+--     id INTEGER PRIMARY KEY AUTOINCREMENT,
+--     plugin_name VARCHAR(100) NOT NULL,
+--     config_key VARCHAR(100) NOT NULL,
+--     config_value TEXT,
+--     config_type VARCHAR(50) DEFAULT 'string',
+--     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--     UNIQUE(plugin_name, config_key)
+-- );
+```
+
+This approach follows the WordPress model: explicit core configuration for reliability, flexible plugin configuration for extensibility.

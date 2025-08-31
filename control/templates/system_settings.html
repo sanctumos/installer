@@ -36,8 +36,6 @@
 
     <main>
         <div class="container-fluid">
-
-
             <!-- System Configuration Section -->
             <section class="mb-5">
                 <div class="card bg-dark border-secondary">
@@ -49,26 +47,26 @@
                             <div class="col-lg-6 mb-4">
                                 <div class="card bg-darker border-secondary">
                                     <div class="card-header border-secondary">
-                                        <h3 class="h5 mb-0 text-light">Environment Variables</h3>
+                                        <h3 class="h5 mb-0 text-light">API Keys</h3>
                                     </div>
                                     <div class="card-body">
                                         <div class="mb-3">
                                             <label class="form-label text-light">OpenAI API Key:</label>
                                             <div class="input-group">
-                                                <input type="password" id="openaiKey" placeholder="sk-..." class="form-control bg-dark border-secondary text-light">
+                                                <input type="password" id="openaiKey" value="{{ config.openai_api_key or '' }}" placeholder="sk-..." class="form-control bg-dark border-secondary text-light">
                                                 <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('openaiKey')">👁️</button>
                                             </div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label text-light">Anthropic API Key:</label>
                                             <div class="input-group">
-                                                <input type="password" id="anthropicKey" placeholder="sk-ant..." class="form-control bg-dark border-secondary text-light">
+                                                <input type="password" id="anthropicKey" value="{{ config.anthropic_api_key or '' }}" placeholder="sk-ant..." class="form-control bg-dark border-secondary text-light">
                                                 <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('anthropicKey')">👁️</button>
                                             </div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label text-light">Ollama Base URL:</label>
-                                            <input type="text" id="ollamaUrl" placeholder="http://localhost:11434" class="form-control bg-dark border-secondary text-light">
+                                            <input type="text" id="ollamaUrl" value="{{ config.ollama_base_url or 'http://localhost:11434' }}" placeholder="http://localhost:11434" class="form-control bg-dark border-secondary text-light">
                                         </div>
                                     </div>
                                 </div>
@@ -77,21 +75,31 @@
                             <div class="col-lg-6 mb-4">
                                 <div class="card bg-darker border-secondary">
                                     <div class="card-header border-secondary">
-                                        <h3 class="h5 mb-0 text-light">Path Configurations</h3>
+                                        <h3 class="h5 mb-0 text-light">Paths & Ports</h3>
                                     </div>
                                     <div class="card-body">
                                         <div class="mb-3">
                                             <label class="form-label text-light">Sanctum Base Path:</label>
-                                            <input type="text" id="sanctumPath" value="~/sanctum" class="form-control bg-dark border-secondary text-light">
+                                            <input type="text" id="sanctumPath" value="{{ config.sanctum_base_path or '~/sanctum' }}" class="form-control bg-dark border-secondary text-light">
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label text-light">Letta Data Path:</label>
-                                            <input type="text" id="lettaPath" value="~/.letta" class="form-control bg-dark border-secondary text-light">
+                                            <input type="text" id="lettaPath" value="{{ config.letta_data_path or '~/.letta' }}" class="form-control bg-dark border-secondary text-light">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label text-light">Webapp Port:</label>
+                                            <input type="number" id="flaskPort" value="{{ config.flask_port or 5000 }}" class="form-control bg-dark border-secondary text-light">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label text-light">SMCP Port:</label>
+                                            <input type="number" id="smcpPort" value="{{ config.smcp_port or 9000 }}" class="form-control bg-dark border-secondary text-light">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+
 
                         <div class="d-flex gap-2 mt-3">
                             <button id="saveConfig" class="btn btn-primary">💾 Save Configuration</button>
@@ -118,17 +126,17 @@
                                     <div class="card-body">
                                         <div class="mb-3">
                                             <label class="form-label text-light">Server Address:</label>
-                                            <input type="text" id="lettaServerAddress" placeholder="localhost" class="form-control bg-dark border-secondary text-light">
+                                            <input type="text" id="lettaServerAddress" value="{{ config.letta_server_address or 'https://localhost' }}" placeholder="https://localhost" class="form-control bg-dark border-secondary text-light">
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label text-light">Server Port:</label>
-                                            <input type="number" id="lettaServerPort" placeholder="8080" class="form-control bg-dark border-secondary text-light">
+                                            <input type="number" id="lettaServerPort" value="{{ config.letta_server_port or 443 }}" placeholder="443" class="form-control bg-dark border-secondary text-light">
                                         </div>
                                         <div class="mb-3">
-                                            <label class="form-label text-light">Server Password:</label>
+                                            <label class="form-label text-light">Server Token:</label>
                                             <div class="input-group">
-                                                <input type="password" id="lettaServerPassword" placeholder="Enter password" class="form-control bg-dark border-secondary text-light">
-                                                <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('lettaServerPassword')">👁️</button>
+                                                <input type="password" id="lettaServerToken" value="{{ config.letta_server_token or '' }}" placeholder="Enter token/password" class="form-control bg-dark border-secondary text-light">
+                                                <button class="btn btn-outline-secondary" type="button" onclick="togglePassword('lettaServerToken')">👁️</button>
                                             </div>
                                         </div>
                                     </div>
@@ -145,16 +153,55 @@
                                             <label class="form-label text-light">Status:</label>
                                             <div class="d-flex align-items-center">
                                                 <span class="badge bg-secondary me-2">Unknown</span>
-                                                <button id="testConnection" class="btn btn-outline-primary btn-sm">🔍 Test Connection</button>
+                                                <button id="testConnection" class="btn btn-primary btn-sm">🔍 Test Connection</button>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Response Status Area -->
+                                        <div class="mb-3">
+                                            <label class="form-label text-light">Response Status:</label>
+                                            <div id="responseStatus" class="border border-secondary rounded p-2 bg-darker">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <small class="text-muted">HTTP Status:</small><br>
+                                                        <span id="httpStatus" class="text-light">-</span>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <small class="text-muted">Response Time:</small><br>
+                                                        <span id="responseTime" class="text-light">-</span>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-2">
+                                                    <small class="text-muted">Response Details:</small><br>
+                                                    <div id="responseDetails" class="text-light small">No test performed yet</div>
+                                                </div>
+                                                <div class="mt-2">
+                                                    <small class="text-muted">Last Test:</small><br>
+                                                    <span id="lastTestTime" class="text-light">-</span>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label text-light">Last Connected:</label>
-                                            <span class="text-muted">Never</span>
+                                            <span class="text-muted">
+                                                {% if config.last_connected %}
+                                                    {{ config.last_connected.strftime('%Y-%m-%d %H:%M:%S') }}
+                                                {% else %}
+                                                    Never
+                                                {% endif %}
+                                            </span>
                                         </div>
                                         <div class="mb-3">
                                             <label class="form-label text-light">Connection Timeout:</label>
-                                            <input type="number" id="lettaTimeout" value="30" class="form-control bg-dark border-secondary text-light">
+                                            <input type="number" id="lettaTimeout" value="{{ config.letta_connection_timeout or 30 }}" class="form-control bg-dark border-secondary text-light">
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="lettaServerActive" {% if config.letta_server_active %}checked{% endif %}>
+                                                <label class="form-check-label text-light" for="lettaServerActive">
+                                                    Server Active
+                                                </label>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -163,21 +210,12 @@
 
                         <div class="d-flex gap-2 mt-3">
                             <button id="saveLettaConfig" class="btn btn-primary">💾 Save Letta Config</button>
-                            <button id="testLettaConnection" class="btn btn-outline-info">🔗 Test Connection</button>
                         </div>
-                    </div>
-                </div>
-            </section>
                     </div>
                 </div>
             </section>
         </div>
     </main>
-
-    </div>
-</div>
-
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='system_settings.js') }}"></script>
