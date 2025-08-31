@@ -92,6 +92,7 @@ class Agent(Base):
     name = Column(String(100), nullable=False)
     letta_uid = Column(String(100), unique=True, nullable=False)
     description = Column(Text)
+    status = Column(String(50), default='active')  # Agent status: active, inactive, error, etc.
     config = Column(Text)  # JSON configuration
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=func.now())

@@ -48,10 +48,10 @@ def init_database():
         print(f"Tables created: {[table[0] for table in tables]}")
         
         # Check schema version
-        cursor.execute("SELECT version, description FROM schema_version ORDER BY version DESC LIMIT 1")
+        cursor.execute("SELECT version, applied_at FROM schema_version ORDER BY version DESC LIMIT 1")
         version = cursor.fetchone()
         if version:
-            print(f"Schema version: {version[0]} - {version[1]}")
+            print(f"Schema version: {version[0]} - Applied at: {version[1]}")
         
         conn.close()
         return True

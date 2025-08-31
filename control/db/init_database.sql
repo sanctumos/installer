@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS agents (
     name VARCHAR(100) NOT NULL,
     letta_uid VARCHAR(100) UNIQUE NOT NULL,
     description TEXT,
+    status VARCHAR(50) DEFAULT 'active', -- Agent status: active, inactive, error, etc.
     config TEXT, -- JSON configuration
     is_active BOOLEAN DEFAULT true,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -110,8 +111,6 @@ CREATE INDEX IF NOT EXISTS idx_agents_letta_uid ON agents(letta_uid);
 CREATE INDEX IF NOT EXISTS idx_agents_active ON agents(is_active);
 
 CREATE INDEX IF NOT EXISTS idx_system_config_letta_active ON system_config(letta_server_active);
-CREATE INDEX IF NOT EXISTS idx_system_config_environment ON system_config(environment);
-CREATE INDEX IF NOT EXISTS idx_system_config_debug_mode ON system_config(debug_mode);
 
 -- Insert default admin user
 INSERT INTO users (username, email, password_hash, role, permissions, failed_login_attempts) VALUES
