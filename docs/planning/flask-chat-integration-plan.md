@@ -37,12 +37,27 @@
 
 ## Integration Strategy
 
-### Phase 1: Database Schema Integration (CRITICAL FIRST STEP)
-1. **Update Main Database Schema**
-   - **MODIFY** `control/db/init_database.sql` to include chat tables
-   - **ADD** the working Flask chat system's database schema to the main control database
-   - **INTEGRATE** chat tables with existing UI management tables
-   - **ENSURE** foreign key relationships work between chat and UI systems
+### Phase 1: Copy Working Flask System AS-IS (SIMPLE APPROACH)
+1. **Copy Working Code AS-IS**
+   - **COPY** working Flask API/backend code from `temp-sources/python/app/` into main control app
+   - **NO PORTING** - use the tested, working code exactly as it is
+   - **NO REWRITING** - the working system becomes a library/module
+
+2. **Change Database Path Only**
+   - **MODIFY** database configuration in working Flask system to point to `sanctum_ui.db`
+   - **USE** existing working database schema (don't change it)
+   - **ENSURE** working system can access the main control database
+
+3. **Import as Module/Library**
+   - **IMPORT** working Flask system as a module in main control app
+   - **USE** working system's functions and API endpoints directly
+   - **MAP** control UI routes to call working API endpoints
+
+### Phase 2: Database Schema Integration
+1. **Use Working System's Schema**
+   - **COPY** working Flask system's database schema to main control database
+   - **ADD** chat tables that the working system expects
+   - **ENSURE** working system can create/access its required tables
 
 2. **Database Schema Changes Required**
    ```sql
@@ -97,20 +112,19 @@
 3. **Database Migration Strategy**
    - **NO DATA LOSS**: Existing UI data remains intact
    - **ADDITIVE**: Chat tables are added to existing schema
-   - **INTEGRATED**: Chat sessions link to existing users and agents
+   - **WORKING SYSTEM COMPATIBLE**: Use schema that working Flask system expects
    - **CONSISTENT**: Single database file for entire system
 
-### Phase 2: Integrate Working Chat Code INTO Main Control App
-1. **Integrate Working Chat Code**
-   - **COPY** working chat API endpoints from `temp-sources/python/app/api/` into main control app
-   - **COPY** working chat utilities from `temp-sources/python/app/utils/` into main control app
-   - **COPY** working chat blueprints from `temp-sources/python/app/chat/` into main control app
-   - **NO PORTING** - use the tested, working code as-is
+### Phase 3: Module Integration and API Mapping
+1. **Import Working System as Module**
+   - **COPY** working Flask system files into main control app structure
+   - **IMPORT** working system as a module/library
+   - **USE** working system's functions directly from main control app
 
-2. **Code Integration**
-   - **REGISTER** chat blueprints in the main control app's Flask application
-   - **ENSURE** working chat code can access the integrated database tables
-   - **TEST** that chat endpoints work within the main app
+2. **API Endpoint Mapping**
+   - **MAP** control UI routes to working Flask API endpoints
+   - **USE** working system's existing API structure
+   - **ENSURE** control UI calls working API endpoints correctly
 
 3. **Single App Configuration**
    - **USE** existing Flask port configuration from database (`flask_port` setting)
@@ -386,17 +400,17 @@ GET  /api/v1/?action=config - Configuration (admin)
 ## File Changes Required
 
 ### Database Schema Changes (CRITICAL FIRST)
-- **MODIFY** `control/db/init_database.sql` - Add chat tables to existing schema
-- **INTEGRATE** chat tables with existing UI management tables
-- **ENSURE** foreign key relationships work properly
+- **MODIFY** `control/db/init_database.sql` - Add chat tables that working Flask system expects
+- **USE** working system's schema (don't change it)
+- **ENSURE** working system can access its required tables
 
 ### New Files to Create
-- **NONE** - We integrate INTO existing structure, not create separate directories
+- **NONE** - We copy working code INTO existing structure, not create separate directories
 
 ### Files to Modify
 - `control/static/chat.js` - Update API calls to use working endpoints
 - `control/templates/index.html` - Add session management
-- `control/app.py` - Add health check for chat bridge
+- `control/app.py` - Import working Flask system as module
 
 ### Files to Copy (Working Implementation)
 - `temp-sources/python/app/utils/*` → `control/utils/` (**COPY AS-IS INTO EXISTING STRUCTURE**)
@@ -404,28 +418,42 @@ GET  /api/v1/?action=config - Configuration (admin)
 - `temp-sources/python/app/chat/*` → `control/chat/` (**COPY AS-IS INTO EXISTING STRUCTURE**)
 - **NO SEPARATE CONFIG** - Use existing control app configuration
 - **NO SEPARATE REQUIREMENTS** - Integrate with existing dependencies
+- **WORKING SYSTEM AS MODULE** - Import and use working Flask system functions
 
 ## Deployment Strategy
 
-### 1. Update Database Schema (FIRST)
-```sql
--- Run this against the main control database to add chat tables
--- This integrates chat functionality into the existing UI database
--- No data loss, only additive changes
-```
-
-### 2. Integrate Working Chat Code INTO Main Control App
+### 1. Copy Working Flask System AS-IS (FIRST)
 ```bash
-# COPY working chat code INTO main control app (NO PORTING)
+# COPY working Flask system files INTO main control app (NO PORTING)
 cp -r temp-sources/python/app/api/* control/api/
 cp -r temp-sources/python/app/utils/* control/utils/
 cp -r temp-sources/python/app/chat/* control/chat/
 
-# REGISTER chat blueprints in main control app
-# Add chat endpoint registration to control/app.py
-
+# WORKING SYSTEM BECOMES A MODULE - import and use its functions
 # NO SEPARATE PORTS - everything runs in main Flask app
 # Use existing flask_port configuration from database
+```
+
+### 2. Update Database Schema
+```sql
+-- Run this against the main control database to add chat tables
+-- This adds tables that the working Flask system expects
+-- No data loss, only additive changes
+-- Use working system's schema (don't change it)
+```
+
+### 3. Import Working System as Module
+```python
+# In control/app.py - import working Flask system as module
+from api import bp as api_bp
+from chat import bp as chat_bp
+
+# Register working system's blueprints
+app.register_blueprint(api_bp, url_prefix='/api/v1')
+app.register_blueprint(chat_bp, url_prefix='/chat')
+
+# Use working system's functions directly
+# Map control UI routes to working API endpoints
 ```
 
 ### 2. Update Chat UI
@@ -543,19 +571,19 @@ cp -r temp-sources/python/app/chat/* control/chat/
 
 ## Key Principle
 
-**LIFT AND SHIFT INTO MAIN APP, DON'T PORT, INTEGRATE DATABASE.** The Flask chat system in `temp-sources/python/` is **TESTED AND WORKING** code that already perfectly integrates with Sanctum Broca. This plan:
+**COPY WORKING CODE AS-IS, IMPORT AS MODULE, MAP UI TO API.** The Flask chat system in `temp-sources/python/` is **TESTED AND WORKING** code that already perfectly integrates with Sanctum Broca. This plan:
 
 1. **COPIES the working code as-is** - no rewriting, no porting, no "integration"
-2. **INTEGRATES the database schema** - adds chat tables to existing control database
-3. **INTEGRATES the working code INTO the main control app** - not as a separate service
-4. **Uses existing working API endpoints** exactly as they are
+2. **IMPORTS working system as module/library** - use working functions directly
+3. **CHANGES ONLY database path** - point working system to `sanctum_ui.db`
+4. **MAPS control UI to working API** - call working endpoints from control interface
 5. **Maintains all existing functionality** that's already tested and working
 
 **The backend is DONE. The API is DONE. The database integration is DONE.** We just need to:
-- **Integrate the chat tables into the main control database**
-- **Copy the working chat code INTO the main control app**
-- **Register chat blueprints in the main Flask application**
-- **Connect the existing UI to the working API**
+- **Copy working Flask system files INTO main control app**
+- **Change database path in working system config**
+- **Import working system as module in main control app**
+- **Map control UI routes to working API endpoints**
 - **ONE APP, ONE DATABASE, ONE PORT**
 
 ## Future Enhancement: Multi-Agent Routing (NOT IN CURRENT SCOPE)
