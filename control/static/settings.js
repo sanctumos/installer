@@ -37,9 +37,9 @@ function initializeTabSearch() {
     const allTabs = ['master', 'smcp'];
     
     // Add agent tabs if they exist
-    const agentTabs = document.querySelectorAll('[id$="-tab"]');
+    const agentTabs = document.querySelectorAll('[id^="agent-"][id$="-tab"]');
     agentTabs.forEach(tab => {
-        const tabId = tab.id.replace('-tab', '');
+        const tabId = tab.id.replace('agent-', '').replace('-tab', '');
         if (!allTabs.includes(tabId)) {
             allTabs.push(tabId);
         }
