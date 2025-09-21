@@ -1,5 +1,16 @@
 # Sanctum Control Interface - Authentication System
 
+⚠️ **HEAVILY UNDER DEVELOPMENT - EARLY ALPHA** ⚠️
+
+## 🚨 Development Status
+
+**This project is in EARLY ALPHA and HEAVILY UNDER DEVELOPMENT.**
+
+- **Current Focus**: The kernel loader is the primary payload
+- **Target Platforms**: WSL, Ubuntu, and Raspbian systems (not tested on other platforms)
+- **Stability**: Expect breaking changes, incomplete features, and potential data loss
+- **Testing**: Limited testing has been performed - use at your own risk
+
 ## Overview
 This is the Phase 1 implementation of the Sanctum UI Database Schema Plan, focusing on user management and authentication.
 

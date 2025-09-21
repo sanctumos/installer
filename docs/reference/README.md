@@ -1,6 +1,17 @@
 # Reference Documentation
 
+⚠️ **HEAVILY UNDER DEVELOPMENT - EARLY ALPHA** ⚠️
+
 This folder contains technical reference documentation for the Sanctum system.
+
+## 🚨 Development Status
+
+**This project is in EARLY ALPHA and HEAVILY UNDER DEVELOPMENT.**
+
+- **Current Focus**: The kernel loader is the primary payload
+- **Target Platforms**: WSL, Ubuntu, and Raspbian systems (not tested on other platforms)
+- **Stability**: Expect breaking changes, incomplete features, and potential data loss
+- **Testing**: Limited testing has been performed - use at your own risk
 
 ## Contents
 
