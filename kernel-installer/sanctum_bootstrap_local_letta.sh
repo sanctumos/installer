@@ -12,11 +12,8 @@ LETTAPASS="${LETTAPASS:-yourpassword}"
 LETTA_REPO="${LETTA_REPO:-$HOME/tmp/letta}"
 LETTA_HOST_PORT="${LETTA_HOST_PORT:-8284}"
 
-# API Keys (customize or set via env)
-OPENAI_API_KEY="${OPENAI_API_KEY:-dummy}"
-ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-dummy}"
-OLLAMA_BASE_URL="${OLLAMA_BASE_URL:-http://127.0.0.1:11434}"
-
+# Optional API keys / URLs: set via env before running bootstrap.
+# When unset, they are written commented out in ~/.letta/.env (no dummy values; Letta will ignore commented keys).
 # Screen Session Name
 SCREEN_SESSION="letta"
 
@@ -62,16 +59,36 @@ uv sync --extra server --extra sqlite
 echo "✔ Letta deps installed"
 
 ############################################
-# 2a. Letta .env (no LETTA_PG_URI = use SQLite)
+# 2a. Letta .env (Venice AI compatible; no LETTA_PG_URI = use SQLite)
+#     Only set keys that are non-empty; unset keys are written commented out (no dummy values).
 ############################################
 mkdir -p ~/.letta
-cat > ~/.letta/.env <<EOF
-OPENAI_API_KEY="$OPENAI_API_KEY"
-ANTHROPIC_API_KEY="$ANTHROPIC_API_KEY"
-OLLAMA_BASE_URL="$OLLAMA_BASE_URL"
-LETTA_SERVER_PASSWORD="$LETTAPASS"
-EOF
+write_env_line() {
+  local key="$1" val="${2:-}"
+  if [[ -n "${val}" ]]; then
+    echo "$key=$val"
+  else
+    echo "# $key="
+  fi
+}
+# Env var names match letta/settings.py ModelSettings (pydantic-settings: field name -> UPPER_SNAKE_CASE)
+{
+  echo "# ~/.letta/.env — Venice AI compatible. Uncomment and set only the keys you use."
+  echo "# Do not set dummy values; Letta can misbehave."
+  echo ""
+  write_env_line "OPENAI_API_KEY" "${OPENAI_API_KEY:-}"
+  write_env_line "OPENAI_BASE_URL" "${OPENAI_BASE_URL:-}"
+  write_env_line "ANTHROPIC_API_KEY" "${ANTHROPIC_API_KEY:-}"
+  write_env_line "OLLAMA_BASE_URL" "${OLLAMA_BASE_URL:-}"
+  write_env_line "VENICE_API_KEY" "${VENICE_API_KEY:-}"
+  write_env_line "VENICE_BASE_URL" "${VENICE_BASE_URL:-}"
+  write_env_line "VLLM_API_BASE" "${VLLM_API_BASE:-}"
+  echo ""
+  echo "# Server auth (required by bootstrap)"
+  echo "LETTA_SERVER_PASSWORD=$LETTAPASS"
+} > ~/.letta/.env
 # Do not set LETTA_PG_URI so server uses SQLite (~/.letta/sqlite.db)
+echo "✔ Wrote ~/.letta/.env (unset keys commented out)"
 
 ############################################
 # 2b. Run migrations (SQLite)
