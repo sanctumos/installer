@@ -75,6 +75,7 @@ Contains implementation roadmaps and planning materials for:
 - **Installation**: Review `planning/core-installation-planning.md`
 - **Requirements**: Check `reference/docs-on-installer-criteria.md`
 - **Configuration**: See `planning/system_settings_planning.md`
+- **Letta on Android (Termux + Proot)**: Full install log and procedures — [LETTA_PROOT_ANDROID_INSTALL.md](./LETTA_PROOT_ANDROID_INSTALL.md)
 
 ### For UI/UX Work
 - **Interface Design**: Review `planning/design for web interface.md`
