@@ -1,0 +1,11 @@
+[Unit]
+Description=Network watchdog recovery (ping gateway/remote, recover WiFi, restart bore)
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/bin/network-watchdog-recovery.sh
+# No Restart=; timer runs us periodically
+
+[Install]
+WantedBy=default.target

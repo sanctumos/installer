@@ -1,0 +1,11 @@
+# Passwordless sudo for network-watchdog-recovery.sh when run from user timer.
+# Interface/service for MSI AX1800: wlx2cf05dfb1561
+
+Cmnd_Alias NETWORK_WATCHDOG_CMDS = \
+	/usr/bin/systemctl restart netplan-wpa-wlx2cf05dfb1561.service, \
+	/usr/sbin/ip link set dev wlx2cf05dfb1561 down, \
+	/usr/sbin/ip link set dev wlx2cf05dfb1561 up, \
+	/usr/sbin/reboot
+
+rizzn ALL=(root) NOPASSWD: NETWORK_WATCHDOG_CMDS
+rizzn ALL=(root) NOPASSWD: /home/rizzn/bin/usb-wifi-reset.sh
