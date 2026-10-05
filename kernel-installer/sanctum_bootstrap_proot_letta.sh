@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 # Letta install for Proot Ubuntu (Termux, ARM64). No Docker, no systemd, no /etc.
-# Target: run ONLY on 192.168.1.244 inside proot-distro login ubuntu.
+# Kernel source: public SanctumOS fork (sanctumos/letta), venice-openai-proxy branch.
 # Resumable: checkpoints in ~/sanctum-install-checkpoints. Remove checkpoint_N_ok to redo from N.
 set -euo pipefail
 
 CHECKPOINT_DIR="${CHECKPOINT_DIR:-$HOME/sanctum-install-checkpoints}"
 LETTA_REPO="${LETTA_REPO:-$HOME/letta}"
+# Public SanctumOS Letta kernel (0.16.4 + Venice). Override if needed.
+LETTA_GIT_URL="${LETTA_GIT_URL:-https://github.com/sanctumos/letta.git}"
+LETTA_GIT_BRANCH="${LETTA_GIT_BRANCH:-venice-openai-proxy}"
 LETTAPASS="${LETTAPASS:-yourpassword}"
 LETTA_HOST_PORT="${LETTA_HOST_PORT:-8284}"
 SCREEN_SESSION="${SCREEN_SESSION:-letta}"
@@ -48,10 +51,11 @@ else
   if [[ -d "$LETTA_REPO/.git" ]]; then
     echo "Repo already present at $LETTA_REPO" >&2
   else
-    # Use letta-ai/letta (public). For technonomicon-lore fork, clone manually with token/SSH.
-    GIT_TERMINAL_PROMPT=0 git clone --depth 1 https://github.com/letta-ai/letta.git "$LETTA_REPO" || true
+    echo "Cloning SanctumOS Letta kernel ($LETTA_GIT_BRANCH) from $LETTA_GIT_URL ..." >&2
+    GIT_TERMINAL_PROMPT=0 git clone --depth 1 --branch "$LETTA_GIT_BRANCH" "$LETTA_GIT_URL" "$LETTA_REPO" || true
     if [[ ! -d "$LETTA_REPO/.git" ]]; then
-      echo "❌ git clone failed. If using private fork, clone manually into $LETTA_REPO and re-run." >&2
+      echo "❌ git clone failed for $LETTA_GIT_URL ($LETTA_GIT_BRANCH)." >&2
+      echo "   Clone manually into $LETTA_REPO and re-run, or set LETTA_GIT_URL / LETTA_GIT_BRANCH." >&2
       exit 1
     fi
   fi

@@ -50,10 +50,10 @@ Install Letta (self-hosted server, SQLite backend) on the Android device at 192.
 
 ### 4.3 Checkpoint 2 — Clone Letta repo
 
-- **Initial attempt:** Clone `https://github.com/technonomicon-lore/letta.git` failed with “could not read Username for 'https://github.com': No such device or address” (no TTY). Repo returned 404 from the dev machine (private or renamed).
-- **Change:** Installer script was updated to use **letta-ai/letta** (public upstream):  
-  `GIT_TERMINAL_PROMPT=0 git clone --depth 1 https://github.com/letta-ai/letta.git "$LETTA_REPO"`.
-- **Result:** Clone succeeded. Checkpoint 2 marked done. Repo at `~/letta` on the device.
+- **Initial attempt (historical):** Clone of private `technonomicon-lore/letta` failed without auth on the device; temporary fallback was public `letta-ai/letta`.
+- **Current (2026-10-05):** Installer clones the public SanctumOS kernel:  
+  `GIT_TERMINAL_PROMPT=0 git clone --depth 1 --branch venice-openai-proxy https://github.com/sanctumos/letta.git "$LETTA_REPO"`.
+- **Result (historical install):** Clone of upstream succeeded; device had `~/letta` from letta-ai. Re-installs should use `sanctumos/letta`.
 
 ### 4.4 Checkpoint 3 — uv sync (server + sqlite)
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Modified bootstrap: run Letta from local repo (technonomicon-lore/letta), no Docker.
+# Modified bootstrap: run Letta from SanctumOS public kernel (sanctumos/letta), no Docker.
 # No Certbot/HTTPS (home network); optional nginx for local proxy.
 set -euo pipefail
 
@@ -8,8 +8,11 @@ set -euo pipefail
 ############################################
 LETTAPASS="${LETTAPASS:-yourpassword}"
 
-# Local Letta: path to cloned repo (technonomicon-lore/letta)
+# Local Letta: path to cloned SanctumOS kernel repo
 LETTA_REPO="${LETTA_REPO:-$HOME/tmp/letta}"
+# Public SanctumOS Letta kernel (0.16.4 + Venice). Override if needed.
+LETTA_GIT_URL="${LETTA_GIT_URL:-https://github.com/sanctumos/letta.git}"
+LETTA_GIT_BRANCH="${LETTA_GIT_BRANCH:-venice-openai-proxy}"
 LETTA_HOST_PORT="${LETTA_HOST_PORT:-8284}"
 
 # Optional API keys / URLs: set via env before running bootstrap.
@@ -28,7 +31,7 @@ LETTA_REPO="${LETTA_REPO/#\~/$HOME}"
 ############################################
 echo "Installing system packages..."
 apt-get update
-apt-get install -y nginx screen curl
+apt-get install -y nginx screen curl git
 
 # Optional: install Docker only if you need it for other services (not for Letta)
 # apt-get install -y docker.io
@@ -40,10 +43,10 @@ echo "✔ Services enabled"
 ############################################
 # 2. Letta repo: ensure present and install deps
 ############################################
-if [[ ! -d "$LETTA_REPO" ]]; then
-  echo "❌ Letta repo not found at $LETTA_REPO"
-  echo "   Clone it first: git clone https://github.com/technonomicon-lore/letta.git $LETTA_REPO"
-  exit 1
+if [[ ! -d "$LETTA_REPO/.git" ]]; then
+  echo "Cloning SanctumOS Letta kernel ($LETTA_GIT_BRANCH) from $LETTA_GIT_URL ..."
+  mkdir -p "$(dirname "$LETTA_REPO")"
+  GIT_TERMINAL_PROMPT=0 git clone --depth 1 --branch "$LETTA_GIT_BRANCH" "$LETTA_GIT_URL" "$LETTA_REPO"
 fi
 
 echo "Installing uv and Letta dependencies (server + sqlite)..."
