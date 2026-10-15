@@ -406,6 +406,18 @@ else
     fi
 fi
 
+
+############################################
+# Install SanctumOS-top (stop) — default screen
+############################################
+_STOP_INSTALL="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)/install_stop_default_screen.sh"
+if [[ -f "$_STOP_INSTALL" ]]; then
+  # shellcheck disable=SC1090
+  source "$_STOP_INSTALL"
+else
+  echo "⚠ install_stop_default_screen.sh not found next to this bootstrap; skipping stop"
+fi
+
 ############################################
 # 12. Create Flask control panel
 ############################################

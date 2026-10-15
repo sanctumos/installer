@@ -31,7 +31,7 @@ LETTA_REPO="${LETTA_REPO/#\~/$HOME}"
 ############################################
 echo "Installing system packages..."
 apt-get update
-apt-get install -y nginx screen curl git
+apt-get install -y nginx screen curl git python3-venv python3-pip
 
 # Optional: install Docker only if you need it for other services (not for Letta)
 # apt-get install -y docker.io
@@ -59,6 +59,8 @@ export PATH="$HOME/.local/bin:${PATH:-}"
 
 cd "$LETTA_REPO"
 uv sync --extra server --extra sqlite
+# letta ORM imports asyncpg even on SQLite
+uv pip install asyncpg
 echo "✔ Letta deps installed"
 
 ############################################
@@ -306,6 +308,18 @@ else
   echo "✔ Added @reboot $HOME/launch_letta_screen.sh to crontab"
 fi
 
+
+############################################
+# Install SanctumOS-top (stop) — default screen
+############################################
+_STOP_INSTALL="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)/install_stop_default_screen.sh"
+if [[ -f "$_STOP_INSTALL" ]]; then
+  # shellcheck disable=SC1090
+  source "$_STOP_INSTALL"
+else
+  echo "⚠ install_stop_default_screen.sh not found next to this bootstrap; skipping stop"
+fi
+
 ############################################
 # 8. Summary
 ############################################
@@ -315,6 +329,7 @@ echo "Letta (local):  http://127.0.0.1:$LETTA_HOST_PORT  (screen: $SCREEN_SESSIO
 echo "Nginx:          127.0.0.1:8080  (CORS for $CORS_ORIGIN; Cloudflare Tunnel target)"
 echo "DB:             SQLite at ~/.letta/sqlite.db (no Postgres)"
 echo "To attach:      screen -r $SCREEN_SESSION"
+echo "stop TUI:       screen -x stop"
 echo ""
 echo "--- Expose for ADE (app.letta.com) ---"
 echo "1. Edit /etc/cloudflared/config.yml: set hostname to your public hostname (e.g. sanctum.zero1.network)"

@@ -30,7 +30,7 @@ if checkpoint_ok 1; then
 else
   echo "=== Checkpoint 1: Prereqs ===" >&2
   apt-get update
-  apt-get install -y curl git screen
+  apt-get install -y curl git screen python3-venv python3-pip
   if ! command -v uv &>/dev/null; then
     curl -LsSf https://astral.sh/uv/install.sh | sh
     export PATH="$HOME/.local/bin:${PATH:-}"
@@ -156,8 +156,21 @@ screen -dmS $SCREEN_SESSION $HOME/launch_letta.sh
 SCREEN
 chmod +x "$HOME/launch_letta_screen.sh"
 
+
+############################################
+# Install SanctumOS-top (stop) — default screen
+############################################
+_STOP_INSTALL="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)/install_stop_default_screen.sh"
+if [[ -f "$_STOP_INSTALL" ]]; then
+  # shellcheck disable=SC1090
+  source "$_STOP_INSTALL"
+else
+  echo "⚠ install_stop_default_screen.sh not found next to this bootstrap; skipping stop"
+fi
+
 echo ""
 echo "=== Done ==="
 echo "Letta:  http://127.0.0.1:$LETTA_HOST_PORT  (screen: $SCREEN_SESSION)"
 echo "Attach: screen -r $SCREEN_SESSION"
+echo "stop:   screen -x stop"
 echo "Checkpoints: $CHECKPOINT_DIR"
