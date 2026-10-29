@@ -4,10 +4,9 @@
 # recovery (restart WiFi); when reachability returns, restart bore-client so
 # the tunnel comes back. Run via systemd user timer (e.g. every 60–120s).
 #
-# Requires passwordless sudo for:
-#   systemctl restart netplan-wpa-wlx2cf05dfb1561.service
-#   ip link set dev wlx2cf05dfb1561 down
-#   ip link set dev wlx2cf05dfb1561 up
+# Requires passwordless sudo for iface from NETWORK_WATCHDOG_INTERFACE:
+#   systemctl restart netplan-wpa-<iface>.service
+#   ip link / rfkill unblock wifi / wpa_cli / timed dhclient
 #   /usr/sbin/reboot
 #
 set -euo pipefail
@@ -20,8 +19,15 @@ BORE_REMOTE_PORT="${NETWORK_WATCHDOG_BORE_PORT:-7836}"   # must match bore tunne
 # A stuck client (half-open control connection) means the server stops listening on that
 # tunnel's port, so probing every port catches a dead bore-ssh-client even when 7836 is fine.
 BORE_REMOTE_PORTS="${NETWORK_WATCHDOG_BORE_PORTS:-$BORE_REMOTE_PORT 7837}"
+BORE_SSH_PORT="${NETWORK_WATCHDOG_BORE_SSH_PORT:-7837}"
 INTERFACE="${NETWORK_WATCHDOG_INTERFACE:-wlx2cf05dfb1561}"
-USB_WIFI_UNBIND="${NETWORK_WATCHDOG_USB_WIFI:-}"   # Realtek USB WiFi; empty=skip USB reset
+# Default ON — MSI AX1800 USB reset via usb-wifi-reset.sh (set NETWORK_WATCHDOG_USB_WIFI=0 to skip)
+USB_WIFI_UNBIND="${NETWORK_WATCHDOG_USB_WIFI:-1}"
+# Hairpin end-to-end probe: 1 = probe remote tunnel TCP/SSH banner from this box (moya default).
+# 0 = this box cannot hairpin its own tunnel (ISP/router blocks it); judge tunnel health by
+# local sshd + bore client control connection only. Set 0 on authlokr-ai.
+HAIRPIN_E2E="${NETWORK_WATCHDOG_HAIRPIN_E2E:-1}"
+# (PubkeyAuthentication is disabled on moya — tunnel e2e uses SSH banner probe, not key login.)
 FAILURES_BEFORE_RECOVERY="${NETWORK_WATCHDOG_FAILURES:-2}"
 TIER1_FAILURES="${NETWORK_WATCHDOG_TIER1_FAILURES:-2}"   # consecutive "tunnel down, LAN up" before tier 1
 TIER2_CYCLES_BEFORE_REBOOT="${NETWORK_WATCHDOG_TIER2_CYCLES:-3}"   # tier-2 cycles before tier 3 (reboot); 0 = disable tier 3
@@ -86,26 +92,38 @@ failed_reboot_boot_id=$frbid
 EOF
 }
 
-# Check reachability: ping gateway; if REMOTE is set, also ping remote (both must pass for "up")
+# WiFi association state via wpa_cli (COMPLETED = associated). Empty if unknown.
+wifi_wpa_state() {
+  timeout -k 1 3 sudo -n wpa_cli -i "$INTERFACE" status 2>/dev/null | awk -F= '/^wpa_state=/ {print $2; exit}'
+}
+
+# LAN/WiFi up = associated (if we can tell) AND gateway ping.
+# Do NOT require WAN/remote ICMP here — that used to thrash WiFi on ISP blips.
 is_reachable() {
-  if ! ping -c1 -W"$PING_TIMEOUT" -q "$GATEWAY" &>/dev/null; then
+  local st
+  st="$(wifi_wpa_state || true)"
+  if [[ -n "$st" && "$st" != "COMPLETED" ]]; then
     return 1
   fi
-  if [[ -n "${REMOTE:-}" ]]; then
-    if ! ping -c1 -W"$PING_TIMEOUT" -q "$REMOTE" &>/dev/null; then
-      return 1
-    fi
+  if ! ping -c1 -W"$PING_TIMEOUT" -q "$GATEWAY" &>/dev/null; then
+    return 1
   fi
   return 0
 }
 
-# TCP connect to remote bore ports (timeout 2s each). Requires reachability first.
+# TCP connect to remote bore ports (timeout 2s each). Requires LAN reachability first.
 # Every tunnel port must accept; one stuck bore client fails the whole check.
+# NOTE: A flapping bore client can make the remote port accept briefly while SSH
+# through the tunnel still fails — always pair with is_tunnel_ssh_ok.
 is_tunnel_tcp_ok() {
   [[ -z "${REMOTE:-}" ]] && return 0
+  # Skip hairpin data-plane probe when this box cannot reach its own tunnel
+  # endpoint (some ISPs/routers block the box's outbound connect to the public
+  # bore port). In that case rely on local sshd + bore client control conn.
+  [[ "${HAIRPIN_E2E}" == "0" ]] && return 0
   local port
   for port in $BORE_REMOTE_PORTS; do
-    if timeout 2 bash -c "echo >/dev/tcp/$REMOTE/$port" 2>/dev/null; then
+    if timeout -k 2 2 bash -c "echo >/dev/tcp/$REMOTE/$port" 2>/dev/null; then
       continue
     fi
     if command -v nc &>/dev/null && nc -z -w 2 "$REMOTE" "$port" 2>/dev/null; then
@@ -116,10 +134,49 @@ is_tunnel_tcp_ok() {
   return 0
 }
 
-# Tunnel healthy = reachable AND TCP to bore port OK
+# Local sshd must accept — otherwise bore registers :7837 then goes stale every ~10s.
+is_local_sshd_ok() {
+  timeout -k 2 2 bash -c 'echo >/dev/tcp/127.0.0.1/22' 2>/dev/null
+}
+
+# bore-ssh-client unit up + established control plane to bore server :7835
+is_bore_client_ok() {
+  systemctl --user is-active --quiet bore-ssh-client.service 2>/dev/null || return 1
+  # Established TCP to remote control port (7835) from a bore process
+  if ss -tnp 2>/dev/null | grep -E 'bore' | grep -qE ":7835\b"; then
+    return 0
+  fi
+  # Fallback: any ESTAB to REMOTE:7835
+  ss -tn state established "dst ${REMOTE}:7835" 2>/dev/null | grep -q . && return 0
+  return 1
+}
+
+# End-to-end data-plane check: remote :7837 must return an SSH banner.
+# Plain TCP connect is NOT enough — flapping bore clients accept briefly then go
+# stale (~10s) without ever proxying to local sshd. Reading "SSH-*" proves the
+# tunnel actually reaches sshd. (Pubkey auth is disabled on this host.)
+is_tunnel_ssh_ok() {
+  [[ -z "${REMOTE:-}" ]] && return 0
+  # Skip hairpin e2e banner probe when this box cannot hairpin its own tunnel.
+  [[ "${HAIRPIN_E2E}" == "0" ]] && return 0
+  local banner
+  banner="$(
+    timeout -k 2 6 bash -c "
+      exec 3<>/dev/tcp/${REMOTE}/${BORE_SSH_PORT} || exit 1
+      read -t 4 -r -u 3 line || exit 1
+      printf '%s' \"\$line\"
+    " 2>/dev/null
+  )" || return 1
+  [[ "$banner" == SSH-* ]]
+}
+
+# Tunnel healthy = LAN up + local sshd + bore client + remote ports + SSH banner via bore
 is_tunnel_healthy() {
   is_reachable || return 1
+  is_local_sshd_ok || return 1
+  is_bore_client_ok || return 1
   is_tunnel_tcp_ok || return 1
+  is_tunnel_ssh_ok || return 1
   return 0
 }
 
@@ -133,29 +190,74 @@ trim_log() {
   fi
 }
 
-# Recovery: restart WPA for this interface and bounce the link
-do_recovery() {
-  log "Recovery: restarting $WPA_SERVICE and bouncing $INTERFACE"
-  sudo systemctl restart "$WPA_SERVICE" 2>>"$LOG_FILE" || log "WARNING: restart $WPA_SERVICE failed"
-  sleep 2
-  sudo ip link set dev "$INTERFACE" down 2>>"$LOG_FILE" || true
-  sleep 2
-  sudo ip link set dev "$INTERFACE" up 2>>"$LOG_FILE" || true
-  log "Recovery done; waiting 15s before re-checking"
-  sleep 15
+# Soft reconnect after router bounce: un-rfkill → scan → reconnect → DHCP renew.
+wifi_soft_reconnect() {
+  local st
+  st="$(wifi_wpa_state || true)"
+  log "Soft reconnect: wpa_state=${st:-unknown} on $INTERFACE"
+  sudo -n /usr/sbin/rfkill unblock wifi 2>>"$LOG_FILE" || \
+    sudo -n /usr/sbin/rfkill unblock wlan 2>>"$LOG_FILE" || true
+  sudo -n ip link set dev "$INTERFACE" up 2>>"$LOG_FILE" || true
+  sudo -n wpa_cli -i "$INTERFACE" scan 2>>"$LOG_FILE" || true
+  sleep 3
+  sudo -n wpa_cli -i "$INTERFACE" reconnect 2>>"$LOG_FILE" || \
+    sudo -n wpa_cli -i "$INTERFACE" reassociate 2>>"$LOG_FILE" || true
+  sleep 8
+  st="$(wifi_wpa_state || true)"
+  if [[ "$st" == "COMPLETED" ]]; then
+    sudo -n /usr/bin/timeout -k 2 8 /usr/sbin/dhclient -r "$INTERFACE" 2>>"$LOG_FILE" || true
+    sudo -n /usr/bin/timeout -k 2 8 /usr/sbin/dhclient "$INTERFACE" 2>>"$LOG_FILE" || \
+      sudo -n systemctl restart systemd-networkd.service 2>>"$LOG_FILE" || true
+    sleep 5
+  else
+    log "Soft reconnect: skip dhclient (wpa_state=${st:-unknown})"
+  fi
+  st="$(wifi_wpa_state || true)"
+  log "Soft reconnect done: wpa_state=${st:-unknown}"
 }
 
-# USB WiFi reset: unbind/bind Realtek adapter (fixes "firmware failed to leave lps state")
-do_usb_wifi_reset() {
-  [[ -z "${USB_WIFI_UNBIND:-}" ]] && return 0
-  local drv="rtw_8723du"
-  if [[ ! -d "/sys/bus/usb/drivers/$drv" ]]; then
-    log "USB WiFi reset skipped: driver $drv not found"
+# Recovery: soft reconnect first (router bounce), then hard WPA restart + link bounce
+do_recovery() {
+  log "Recovery: soft reconnect first (router-bounce path)"
+  wifi_soft_reconnect
+  if ping -c1 -W"$PING_TIMEOUT" -q "$GATEWAY" &>/dev/null; then
+    log "Recovery: soft reconnect restored gateway — skipping hard bounce"
     return 0
   fi
-  log "USB WiFi reset: unbind/bind via usb-wifi-reset.sh"
-  sudo /home/rizzn/bin/usb-wifi-reset.sh 2>>"$LOG_FILE" || true
-  log "USB WiFi reset done; waiting 20s for interface"
+
+  log "Recovery: soft failed; restarting $WPA_SERVICE and bouncing $INTERFACE"
+  sudo -n systemctl restart "$WPA_SERVICE" 2>>"$LOG_FILE" || log "WARNING: restart $WPA_SERVICE failed"
+  sleep 2
+  sudo -n ip link set dev "$INTERFACE" down 2>>"$LOG_FILE" || true
+  sleep 2
+  sudo -n ip link set dev "$INTERFACE" up 2>>"$LOG_FILE" || true
+  sleep 3
+  sudo -n wpa_cli -i "$INTERFACE" reconnect 2>>"$LOG_FILE" || true
+  sleep 8
+  st="$(wifi_wpa_state || true)"
+  if [[ "$st" == "COMPLETED" ]]; then
+    sudo -n /usr/bin/timeout -k 2 8 /usr/sbin/dhclient -r "$INTERFACE" 2>>"$LOG_FILE" || true
+    sudo -n /usr/bin/timeout -k 2 8 /usr/sbin/dhclient "$INTERFACE" 2>>"$LOG_FILE" || \
+      sudo -n systemctl restart systemd-networkd.service 2>>"$LOG_FILE" || true
+  else
+    log "Hard bounce: skip dhclient (wpa_state=${st:-unknown})"
+  fi
+  log "Recovery done; waiting 10s before re-checking"
+  sleep 10
+}
+
+# USB WiFi reset: unbind/bind primary MSI AX1800 (rtw89_8852bu_git) via usb-wifi-reset.sh
+do_usb_wifi_reset() {
+  # Skip when explicitly disabled (0/false/empty after override)
+  case "${USB_WIFI_UNBIND}" in
+    0|false|no|off|"") return 0 ;;
+  esac
+  log "USB WiFi reset: unbind/bind via usb-wifi-reset.sh (AX1800 / fallback)"
+  if sudo -n "$HOME/bin/usb-wifi-reset.sh" 2>>"$LOG_FILE"; then
+    log "USB WiFi reset OK; waiting 20s for interface"
+  else
+    log "WARNING: usb-wifi-reset.sh failed (exit $?)"
+  fi
   sleep 20
 }
 
@@ -172,8 +274,9 @@ restart_bore() {
   systemctl --user restart bore-ssh-client.service 2>>"$LOG_FILE" || log "WARNING: bore-ssh-client restart failed"
 }
 
-# Max recovery attempts in one cycle (retry if still unreachable after first recovery)
-RECOVERY_RETRIES="${NETWORK_WATCHDOG_RECOVERY_RETRIES:-2}"
+# One recovery pass per timer tick. Nested retries overran TimeoutStartSec on moya
+# (2026-10-29) so t2 never persisted and Tier 3 never fired.
+RECOVERY_RETRIES="${NETWORK_WATCHDOG_RECOVERY_RETRIES:-0}"
 # Seconds to wait before restarting bore when we just became reachable (lets stack settle)
 BORE_RESTART_DELAY="${NETWORK_WATCHDOG_BORE_DELAY:-5}"
 # Throttle "Recovery paused" log to at most once per 60s
@@ -292,8 +395,19 @@ main() {
     return 0
   fi
 
-  # Tier 2: WPA + link bounce (with retries)
+  if [[ "$TIER2_CYCLES_BEFORE_REBOOT" -gt 0 ]] && [[ "$t2" -ge "$TIER2_CYCLES_BEFORE_REBOOT" ]]; then
+    local boot_id
+    boot_id=$(current_boot_id)
+    log "Tier 3: initiating full reboot (tier2_cycle_count=$t2, boot_id=$boot_id)"
+    write_state "$cf" "$ctf" "$wd" "$t2" 1 "$cfr" "$rp" "$t1a" "$boot_id" "$frbid"
+    sync
+    systemctl --user stop network-watchdog-recovery.timer 2>>"$LOG_FILE" || log "WARNING: could not stop watchdog timer before reboot"
+    sudo -n reboot
+    exit 0
+  fi
+
   t2=$((t2 + 1))
+  write_state "$cf" "$ctf" "$wd" "$t2" "$t3p" "$cfr" "$rp" "$t1a" "$prbid" "$frbid"
   log "Tier 2: cycle $t2 (max $TIER2_CYCLES_BEFORE_REBOOT before reboot)"
   local attempt=0
   while [[ "$attempt" -le "$RECOVERY_RETRIES" ]]; do
@@ -326,7 +440,7 @@ main() {
     sync
     # Stop timer so pre-reboot ticks cannot count fake failed reboots.
     systemctl --user stop network-watchdog-recovery.timer 2>>"$LOG_FILE" || log "WARNING: could not stop watchdog timer before reboot"
-    sudo reboot
+    sudo -n reboot
     exit 0
   fi
 

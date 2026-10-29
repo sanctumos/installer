@@ -4,8 +4,13 @@ After=network-online.target
 
 [Service]
 Type=oneshot
+EnvironmentFile=-%h/.config/network-watchdog.env
 ExecStart=%h/bin/network-watchdog-recovery.sh
-# No Restart=; timer runs us periodically
+# Default is infinity. A wedged /dev/tcp probe used to hold this oneshot
+# (and the flock) until reboot, so the timer could not fire again.
+# One soft-reconnect is ~16s; hard bounce adds more. 45s killed every
+# Tier-2 pass on 2026-10-29 (RF-kill + dhclient hang) so t2 never persisted.
+TimeoutStartSec=120
 
 [Install]
 WantedBy=default.target

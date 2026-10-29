@@ -3,9 +3,15 @@ Description=Run network watchdog recovery every 5 seconds
 
 [Timer]
 AccuracySec=1s
-OnBootSec=15
-OnUnitActiveSec=5
-Persistent=true
+OnBootSec=10
+# Fire once after this timer unit itself starts. Needed because user
+# systemd often comes up after OnBootSec already elapsed, and
+# OnUnitInactiveSec has nothing to count until the oneshot has run once
+# (otherwise NextElapse=infinity and the watchdog stays dead).
+OnActiveSec=10
+# Repeat 5s after each run finishes (or TimeoutStartSec kills it).
+OnUnitInactiveSec=5
+Persistent=false
 
 [Install]
 WantedBy=timers.target

@@ -1,10 +1,22 @@
-# Passwordless sudo for network-watchdog-recovery.sh when run from user timer.
-# Interface/service for MSI AX1800: wlx2cf05dfb1561
-
+# Edit user + iface before install (visudo -cf).
+# Moya example below: user rizzn, iface wlx2cf05dfb1561.
+# authlokr-ai: user rizzn0, iface wlp58s0 (no usb-wifi-reset line).
 Cmnd_Alias NETWORK_WATCHDOG_CMDS = \
 	/usr/bin/systemctl restart netplan-wpa-wlx2cf05dfb1561.service, \
 	/usr/sbin/ip link set dev wlx2cf05dfb1561 down, \
 	/usr/sbin/ip link set dev wlx2cf05dfb1561 up, \
+	/usr/sbin/wpa_cli -i wlx2cf05dfb1561 reconnect, \
+	/usr/sbin/wpa_cli -i wlx2cf05dfb1561 reassociate, \
+	/usr/sbin/wpa_cli -i wlx2cf05dfb1561 scan, \
+	/usr/sbin/wpa_cli -i wlx2cf05dfb1561 status, \
+	/usr/sbin/wpa_cli -i wlx2cf05dfb1561 disconnect, \
+	/usr/sbin/dhclient -r wlx2cf05dfb1561, \
+	/usr/sbin/dhclient wlx2cf05dfb1561, \
+	/usr/bin/timeout -k 2 8 /usr/sbin/dhclient -r wlx2cf05dfb1561, \
+	/usr/bin/timeout -k 2 8 /usr/sbin/dhclient wlx2cf05dfb1561, \
+	/usr/sbin/rfkill unblock wifi, \
+	/usr/sbin/rfkill unblock wlan, \
+	/usr/bin/systemctl restart systemd-networkd.service, \
 	/usr/sbin/reboot
 
 rizzn ALL=(root) NOPASSWD: NETWORK_WATCHDOG_CMDS
