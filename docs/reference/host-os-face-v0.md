@@ -1,13 +1,14 @@
-# Sanctum Host OS face — pointer (v0)
+# Sanctum Registry + installer harness — pointer (v0)
 
-**Canonical long form lives in ADE** (the web client this face is for):
+Canonical long form: https://github.com/sanctumos/ade/blob/main/docs/host-os/README.md
 
-- https://github.com/sanctumos/ade/blob/main/docs/host-os/README.md
-- `docs/host-os/architecture-v0.md`
-- `docs/host-os/api-map-v0.md`
+**This repo’s future job (experimental):** stop being a **collection** of env-specific bootstraps (`kernel-installer/sanctum_bootstrap.sh` vs `_local_letta` vs `_proot_letta`). Become a **harness** (or Letta-code runner) that:
 
-**This repo’s drawer:** `installer/control/` (alpha Flask). Layout canon already names `control/gateway/` as the optional control plane. v0 draft: **evolve that into Host** (`/v1/sanctum/*`), do not treat the control chat bridge as ADE Chat.
+1. **Polls Registry** for sysinfo (`bare` / `wsl` / `docker` / `proot`, paths, …)
+2. Takes a bootstrap **contract**
+3. Adapts and applies
+4. Writes actual/ports back to Registry
 
-**Locked 2026-10-31:** Letta is kernel (optional direct). Broca + SMCP + install/uninstall are OS. ADE Settings stays one URL via path-split (E2 sidecar). Engineering: Host first, Broca-through-Host after.
+**Registry** (separate sidecar) is the hive + light ADE↔Broca transport. It is not this harness.
 
-See also: `docs/reference/docs-on-installer-criteria.md`.
+Layout canon: `docs/reference/docs-on-installer-criteria.md`. Hive stub: `registry_schema.md` (idea only).
