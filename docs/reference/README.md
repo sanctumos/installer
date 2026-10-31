@@ -21,6 +21,7 @@ This folder contains technical reference documentation for the Sanctum system.
 ## Contents
 
 ### Architecture & Design
+- **`host-os-face-v0.md`** - Pointer to ADE Host OS draft (2026-10-31): Host sidecar, optional Letta, Broca/SMCP through Host
 - **`multi-agent-architecture.md`** - Multi-agent architecture guide and implementation details
 - **`flask_chat_bridge_architecture.md`** - Technical architecture of the Flask chat bridge system
 
