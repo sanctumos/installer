@@ -9,7 +9,7 @@ Canonical long form: https://github.com/sanctumos/ade/blob/main/docs/host-os/REA
 3. Adapts and applies
 4. Writes actual/ports back to Registry
 
-**Interactive debugger (locked):** compact **gptme** (`[minimal]`, `--system short`, `--tools shell,read,patch,save`). Goose is out. Freeze to a binary is later packaging, not the first spike. Same agent later as a **brain doctor** for Kernel/agent trees — outside the Kernel.
+**Interactive debugger (locked):** compact **gptme** (`[minimal]`, `-y` / `--no-confirm`, `--system short`, `--tools shell,read,patch,save`). **No HITL.** Goose is out. Freeze to a binary is later packaging, not the first spike. Same agent later as a **brain doctor** for Kernel/agent trees — outside the Kernel.
 
 **Registry** (separate sidecar) is the hive + light ADE↔Broca transport. It is not this harness.
 
